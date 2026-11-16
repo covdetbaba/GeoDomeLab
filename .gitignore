@@ -12,3 +12,6 @@ __pycache__/
 /build/
 /dist/
 .ipynb_checkpoints/
+
+# outputs of the report supplementary runs
+/examples/report_supplementary/*.json

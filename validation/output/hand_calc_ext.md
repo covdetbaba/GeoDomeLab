@@ -531,7 +531,7 @@ stiffness  Kxx = Kyy = 5/2 k s^2,  Kzz = 5 k t^2
 
 ## F8  2V Class I geodesic geometry: chord factors and angles
 
-Purpose. Fabrication data. The 2V Class I sphere splits each of the 20 icosahedron faces into four triangles through the edge midpoints, which are pushed out radially to the sphere. Every value below is computed twice, once from closed-form spherical trigonometry and once from the vertex vectors of an independently built 2V sphere, and the chord factors are compared with the 2V chord factors of Kenner (1976), Geodesic Math and How to Use It, as reproduced by the Domerama chord-factor chart: A = 0.54653, B = 0.61803.
+Purpose. Fabrication data. The 2V Class I sphere splits each of the 20 icosahedron faces into four triangles through the edge midpoints, which are pushed out radially to the sphere. Every value below is computed twice, once from closed-form spherical trigonometry and once from the vertex vectors of an independently built 2V sphere, and the chord factors are compared with the 2V chord factors printed by the Domerama chord-factor chart (method 1, icosahedral): A = 0.54653, B = 0.61803. The Class I breakdown itself is described by Kenner (1976).
 
 ### Closed form
 
@@ -588,7 +588,7 @@ dihedral angle across an edge (face circumradius rho = abc/(4 Area)):
 
 Hub types: 30 x 2A+4B, 12 x 5A+0B. Panel types: 60 x AAB, 20 x BBB. Every strut has exactly two panels: True. All panels are oriented outwards: True. Largest distance of a node from the unit sphere: 2.22e-16. Spread of the dihedral angle inside each family: A 1.02e-13 deg, B 7.63e-14 deg. Faceted area / sphere area = 0.92834532.
 
-- Kenner (1976): A = 0.54653, B = 0.61803. Computed: A = 0.54653306, B = 0.61803399. Both agree to the five published decimals (differences 3.06e-06 and 3.99e-06).
+- Domerama chart: A = 0.54653, B = 0.61803. Computed: A = 0.54653306, B = 0.61803399. Both agree to the five published decimals (differences 3.06e-06 and 3.99e-06).
 - For a sphere of R = 5 m the struts are 2.73267 m (A) and 3.09017 m (B).
 - The axial angle is the same at both ends of a strut because both hubs lie on the sphere. The dihedral angle is the angle between the two panels measured inside the dome. The bend angle (180 - dihedral) is the angle between the panel normals and is what a hub or panel bracket must turn.
 
@@ -750,8 +750,8 @@ phi_c Pn = 0.90 Fcr Ae                               (E3-1, E7-1)
 | F8 | dihedral B vectors - formula [rad] | 4.44e-16 | 1e-12 | ok |
 | F8 | dihedral spread inside a family [rad] | 1.78e-15 | 1e-12 | ok |
 | F8 | panel area sum vectors - formula | 7.11e-15 | 1e-12 | ok |
-| F8 | CF_A vs Kenner 0.54653 (5 decimals) | 3.06e-06 | 5e-06 | ok |
-| F8 | CF_B vs Kenner 0.61803 (5 decimals) | 3.99e-06 | 5e-06 | ok |
+| F8 | CF_A vs Domerama 0.54653 (5 decimals) | 3.06e-06 | 5e-06 | ok |
+| F8 | CF_B vs Domerama 0.61803 (5 decimals) | 3.99e-06 | 5e-06 | ok |
 | F8 | every strut shared by two panels | 0 | 0.5 | ok |
 | F9 | 15 panel areas by cross product - 15 sqrt3/4 L^2 [m2] | 0 | 1e-11 | ok |
 | F9 | sum of tributary areas - surface [m2] | 0 | 1e-11 | ok |
@@ -984,8 +984,8 @@ All values in SI units. These are the numbers the program must reproduce.
 | F7.meff_x_dead | 720.2827512 | kg | m_eff = (phi^T M r)^2 = m | effective modal mass of the x mode, self weight + dead |
 | F7.meff_y_dead | 720.2827512 | kg | m_eff = (phi^T M r)^2 = m | effective modal mass of the y mode, self weight + dead |
 | F7.meff_z_dead | 720.2827512 | kg | m_eff = (phi^T M r)^2 = m | effective modal mass of the z mode, self weight + dead |
-| F8.CF_A | 0.5465330578 | - | CF_A = 2 sin(acos(1/sqrt5)/4) | 2V chord factor of strut A (Kenner 0.54653) |
-| F8.CF_B | 0.6180339887 | - | CF_B = 2 sin 18 deg = (sqrt5-1)/2 | 2V chord factor of strut B (Kenner 0.61803) |
+| F8.CF_A | 0.5465330578 | - | CF_A = 2 sin(acos(1/sqrt5)/4) | 2V chord factor of strut A (Domerama 0.54653) |
+| F8.CF_B | 0.6180339887 | - | CF_B = 2 sin 18 deg = (sqrt5-1)/2 | 2V chord factor of strut B (Domerama 0.61803) |
 | F8.L_A_R5 | 2.732665289 | m | L = CF_A*R | strut A length for R = 5 m |
 | F8.L_B_R5 | 3.090169944 | m | L = CF_B*R | strut B length for R = 5 m |
 | F8.axial_A_deg | 74.14126279 | deg | alpha = acos(L/(2R)) | axial angle of strut A (strut to hub radius) |
@@ -1078,7 +1078,8 @@ All values in SI units. These are the numbers the program must reproduce.
 
 - Kassimali, A. Matrix Analysis of Structures, 2nd ed. Cengage, 2012 (direct stiffness method for plane and space trusses, member forces from end displacements, support settlements and temperature changes by equivalent joint loads).
 - Hibbeler, R. C. Structural Analysis, 10th ed. Pearson, 2018 (force method of analysis for trusses, principle of virtual work, unit-load method, temperature and fabrication errors, support settlement).
-- Kenner, H. Geodesic Math and How to Use It. University of California Press, 1976 (Class I breakdown; the 2V chord factors 0.54653 and 0.61803 as reproduced by the Domerama chord-factor chart; closed forms 2 sin(15.8587 deg) and 2 sin 18 deg).
+- Kenner, H. Geodesic Math and How to Use It. University of California Press, 1976 (Class I breakdown).
+- Domerama, Chord factor charts, https://domerama.com/calculators/chord-charts, read 16 November 2026 (method 1 icosahedral chord factors to five decimals; 2V 0.54653 and 0.61803; closed forms 2 sin(15.8587 deg) and 2 sin 18 deg).
 - ASCE/SEI 7-16 Minimum Design Loads, Eq. 26.10-1 (velocity pressure qz = 0.613 Kz Kzt Kd V^2 in SI). The 7-point Cp table of F9 is the program's illustrative simplification, not values read from Fig. 27.3-2; F9 checks the implementation, not the table.
 - AISC 360-16 Specification for Structural Steel Buildings, Sec. B4.2 (design wall thickness 0.93 t for ERW HSS), Table B4.1a, Eqs. E3-2 to E3-4 and E7-7 (F10).
 - Crisfield, M. A. Non-linear Finite Element Analysis of Solids and Structures, Vol. 1. Wiley, 1991 (shallow two-bar truss, limit point, snap-through).

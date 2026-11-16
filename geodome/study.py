@@ -71,8 +71,8 @@ R^2, the bar stiffnesses EA/L as 1/R, so
 
 A study at R and 2R must reproduce these ratios to round-off.  The 2V mass
 has a closed form from the chord factors 2 sin(arctan(2)/4) (30 struts) and
-2 sin(18 deg) (35 struts) of the hemisphere (Kenner 1976, as reproduced
-by the Domerama chord-factor chart; Clinton 1971).
+2 sin(18 deg) (35 struts) of the hemisphere (printed as 0.54653 and
+0.61803 by the Domerama chord-factor chart; Clinton 1971).
 
 Reading the results
 -------------------

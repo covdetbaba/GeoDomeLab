@@ -260,7 +260,7 @@ View > Save current view as PNG saves the figure of the current view tab.
 | Tab | Content |
 |---|---|
 | Summary | The calculation narrative: geometry, load totals, one row per combination, the governing member and combination, the deflection check, λ_cr and any warnings. |
-| Members | Every strut: nodes, family, section, length, KL/r, envelope tension and compression, both design strengths, utilisation and OK or OVER. Rows over 1.0 are shaded red. |
+| Members | Every strut: nodes, family, section, length, KL/r, envelope maximum and minimum axial force over the strength combinations (N max and N min; a strut always in compression shows two negative values), both design strengths, utilisation and OK or OVER. Rows over 1.0 are shaded red. |
 | Nodes | Coordinates, ring number and the three displacements. |
 | Reactions | Support forces per node (spring forces included) with a total row. |
 | Auto-sizing | One row per iteration of the fully stressed design: sections and mass. |
@@ -398,8 +398,14 @@ the lower limit load is kept.
 | Method, Maximum steps, Steps past the limit | As above (default 5 steps past each limit). |
 
 The sub-tab **Imperfection study** plots λ_limit/λ_cr against amplitude/span.
-The **Imperfection** result tab lists each amplitude, both signs and the
-first critical λ.
+The **Imperfection** result tab lists each amplitude, both signs, the
+first critical λ and the local rise left at the hub where the mode is
+largest (usually the crown). A positive amplitude always points the way the
+load pushes. When an amplitude removes more than half of that hub's rise
+above its neighbours, the Log says so: the limit load then measures a local
+snap of that hub, so judge the amplitude against the hub's rise or the strut
+length rather than the span (in the 6V case study the crown stands 0.198 m
+above its neighbours, and span/300 = 100 mm removes 66 % of it).
 
 Try it on Examples > 24-member shallow star dome: arc-length finds the limit
 point at 10⁴ P/EA = 3.157, only 0.21 of λ_cr.
@@ -511,7 +517,7 @@ File > Save model writes a JSON file. File > Open reads it back exactly.
 Version 1 files (GeoDomeLab 1.x) still open. All values are SI: m, N, Pa,
 N/m and °C.
 
-A geodesic dome (two of the five default combinations are shown):
+A geodesic dome (two of the seven default combinations are shown):
 
 ```json
 {

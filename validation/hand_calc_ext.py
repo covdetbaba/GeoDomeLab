@@ -121,8 +121,11 @@ VM_SAMPLES = (0.1, 0.25, 0.5, 1.0, 1.5, 2.0, 2.5)   # w/h for the P(w) table
 
 # F8  2V geodesic sphere
 F8_R = 5.0                   # radius for the metric lengths            [m]
-# Kenner (1976) 2V chord factors, the values as reproduced by the Domerama
-# chord-factor chart; closed forms 2 sin(15.8587 deg) and 2 sin 18 deg
+# 2V chord factors as printed by the Domerama chord-factor chart (method 1,
+# icosahedral, https://domerama.com/calculators/chord-charts, read
+# 2026-11-16); closed forms 2 sin(15.8587 deg) and 2 sin 18 deg.  (The
+# name KENNER_2V is kept for compatibility; Kenner (1976) is the general
+# reference for the Class I breakdown, the printed values are Domerama's.)
 KENNER_2V = {"A": 0.54653, "B": 0.61803}
 
 # F9  wind on Model B (the program's default wind data, ASCE 7 notation)
@@ -1572,9 +1575,9 @@ def case_f8(doc, res):
           "value below is computed twice, once from closed-form spherical "
           "trigonometry and once from the vertex vectors of an independently "
           "built 2V sphere, and the chord factors are compared with the "
-          "2V chord factors of Kenner (1976), Geodesic Math and How to Use "
-          "It, as reproduced by the Domerama chord-factor chart: "
-          "A = 0.54653, B = 0.61803.")
+          "2V chord factors printed by the Domerama chord-factor chart "
+          "(method 1, icosahedral): A = 0.54653, B = 0.61803. The Class I "
+          "breakdown itself is described by Kenner (1976).")
     P, faces, V, F, e1 = geodesic_2v()
     R = 1.0
     doc.h3("Closed form")
@@ -1752,13 +1755,13 @@ def case_f8(doc, res):
     check("F8", "dihedral spread inside a family [rad]", max(sprA, sprB),
           1e-12)
     check("F8", "panel area sum vectors - formula", tot_area - tot_cf, 1e-12)
-    check("F8", "CF_A vs Kenner 0.54653 (5 decimals)",
+    check("F8", "CF_A vs Domerama 0.54653 (5 decimals)",
           cfA - KENNER_2V["A"], 5e-6)
-    check("F8", "CF_B vs Kenner 0.61803 (5 decimals)",
+    check("F8", "CF_B vs Domerama 0.61803 (5 decimals)",
           cfB - KENNER_2V["B"], 5e-6)
     check("F8", "every strut shared by two panels",
           0.0 if two_faces else 1.0, 0.5)
-    doc.items([f"Kenner (1976): A = {KENNER_2V['A']}, B = {KENNER_2V['B']}. "
+    doc.items([f"Domerama chart: A = {KENNER_2V['A']}, B = {KENNER_2V['B']}. "
                f"Computed: A = {cfA:.8f}, B = {cfB:.8f}. Both agree to the "
                f"five published decimals (differences "
                f"{g6(cfA - KENNER_2V['A'], 3)} and "
@@ -1772,9 +1775,9 @@ def case_f8(doc, res):
                "normals and is what a hub or panel bracket must turn."])
 
     res.add("F8.CF_A", cfA, "-", "CF_A = 2 sin(acos(1/sqrt5)/4)",
-            "2V chord factor of strut A (Kenner 0.54653)")
+            "2V chord factor of strut A (Domerama 0.54653)")
     res.add("F8.CF_B", cfB, "-", "CF_B = 2 sin 18 deg = (sqrt5-1)/2",
-            "2V chord factor of strut B (Kenner 0.61803)")
+            "2V chord factor of strut B (Domerama 0.61803)")
     res.add("F8.L_A_R5", cfA * F8_R, "m", "L = CF_A*R",
             f"strut A length for R = {g6(F8_R)} m")
     res.add("F8.L_B_R5", cfB * F8_R, "m", "L = CF_B*R",
@@ -2135,9 +2138,12 @@ def _run():
         "unit-load method, temperature and fabrication errors, support "
         "settlement).",
         "Kenner, H. Geodesic Math and How to Use It. University of "
-        "California Press, 1976 (Class I breakdown; the 2V chord factors "
-        "0.54653 and 0.61803 as reproduced by the Domerama chord-factor "
-        "chart; closed forms 2 sin(15.8587 deg) and 2 sin 18 deg).",
+        "California Press, 1976 (Class I breakdown).",
+        "Domerama, Chord factor charts, "
+        "https://domerama.com/calculators/chord-charts, read 16 November "
+        "2026 (method 1 icosahedral chord factors to five decimals; 2V "
+        "0.54653 and 0.61803; closed forms 2 sin(15.8587 deg) and "
+        "2 sin 18 deg).",
         "ASCE/SEI 7-16 Minimum Design Loads, Eq. 26.10-1 (velocity "
         "pressure qz = 0.613 Kz Kzt Kd V^2 in SI). The 7-point Cp table of "
         "F9 is the program's illustrative simplification, not values read "

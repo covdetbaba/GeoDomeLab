@@ -108,13 +108,13 @@ everything passes. Qt runs offscreen, so no window opens. The run on
 
 | Step | Result |
 |---|---|
-| Unit and GUI tests (17 files) | 320 of 320 pass, 1 skipped |
+| Unit and GUI tests (17 files) | 321 of 321 pass, 1 skipped |
 | Verification suite (`run_geodome.py --verify`) | 75 of 75 pass |
 | Hand calculation, Models A and B (`validation/run_validation.py`) | 80 of 80 pass |
 | Hand calculation file F1-F10, internal checks (`validation/hand_calc_ext.py`) | 120 of 120 pass |
 | Program vs hand calculation F1-F10 (`validation/run_validation_ext.py`) | 422 of 422 pass |
 | OpenSees cross-check, quick set (`validation/opensees_crosscheck.py --quick`) | 486 of 486 pass |
-| **Overall** | **PASS, 1503 of 1503 checks** |
+| **Overall** | **PASS, 1504 of 1504 checks** |
 
 The skipped test compares two ways of running OpenSees and needs both of them.
 Without OpenSees the OpenSees steps are skipped, not failed. The same command
@@ -135,7 +135,7 @@ above.
 | 24-member star dome snap-through | Greco & Venturini (2006), Iu & Bradford (2012) | first limit point and first zero-load state | limit at 0.768 cm (published: near 0.75 cm); zero load at 1.88 cm, node 2 up 0.116 cm (published: about 19 mm and 1.16 mm) |
 | von Mises two-bar truss | exact closed form, derived here (the problem of Pecknold et al. 1985) | part of F6 | 4.9e-10 along the path |
 | Chord factors 2V to 8V | Kenner (1976) and the closed forms for 2V; the Domerama chord-factor chart for 3V to 8V | 2V and 4V in the suite, 2V to 8V in the tests | 2V to 6V within the printed decimals; 7V and 8V within 1e-5 |
-| Statics, modes and nonlinear paths of 1V to 8V domes and benchmarks | OpenSees 3.8.0 (`corotTruss`, `eigen`) | 1069 | statics 2.19e-13, frequencies 2.72e-13, nonlinear λ 4.14e-11 (relative) |
+| Statics, modes and nonlinear paths of 1V to 8V domes and benchmarks | OpenSees 3.8.0 (`corotTruss`, `eigen`) | 1069 | statics 2.19e-13, frequencies 2.72e-13, nonlinear λ 4.14e-11 (normwise; 4.38e-11 pointwise) |
 
 OpenSees shares only the input data with GeoDomeLab: nodes, members, E and A,
 supports, the factored load vector, thermal strains, settlements and masses.

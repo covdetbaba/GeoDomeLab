@@ -56,8 +56,7 @@ $$
 
 For 2V the closed forms are $\mathrm{cf} = 2\sin 18^\circ = 0.618034$ and
 $\mathrm{cf} = 2\sin\!\left(\tfrac14 \arccos\tfrac{1}{\sqrt5}\right) = 0.546533$
-(Kenner 1976 prints 0.61803 and 0.54653, as reproduced by the Domerama
-chord-factor chart). $2\sin 18^\circ = 1/\varphi$ is the edge of the
+(the Domerama chord-factor chart prints 0.61803 and 0.54653). $2\sin 18^\circ = 1/\varphi$ is the edge of the
 icosidodecahedron formed by the icosahedron's edge midpoints.
 
 Any other space truss can be read from a model file or from CSV files. Its
@@ -511,6 +510,8 @@ The results and the limits of this check are in
   doi:10.1016/0045-7949(81)90108-5.
 - Crisfield, M. A. (1991). *Non-linear Finite Element Analysis of Solids and
   Structures, Volume 1: Essentials*. Wiley, Chichester.
+- Domerama (n.d.). *Chord factor charts*.
+  https://domerama.com/calculators/chord-charts (read 16 November 2026).
 - Gioncu, V. (1995). Buckling of reticulated shells: state-of-the-art.
   *International Journal of Space Structures* 10(1), 1-46.
   doi:10.1177/026635119501000101.

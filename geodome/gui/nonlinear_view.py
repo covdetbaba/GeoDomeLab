@@ -1169,7 +1169,8 @@ class NonlinearExtension(QtCore.QObject):
     IMP_COLUMNS = ["amplitude", "a [mm]", "a / span", "a / strut",
                    "lambda_limit", "lambda_limit / lambda_cr", "sign",
                    "lambda (+ mode)", "lambda (- mode)",
-                   "first critical lambda", "lambda_cr"]
+                   "first critical lambda", "lambda_cr",
+                   "hub rise left [mm]"]
 
     def __init__(self, win):
         super().__init__(win)
@@ -1651,6 +1652,8 @@ class NonlinearExtension(QtCore.QObject):
                              f"a = {r['amplitude_m'] * 1e3:8.2f} mm"
                              f"  lambda_limit = {_g(r['lambda_limit'])}"
                              f"  ratio = {_g(r['ratio'], '.4f')}")
+                if r.get("note"):
+                    self.win.log(f"  {lab:>12s}  note: {r['note']}")
             worst = min((r for r in rows if _finite(r["ratio"])),
                         key=lambda r: r["ratio"], default=None)
             txt = (f"lowest λ_limit/λ_cr = {worst['ratio']:.3f}"
@@ -1986,7 +1989,9 @@ class NonlinearExtension(QtCore.QObject):
                         _sign_cell(r.get("lambda_plus"), a),
                         _sign_cell(r.get("lambda_minus"), a),
                         _g(r.get("lambda_critical"), ".5g"),
-                        _g(r["lambda_cr"], ".5g")])
+                        _g(r["lambda_cr"], ".5g"),
+                        _g(1e3 * r["hub_rise_left_m"], ".1f")
+                        if _finite(r.get("hub_rise_left_m")) else "-"])
         _fill(self.imp_table, self.IMP_COLUMNS, out,
               numeric=set(range(1, len(self.IMP_COLUMNS))))
 

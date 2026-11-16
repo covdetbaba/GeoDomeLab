@@ -267,7 +267,8 @@ def run_analysis(model, n_buckling_modes=6, do_buckling=True, progress=None):
         n_sl = int(np.sum(caps["Q"] < 1.0))
         res.messages.append(
             f"{n_sl} strut(s) use a locally slender round HSS (D/t > 0.11E/Fy); "
-            f"the AISC E7 reduction factor Q has been applied.")
+            f"their compressive strength uses the AISC 360-16 E7 effective "
+            f"area Ae.")
     if res.governing_util > 1.0:
         res.messages.append(
             f"OVERSTRESSED: member {res.governing_member} reaches "
@@ -303,13 +304,21 @@ def summary_text(res):
     L.append("-" * 74)
     L.append(f"  {'Combination':<24s}{'max T [kN]':>12s}{'max C [kN]':>12s}"
              f"{'max |u| [mm]':>14s}{'max util':>10s}")
+    n_service = 0
     for name in res.order:
         r = res.cases[name]
         _, dmax = r.max_displacement()
         u = res.util.get(name)
         umax = float(np.max(u)) if u is not None else float("nan")
-        L.append(f"  {name:<24s}{r.N.max() / 1e3:12.1f}{r.N.min() / 1e3:12.1f}"
-                 f"{dmax * 1e3:14.2f}{umax:10.3f}")
+        service = res._combo(name).serviceability
+        n_service += service
+        mark = " *" if service else ""
+        L.append(f"  {name + mark:<24s}{r.N.max() / 1e3:12.1f}"
+                 f"{r.N.min() / 1e3:12.1f}{dmax * 1e3:14.2f}{umax:10.3f}")
+    if n_service:
+        L.append("  * service combination: its utilisation is shown for "
+                 "information only and")
+        L.append("    is not part of the strength check.")
     L.append("")
     L.append("-" * 74)
     L.append("  DESIGN CHECK (AISC 360 LRFD)")
@@ -393,8 +402,11 @@ def member_table(res):
     for k in range(g.n_members):
         i, j = g.members[k]
         grp = int(g.strut_group[k])
-        gov_t = res.N_max[k]
-        gov_c = res.N_min[k]
+        # Envelope over the strength combinations: the largest (most
+        # tensile) and the smallest (most compressive) axial force.  A strut
+        # that is always in compression has two negative values.
+        n_max = res.N_max[k]
+        n_min = res.N_min[k]
         rows.append({
             "member": k,
             "node_i": int(i),
@@ -403,8 +415,8 @@ def member_table(res):
             "section": m.group_sections[grp],
             "length_m": float(g.strut_lengths[k]),
             "KL_r": float(caps["slenderness"][k]),
-            "N_tension_kN": float(gov_t / 1e3),
-            "N_compr_kN": float(gov_c / 1e3),
+            "N_max_kN": float(n_max / 1e3),
+            "N_min_kN": float(n_min / 1e3),
             "phiPn_t_kN": float(caps["phiPn_t"][k] / 1e3),
             "phiPn_c_kN": float(caps["phiPn_c"][k] / 1e3),
             "utilisation": float(res.util_env[k]),

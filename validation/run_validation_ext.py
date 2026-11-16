@@ -53,8 +53,8 @@ difference is not defined for an exact zero.  A row passes when d <= tol:
     natural frequencies, modal quantities       tol = 1e-9
     nonlinear path (limit point, snap target)   tol = 1e-6
     counts (nodes, struts, hubs, panels)        exact
-    Kenner (1976) chord factors (as reproduced  |p - h| <= 5e-6 (5 decimals)
-      by the Domerama chart)
+    published chord factors (Domerama chart,    |p - h| <= 5e-6 (5 decimals)
+      method 1 icosahedral)
     program identities (equilibrium residual,   value <= 1e-10
       energy mismatch, sum of loads + reactions)
 
@@ -74,9 +74,10 @@ References (the same as the hand calculations)
       problem studied by Pecknold, Ghaboussi & Healey 1985, J. Eng. Mech.
       111(7)).
     Chopra, Dynamics of Structures: lumped mass, effective modal mass.
-    Kenner, Geodesic Math and How to Use It (1976): 2V chord factors, the
-      values as reproduced by the Domerama chord-factor chart; closed forms
-      2 sin(15.8587 deg) and 2 sin 18 deg.
+    Kenner, Geodesic Math and How to Use It (1976): the Class I breakdown.
+    Domerama, Chord factor charts (domerama.com/calculators/chord-charts,
+      read 2026-11-16): the printed 2V chord factors 0.54653 and 0.61803;
+      closed forms 2 sin(15.8587 deg) and 2 sin 18 deg.
     ASCE/SEI 7-16 Eq. 26.10-1 (velocity pressure); AISC 360-16 B4.2, E3, E7.
     Clinton (1971), NASA CR-1734: axial angle = arccos(L/2R).
 
@@ -791,7 +792,7 @@ def _f8_angles(C, sub, t, R, src, counts):
               dh[fam]["dihedral_deg"], src)
         C.add(sub, f"F8.bend_{fam}_deg", f"bend angle across {fam}",
               dh[fam]["bend_deg"], src)
-        C.add(sub, f"F8.CF_{fam}", f"chord factor {fam} vs Kenner (1976)",
+        C.add(sub, f"F8.CF_{fam}", f"chord factor {fam} vs Domerama chart",
               st[fam]["chord_factor"], src, kind="published",
               ref=hx.KENNER_2V[fam], unit="-")
     pn = {r["panel_type"]: r for r in t["panels"]}
@@ -1073,7 +1074,7 @@ def write_markdown(rows, info, path=MD_PATH):
           "`icosahedron`, `subdivide_class1` and `custom_geometry`, and the "
           "2V hemisphere from `generate_dome`, both through "
           "`fabrication.fabrication_tables`; chord factors also against "
-          "Kenner (1976), the values as reproduced by the Domerama chart.",
+          "the printed values of the Domerama chord-factor chart.",
           "- **F9** `benchmarks.validation_model_b()` with the default "
           "`LoadSpec` (wind on): `loads.velocity_pressure`, "
           "`wind_pressure_coefficients` and `wind_load` at every node, the "

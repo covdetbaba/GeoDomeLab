@@ -3,7 +3,7 @@ Tests for the fabrication schedule (spec task C, ``geodome/fabrication.py``).
 
 Every check is against an independent answer:
 
-* published chord factors and strut counts: 2V (Kenner 1976; Domerama),
+* published chord factors and strut counts: 2V (Domerama chart),
   3V to 6V domes (Domerama chord-factor chart, "method 1" icosahedral,
   https://domerama.com/calculators/chord-charts, read 2026-11-16), and the
   2V closed forms 2 sin(acos(1/sqrt5)/4) and (sqrt5 - 1)/2;
@@ -51,7 +51,7 @@ SQ5 = math.sqrt(5.0)
 DEG = 180.0 / math.pi
 
 # Published chord factors (as printed) and strut counts, sorted by chord
-# factor.  2V: Kenner (1976) and the Domerama chart; 3V-6V: Domerama chart
+# factor.  2V to 6V: the Domerama chord-factor chart
 # ("3V 3/8 = 75 faces", "4V 1/2 method 1, 160 faces", "5V 7/15 = 225
 # faces", "6V 360 faces").
 PUBLISHED = {
@@ -113,7 +113,7 @@ def test_2v_chord_factors_kenner_and_closed_form():
     st = sorted(t["struts"], key=lambda r: r["chord_factor"])
     cfA = 2.0 * math.sin(math.acos(1.0 / SQ5) / 4.0)
     cfB = (SQ5 - 1.0) / 2.0
-    assert abs(st[0]["chord_factor"] - 0.54653) < 5e-6        # Kenner 1976
+    assert abs(st[0]["chord_factor"] - 0.54653) < 5e-6        # Domerama 2V
     assert abs(st[1]["chord_factor"] - 0.61803) < 5e-6
     assert abs(st[0]["chord_factor"] - cfA) < 1e-13
     assert abs(st[1]["chord_factor"] - cfB) < 1e-13

@@ -175,6 +175,7 @@ import copy
 import dataclasses
 import math
 import time
+import types
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -1636,6 +1637,47 @@ def _member_checks(model, res):
 
 
 # ===================================================== imperfections ======
+def local_rise(geom, node):
+    """Local rise of ``node`` above its neighbours, ``(h, n)``.
+
+    ``n`` is the unit normal of the least-squares plane through the nodes
+    joined to ``node`` by a member, turned away from the centroid of the
+    whole structure; ``h = (X_node - c) . n`` with ``c`` the centroid of the
+    neighbours.  For a dome hub, ``h`` is the height of the hub above the
+    plane of its neighbours (the rise of the shallow cap it forms with its
+    struts).  ``(nan, None)`` when the node has fewer than three neighbours.
+    """
+    X = np.asarray(geom.nodes, dtype=float)
+    k = int(node)
+    nb = sorted({int(j) if int(i) == k else int(i)
+                 for i, j in np.asarray(geom.members, dtype=int)
+                 if k in (int(i), int(j))})
+    if len(nb) < 3:
+        return float("nan"), None
+    P = X[nb]
+    c = P.mean(axis=0)
+    n = np.linalg.svd(P - c)[2][-1]
+    if float(n @ (c - X.mean(axis=0))) < 0.0:
+        n = -n
+    return float((X[k] - c) @ n), n
+
+
+def _hub_note(node, rise, left):
+    """Plain-language note when an imperfection flattens a hub."""
+    if not (np.isfinite(rise) and rise > 0.0 and np.isfinite(left)):
+        return ""
+    if left >= 0.5 * rise:
+        return ""
+    lost = 100.0 * (1.0 - left / rise)
+    txt = (f"The imperfection lowers node {node} by {lost:.0f} % of its "
+           f"local rise of {rise * 1e3:.0f} mm")
+    if left < 0.0:
+        txt += ", so the hub is already inverted"
+    return txt + (". The limit load then measures a local snap of that hub. "
+                  "Judge the amplitude against the local rise or the strut "
+                  "length, not the span.")
+
+
 def imperfection_study(model, combination_name=None, amplitudes=None, mode=0,
                        signs=(1.0, -1.0), return_results=False, progress=None,
                        **kwargs):
@@ -1661,7 +1703,12 @@ def imperfection_study(model, combination_name=None, amplitudes=None, mode=0,
     lambda_cr), lambda_critical and ratio_critical (first critical point of
     that run: the load maximum or an earlier bifurcation into another mode),
     sign (+1/-1, the sign with the lower lambda_limit), lambda_plus,
-    lambda_minus, found.  The first row is the perfect structure (a = 0).
+    lambda_minus, found, hub (the node with the largest mode component),
+    hub_rise_m (its local rise, :func:`local_rise`), hub_rise_left_m (the
+    rise left after the governing-sign imperfection) and note (a warning
+    when the imperfection removes more than half of that rise; then the
+    limit load measures a local snap of the hub, and a span-based amplitude
+    is the wrong yardstick).  The first row is the perfect structure (a = 0).
     With ``return_results=True`` returns ``(rows, results)`` where results
     maps (amplitude, sign) -> NonlinearResult.
     """
@@ -1678,6 +1725,17 @@ def imperfection_study(model, combination_name=None, amplitudes=None, mode=0,
     phi /= max(float(np.max(np.abs(phi))), 1e-300)
     span = float(model.geom.base_diameter)
     strut = float(np.mean(model.geom.member_lengths()))
+    P3 = phi.reshape(-1, 3)
+    hub = int(np.argmax(np.linalg.norm(P3, axis=1)))
+    rise, _ = local_rise(model.geom, hub)
+
+    def rise_left(offset):
+        """Local rise of the hub on the imperfect geometry (the mode also
+        moves its neighbours)."""
+        g = types.SimpleNamespace(
+            nodes=np.asarray(model.geom.nodes, float) + offset,
+            members=model.geom.members)
+        return local_rise(g, hub)[0]
     if amplitudes is None:
         amplitudes = [span / d for d in (1000.0, 500.0, 300.0)]
     amps = [0.0] + [float(a) for a in amplitudes if float(a) != 0.0]
@@ -1709,6 +1767,7 @@ def imperfection_study(model, combination_name=None, amplitudes=None, mode=0,
         else:
             sg, lam_lim = 1.0, float("nan")
         lam_c = crit_s.get(sg, float("nan"))
+        left = rise_left(sg * a * P3) if a else rise
         rows.append({
             "amplitude_m": a,
             "amplitude_over_span": a / span if span > 0 else float("nan"),
@@ -1724,6 +1783,10 @@ def imperfection_study(model, combination_name=None, amplitudes=None, mode=0,
             "lambda_plus": lam_s.get(1.0, float("nan")),
             "lambda_minus": lam_s.get(-1.0, float("nan")),
             "found": bool(np.isfinite(lam_lim)),
+            "hub": hub,
+            "hub_rise_m": rise,
+            "hub_rise_left_m": left,
+            "note": _hub_note(hub, rise, left) if a else "",
         })
     if progress:
         progress(1.0, "Imperfection study complete.")

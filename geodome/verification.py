@@ -115,22 +115,29 @@ def check_two_bar_asymmetric():
 
 
 def check_chord_factors():
-    """Chord factors against published Class I geodesic tables."""
+    """Chord factors against a published Class I (method 1) chart.
+
+    Reference: Domerama, Chord factor charts,
+    https://domerama.com/calculators/chord-charts (read 2026-11-16), which
+    prints the chord factors to five decimals; the tolerance 2e-5 covers
+    that rounding.
+    """
     out = []
     g2 = geo.generate_dome(2, 1.0, 0.5)
     s2 = g2.strut_schedule()
-    out.append(_check("2V chord factor A", s2[0]["chord_factor"], 0.546533,
-                      2e-5, "-", "published 2V Class I table"))
-    out.append(_check("2V chord factor B", s2[1]["chord_factor"], 0.618034,
+    out.append(_check("2V chord factor A", s2[0]["chord_factor"], 0.54653,
+                      2e-5, "-", "Domerama chord-factor chart, 2V"))
+    out.append(_check("2V chord factor B", s2[1]["chord_factor"], 0.61803,
                       2e-5, "-", "= 2 sin 18 deg = 1/phi (edge of the "
                       "icosidodecahedron of edge midpoints)"))
     g4 = geo.generate_dome(4, 1.0, 0.5)
     s4 = g4.strut_schedule()
-    refs = [0.253185, 0.294531, 0.295242, 0.298588, 0.312869, 0.324920]
+    # the six 4V "method 1" values of the chart, sorted by size
+    refs = [0.25318, 0.29453, 0.29524, 0.29859, 0.31287, 0.32492]
     for k, ref in enumerate(refs):
         out.append(_check(f"4V chord factor {chr(ord('A') + k)}",
                           s4[k]["chord_factor"], ref, 2e-5, "-",
-                          "published 4V Class I table"))
+                          "Domerama chord-factor chart, 4V"))
     return out
 
 

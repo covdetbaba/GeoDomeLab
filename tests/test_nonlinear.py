@@ -397,6 +397,8 @@ def test_first_arc_step_never_goes_to_a_negative_load():
     # crown, see test_imperfect_crown_snap_near_zero_load_is_not_jumped_over)
     assert row["ratio"] < 1e-3, row["ratio"]
     assert row["sign"] == 1.0
+    # 150 mm leaves almost none of the crown's 0.198 m rise: the row says so
+    assert row["hub_rise_left_m"] < 0.01 and "99 %" in row["note"]
 
 
 def test_spring_braced_column_bifurcation():
@@ -546,6 +548,44 @@ def test_imperfection_study_6v_dome():
     assert abs(rows[1]["amplitude_over_span"] - 1e-3) < 1e-12
     assert rows[1]["lambda_limit"] == min(rows[1]["lambda_plus"],
                                           rows[1]["lambda_minus"])
+    # the crown is the hub of the dimple; span/1000 and span/500 take 20 %
+    # and 40 % of its 0.198 m rise, below the 50 % note threshold
+    c = m.geom.crown_node
+    assert all(r["hub"] == c for r in rows)
+    assert all(abs(r["hub_rise_m"] - 0.1982) < 5e-4 for r in rows)
+    left = [r["hub_rise_left_m"] for r in rows]
+    assert left[0] == rows[0]["hub_rise_m"] and left[0] > left[1] > left[2]
+    assert all(r["note"] == "" for r in rows)
+
+
+def test_local_rise_and_hub_note():
+    """local_rise of the 6V crown equals the closed geometry (crown height
+    above the plane of its five neighbours, which is horizontal by
+    symmetry); the note appears only when more than half of the rise is
+    gone, and says 'inverted' when the hub passes its neighbours."""
+    import types
+    from geodome import benchmarks as bm
+    m = bm.make_preset("case_study_6v")
+    g = m.geom
+    c = g.crown_node
+    nb = sorted({int(j) if int(i) == c else int(i) for i, j in g.members
+                 if c in (int(i), int(j))})
+    assert len(nb) == 5
+    h, n = nl.local_rise(g, c)
+    assert abs(h - (g.nodes[c, 2] - np.mean(g.nodes[nb, 2]))) < 1e-12
+    assert abs(h - 0.1982) < 5e-4 and n[2] > 0.999999
+    assert nl._hub_note(c, h, 0.6 * h) == ""
+    note = nl._hub_note(c, h, 0.3 * h)
+    assert "70 %" in note and "inverted" not in note
+    off = np.zeros_like(g.nodes)
+    off[c, 2] = -1.5 * h                       # push the crown through
+    h2, _ = nl.local_rise(types.SimpleNamespace(nodes=g.nodes + off,
+                                                members=g.members), c)
+    assert abs(h2 + 0.5 * h) < 1e-12
+    assert "inverted" in nl._hub_note(c, h, h2)
+    assert np.isnan(nl.local_rise(types.SimpleNamespace(
+        nodes=np.array([[0., 0, 0], [1, 0, 0], [0, 1, 0]]),
+        members=np.array([[0, 1], [0, 2]])), 0)[0])
 
 
 def test_buckling_mode_sign_is_platform_independent():

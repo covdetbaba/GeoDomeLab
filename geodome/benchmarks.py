@@ -498,7 +498,7 @@ PRESETS = {
         "five-fold symmetry: 11 nodes, 25 CHS 88.9 x 4.0 struts, 5 pinned "
         "nodes, 18 free DOF. B1 = 50 kN crown load: crown uz = -1.6451 mm, "
         "spokes -19.02 kN, upper-ring hoop +15.39 kN, zigzag -5.878 kN. "
-        "B2 = 1.2D + 1.6S: crown uz = -1.8589 mm, total load 211.99 kN.",
+        "B2 = 1.2D + 1.6S: crown uz = -1.8256 mm, total load 190.44 kN.",
         validation_model_b),
     "von_mises": (
         "von Mises two-bar truss (snap-through)",

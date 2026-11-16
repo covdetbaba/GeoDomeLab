@@ -6,7 +6,7 @@ GeoDomeLab is checked in five ways:
    energy checks that every solve reports about itself. Part of the suite
    compares with closed forms and published values; the rest are identities
    (equilibrium, energy, symmetry), which test consistency, not accuracy.
-2. **Unit and GUI tests.** 320 tests in 17 files.
+2. **Unit and GUI tests.** 321 tests in 17 files.
 3. **Hand calculations.** Two small domes solved by hand (80 comparisons), and
    ten more cases F1 to F10 (422 comparisons) from a hand-calculation file
    that does not import the program.
@@ -51,7 +51,7 @@ Result of the run on 16 November 2026:
 
 | Step | Command | Result |
 |---|---|---|
-| Unit and GUI tests | `python tests/test_*.py` (each file) | 320 of 320 pass, 1 skipped |
+| Unit and GUI tests | `python tests/test_*.py` (each file) | 321 of 321 pass, 1 skipped |
 | Built-in verification | `python run_geodome.py --verify` | 75 of 75 pass |
 | Models A and B | `python validation/run_validation.py` | 80 of 80 pass |
 | Hand file F1 to F10, internal checks | `python validation/hand_calc_ext.py` | 120 of 120 pass, 290 reference values |
@@ -100,7 +100,7 @@ it. They also catch any exception raised inside a Qt slot.
 |---|---|---|
 | `test_geodome.py` | 30 | geometry, sections, loads, solver, AISC checks, buckling |
 | `test_foundation.py` | 44 | temperature, settlement, springs, custom supports, custom geometry, JSON v2, mechanism detection, default combinations, unused-load and aluminium messages, wind direction, unbalanced snow, snow on deep domes, lowest buckling factor over the strength combinations |
-| `test_nonlinear.py` | 23 | tangent vs finite differences, von Mises closed form, star dome, 6V limit point, imperfections (including a crown snap close to zero load, and a buckling-mode sign that is the same on every platform), the double bifurcation of a three-bar tent |
+| `test_nonlinear.py` | 24 | tangent vs finite differences, von Mises closed form, star dome, 6V limit point, imperfections (including a crown snap close to zero load, a buckling-mode sign that is the same on every platform, and the local rise left at the hub), the double bifurcation of a three-bar tent |
 | `test_modal.py` | 25 | closed-form frequencies, M-orthonormality, effective mass sum rule |
 | `test_fabrication.py` | 20 | chord factors 2V to 8V, valences, angles, dihedrals, panel areas, cut lists |
 | `test_study.py` | 20 | parameter studies, CSV round trip, auto-sizing with the B4.2 wall and deflection floors |
@@ -115,7 +115,7 @@ it. They also catch any exception raised inside a Qt slot.
 | `test_gui_nonlinear.py` | 7 | nonlinear view, path scrubbing, imperfection study, failed imperfection signs |
 | `test_gui_modal_fab.py` | 16 | Modes view and animation, Fabrication tab, DXF menu |
 | `test_gui_study_validation.py` | 11 | Study view, Validation menu with and without OpenSees |
-| **Total** | **320 + 1 skipped** | |
+| **Total** | **321 + 1 skipped** | |
 
 ## 3. Hand calculations
 
@@ -163,7 +163,7 @@ before the program is loaded.
 | F5 | Bar and elastic spring | springs in series and in parallel, a heated bar on a spring |
 | F6 | von Mises two-bar truss | the exact path P(w), both limit points, the snap-through target, linearised λ_cr and the sway root |
 | F7 | Model A natural frequencies | crown frequencies and effective masses, with and without the dead load as mass |
-| F8 | 2V geodesic geometry | chord factors, axial, bevel, dihedral and face angles, areas and counts; chord factors also vs Kenner (1976), as reproduced by the Domerama chart |
+| F8 | 2V geodesic geometry | chord factors, axial, bevel, dihedral and face angles, areas and counts; chord factors also vs the printed values of the Domerama chord-factor chart |
 | F9 | Wind on Model B | qz = 0.613 Kz Kzt Kd V², Cp of every node along the meridian, the nodal forces −qz G Cp A n and their resultant, with the default wind data. This checks the implementation of the wind field; the 7-point Cp table itself is an illustrative simplification, not ASCE 7-16 Fig. 27.3-2 |
 | F10 | AISC 360-16 strength of round HSS | the inelastic E3 branch (CHS 88.9 x 4.0, L = 2 m: φPn = 239.578 kN), the B4.2 design wall 0.93 t through a model (223.996 kN, tension 309.095 kN), the E7 effective area of a slender wall (D 323.9 x 4.0, L = 3 m: Ae/Ag = 0.93871, φPn = 1112.935 kN) and the 0.45 E/Fy scope limit (φPn = 0) |
 
@@ -197,7 +197,7 @@ value of the same unit in the same case. Tolerances:
 | F10 | 14 | 14 | 0 | - | - | - |
 | **All** | **422** | **422** | | | | |
 
-The two Kenner chord factors (0.54653 and 0.61803) differ from the program by
+The two printed chord factors (0.54653 and 0.61803) differ from the program by
 3.1e-6 and 4.0e-6, which is the rounding of the published 5 decimals.
 
 Some F quantities have no single program output, for example a single heated
@@ -286,13 +286,18 @@ same limit load (1.4e-15).
 
 ### 4.3 Geodesic chord factors
 
-Chord factor = strut length / sphere radius (Kenner 1976).
+Chord factor = strut length / sphere radius (Kenner 1976 describes the Class I
+breakdown).
+The printed reference values come from the Domerama chord-factor chart
+(<https://domerama.com/calculators/chord-charts>, "method 1" icosahedral,
+read 16 November 2026), which gives five decimals.
 
 - 2V: the closed forms 2 sin(18°) = 0.618034 and
-  2 sin(arccos(1/√5)/4) = 0.546533 agree with the program to 1e-13. The values
-  printed by Kenner, 0.54653 and 0.61803, agree to the printed 5 decimals.
-- 2V and 4V: the verification suite checks 8 chord factors (worst 1.6e-6
-  relative).
+  2 sin(arccos(1/√5)/4) = 0.546533 agree with the program to 1e-13. The chart
+  values 0.54653 and 0.61803 agree to the printed 5 decimals.
+- 2V and 4V: the verification suite checks 8 chord factors against the chart
+  values (2V 0.54653 and 0.61803; 4V 0.25318, 0.29453, 0.29524, 0.29859,
+  0.31287 and 0.32492), all within the rounding of the fifth decimal.
 - 3V to 8V: `tests/test_fabrication.py` checks every chord factor and strut
   count against the Domerama chord-factor chart. 2V to 6V agree within the
   printed decimals. The 7V and 8V chart rounds or merges some lengths, so
@@ -300,9 +305,9 @@ Chord factor = strut length / sphere radius (Kenner 1976).
 - Full spheres have 10ν² + 2 nodes, 30ν² struts and 20ν² faces, 12 hubs of
   5 struts and the rest of 6.
 
-Kenner's book itself was not read for this project. The 2V values were
-checked against the closed forms and the Domerama chart, which reproduces
-Kenner's table. (2V B = 2 sin 18° = 1/φ is the edge of the icosidodecahedron
+Kenner's book itself was not read for this project, and the Domerama page
+does not name its source. The printed values were therefore checked against
+the closed forms and the Domerama chart only. (2V B = 2 sin 18° = 1/φ is the edge of the icosidodecahedron
 formed by the icosahedron's edge midpoints, not the icosahedron edge, whose
 chord factor is 1.05146, the 1V value.)
 

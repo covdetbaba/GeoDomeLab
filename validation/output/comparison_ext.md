@@ -39,7 +39,7 @@ For a non-zero reference d = |program - hand| / |hand|, the plain relative diffe
 - **F5** CUSTOM supports with a spring stiffness entry (5e7 N/m) in series and in parallel with the bar, and a heated bar on a spring.
 - **F6** `benchmarks.von_mises_truss()`: linear solve and `buckling.linear_buckling`; `nonlinear.run_nonlinear` (Crisfield arc length) traced through the limit point, the unstable branch and onto the inverted stable branch; every traced point is compared with the closed form P(w). The sample loads P(w) are the program's corotational internal force at the symmetric state; both limit points are also located as zeros of the program's consistent tangent; the snap-through target is the program's equilibrium at lambda* found by Newton iteration on its residual. `linear_buckling` returns n_free - 2 modes, one for this 2-DOF truss, so the sway root uses the same program matrices K and K_g.
 - **F7** `modal.modal_analysis` on Model A, lumped mass, with and without the cladding dead load as mass.
-- **F8** a full 2V Class I sphere built with the program's own `icosahedron`, `subdivide_class1` and `custom_geometry`, and the 2V hemisphere from `generate_dome`, both through `fabrication.fabrication_tables`; chord factors also against Kenner (1976), the values as reproduced by the Domerama chart.
+- **F8** a full 2V Class I sphere built with the program's own `icosahedron`, `subdivide_class1` and `custom_geometry`, and the 2V hemisphere from `generate_dome`, both through `fabrication.fabrication_tables`; chord factors also against the printed values of the Domerama chord-factor chart.
 - **F9** `benchmarks.validation_model_b()` with the default `LoadSpec` (wind on): `loads.velocity_pressure`, `wind_pressure_coefficients` and `wind_load` at every node, the resultant, and a `run_analysis` of 1.0W for the identities. This checks the implementation of the wind field; the 7-point Cp table itself is an illustrative simplification, not ASCE 7-16 Fig. 27.3-2.
 - **F10** `buckling.compression_capacity` (inelastic E3 branch, E7 slender wall with a custom `Section`, the 0.45 E/Fy scope limit) and `buckling.member_capacities` of a one-bar model with `design_thickness_factor = 0.93` (AISC 360-16 B4.2).
 
@@ -301,15 +301,15 @@ None.
 | F6 linear | lambda_cr P_ref | F6.P_cr_linear | 53277.68772 | 53277.68772 | N | 2.7e-16 | 1e-09 | yes | buckling.linear_buckling |
 | F6 linear | lowest root of det(K + lam Kg) | F6.lambda_cr | 5.327768772 | 5.327768772 | - | 1.7e-16 | 1e-09 | yes | solver.assemble_stiffness / assemble_geometric_stiffness |
 | F6 linear | sway root of det(K + lam Kg) | F6.lambda_sway | 852443.0035 | 852443.0035 | - | 1.2e-13 | 1e-09 | yes | solver.assemble_stiffness / assemble_geometric_stiffness |
-| F6 nonlinear | limit load lambda_limit P_ref | F6.P_limit | 10240.4996 | 10240.4996 | N | 3.6e-16 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.10 s) |
-| F6 nonlinear | apex deflection at the limit | F6.w_limit | 0.05286125123 | 0.05286125126 | m | 4.9e-10 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.10 s) |
-| F6 nonlinear | bar length at the limit | F6.l_limit | 2.501040583 | 2.501040583 | m | 3.0e-13 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.10 s) |
-| F6 nonlinear | bar force at the limit | F6.N_limit | -177518.3623 | -177518.3624 | N | 3.6e-10 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.10 s) |
-| F6 nonlinear | strain at the limit | F6.strain_limit | -0.0008319471394 | -0.0008319471397 | - | 3.6e-10 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.10 s) |
-| F6 nonlinear | lambda_cr / lambda_limit | F6.ratio_linear_to_limit | 5.202645361 | 5.202645361 | - | 6.8e-16 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.10 s) |
+| F6 nonlinear | limit load lambda_limit P_ref | F6.P_limit | 10240.4996 | 10240.4996 | N | 3.6e-16 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.09 s) |
+| F6 nonlinear | apex deflection at the limit | F6.w_limit | 0.05286125123 | 0.05286125126 | m | 4.9e-10 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.09 s) |
+| F6 nonlinear | bar length at the limit | F6.l_limit | 2.501040583 | 2.501040583 | m | 3.0e-13 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.09 s) |
+| F6 nonlinear | bar force at the limit | F6.N_limit | -177518.3623 | -177518.3624 | N | 3.6e-10 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.09 s) |
+| F6 nonlinear | strain at the limit | F6.strain_limit | -0.0008319471394 | -0.0008319471397 | - | 3.6e-10 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.09 s) |
+| F6 nonlinear | lambda_cr / lambda_limit | F6.ratio_linear_to_limit | 5.202645361 | 5.202645361 | - | 6.8e-16 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.09 s) |
 | F6 nonlinear | lambda_cr reported by run_nonlinear | F6.lambda_cr | 5.327768772 | 5.327768772 | - | 1.7e-16 | 1e-09 | yes | run_nonlinear (linear_buckling) |
-| F6 nonlinear | max \|P_program - P_exact(w)\| / P* over all 63 path points (w up to 2.84 h, 25 on the unstable branch) | path | 0 | 2.842032284e-15 | - | 2.8e-15 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.10 s) |
-| F6 nonlinear | path passes the snap-through target (max w / w_snap >= 1) | path | 1 | 1 | - | 0.0e+00 | 0e+00 | yes | run_nonlinear arc-length (62 steps, 0.10 s) |
+| F6 nonlinear | max \|P_program - P_exact(w)\| / P* over all 63 path points (w up to 2.84 h, 25 on the unstable branch) | path | 0 | 2.842032284e-15 | - | 2.8e-15 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.09 s) |
+| F6 nonlinear | path passes the snap-through target (max w / w_snap >= 1) | path | 1 | 1 | - | 0.0e+00 | 0e+00 | yes | run_nonlinear arc-length (62 steps, 0.09 s) |
 | F6 tangent | first limit point w* | F6.w_limit | 0.05286125123 | 0.05286125123 | m | 1.6e-14 | 1e-06 | yes | zero of the program's tangent K_T,zz (TrussSystem.tangent) |
 | F6 tangent | second limit point h + y* | F6.w_second_limit | 0.1971387488 | 0.1971387488 | m | 4.4e-15 | 1e-06 | yes | zero of the program's tangent K_T,zz (TrussSystem.tangent) |
 | F6 path | P at w = 0.1 h | F6.P_at_w0.1h | 4545.497953 | 4545.497953 | N | 0.0e+00 | 1e-06 | yes | TrussSystem.state (corotational element) |
@@ -364,14 +364,14 @@ None.
 | F8 sphere | tangent (bevel) angle A | F8.bevel_A_deg | 15.85873721 | 15.85873721 | deg | 9.0e-16 | 1e-09 | yes | fabrication_tables (full 2V sphere) |
 | F8 sphere | dihedral angle across A | F8.dihedral_A_deg | 157.5410761 | 157.5410761 | deg | 0.0e+00 | 1e-09 | yes | fabrication_tables (full 2V sphere) |
 | F8 sphere | bend angle across A | F8.bend_A_deg | 22.45892392 | 22.45892392 | deg | 0.0e+00 | 1e-09 | yes | fabrication_tables (full 2V sphere) |
-| F8 sphere | chord factor A vs Kenner (1976) | F8.CF_A | 0.54653 | 0.5465330578 | - | 3.1e-06 | 5e-06 | yes | fabrication_tables (full 2V sphere) |
+| F8 sphere | chord factor A vs Domerama chart | F8.CF_A | 0.54653 | 0.5465330578 | - | 3.1e-06 | 5e-06 | yes | fabrication_tables (full 2V sphere) |
 | F8 sphere | chord factor B | F8.CF_B | 0.6180339887 | 0.6180339887 | - | 9.0e-16 | 1e-09 | yes | fabrication_tables (full 2V sphere) |
 | F8 sphere | strut B length (R = 5 m) | F8.L_B_R5 | 3.090169944 | 3.090169944 | m | 5.7e-16 | 1e-09 | yes | fabrication_tables (full 2V sphere) |
 | F8 sphere | axial angle B | F8.axial_B_deg | 72 | 72 | deg | 2.0e-16 | 1e-09 | yes | fabrication_tables (full 2V sphere) |
 | F8 sphere | tangent (bevel) angle B | F8.bevel_B_deg | 18 | 18 | deg | 7.9e-16 | 1e-09 | yes | fabrication_tables (full 2V sphere) |
 | F8 sphere | dihedral angle across B | F8.dihedral_B_deg | 161.9708979 | 161.9708979 | deg | 1.8e-16 | 1e-09 | yes | fabrication_tables (full 2V sphere) |
 | F8 sphere | bend angle across B | F8.bend_B_deg | 18.02910211 | 18.02910211 | deg | 1.6e-15 | 1e-09 | yes | fabrication_tables (full 2V sphere) |
-| F8 sphere | chord factor B vs Kenner (1976) | F8.CF_B | 0.61803 | 0.6180339887 | - | 4.0e-06 | 5e-06 | yes | fabrication_tables (full 2V sphere) |
+| F8 sphere | chord factor B vs Domerama chart | F8.CF_B | 0.61803 | 0.6180339887 | - | 4.0e-06 | 5e-06 | yes | fabrication_tables (full 2V sphere) |
 | F8 sphere | AAB apex angle (opposite B) | F8.face_AAB_apex_deg | 68.86197642 | 68.86197642 | deg | 6.2e-16 | 1e-09 | yes | fabrication_tables (full 2V sphere) |
 | F8 sphere | AAB base angle 1 | F8.face_AAB_base_deg | 55.56901179 | 55.56901179 | deg | 1.3e-16 | 1e-09 | yes | fabrication_tables (full 2V sphere) |
 | F8 sphere | AAB base angle 2 | F8.face_AAB_base_deg | 55.56901179 | 55.56901179 | deg | 1.3e-16 | 1e-09 | yes | fabrication_tables (full 2V sphere) |
@@ -390,14 +390,14 @@ None.
 | F8 dome | tangent (bevel) angle A | F8.bevel_A_deg | 15.85873721 | 15.85873721 | deg | 9.0e-16 | 1e-09 | yes | generate_dome(2V, 0.5) -> fabrication_tables |
 | F8 dome | dihedral angle across A | F8.dihedral_A_deg | 157.5410761 | 157.5410761 | deg | 3.6e-16 | 1e-09 | yes | generate_dome(2V, 0.5) -> fabrication_tables |
 | F8 dome | bend angle across A | F8.bend_A_deg | 22.45892392 | 22.45892392 | deg | 2.5e-15 | 1e-09 | yes | generate_dome(2V, 0.5) -> fabrication_tables |
-| F8 dome | chord factor A vs Kenner (1976) | F8.CF_A | 0.54653 | 0.5465330578 | - | 3.1e-06 | 5e-06 | yes | generate_dome(2V, 0.5) -> fabrication_tables |
+| F8 dome | chord factor A vs Domerama chart | F8.CF_A | 0.54653 | 0.5465330578 | - | 3.1e-06 | 5e-06 | yes | generate_dome(2V, 0.5) -> fabrication_tables |
 | F8 dome | chord factor B | F8.CF_B | 0.6180339887 | 0.6180339887 | - | 5.4e-16 | 1e-09 | yes | generate_dome(2V, 0.5) -> fabrication_tables |
 | F8 dome | strut B length (R = 5 m) | F8.L_B_R5 | 3.090169944 | 3.090169944 | m | 5.7e-16 | 1e-09 | yes | generate_dome(2V, 0.5) -> fabrication_tables |
 | F8 dome | axial angle B | F8.axial_B_deg | 72 | 72 | deg | 3.9e-16 | 1e-09 | yes | generate_dome(2V, 0.5) -> fabrication_tables |
 | F8 dome | tangent (bevel) angle B | F8.bevel_B_deg | 18 | 18 | deg | 1.6e-15 | 1e-09 | yes | generate_dome(2V, 0.5) -> fabrication_tables |
 | F8 dome | dihedral angle across B | F8.dihedral_B_deg | 161.9708979 | 161.9708979 | deg | 3.5e-16 | 1e-09 | yes | generate_dome(2V, 0.5) -> fabrication_tables |
 | F8 dome | bend angle across B | F8.bend_B_deg | 18.02910211 | 18.02910211 | deg | 3.2e-15 | 1e-09 | yes | generate_dome(2V, 0.5) -> fabrication_tables |
-| F8 dome | chord factor B vs Kenner (1976) | F8.CF_B | 0.61803 | 0.6180339887 | - | 4.0e-06 | 5e-06 | yes | generate_dome(2V, 0.5) -> fabrication_tables |
+| F8 dome | chord factor B vs Domerama chart | F8.CF_B | 0.61803 | 0.6180339887 | - | 4.0e-06 | 5e-06 | yes | generate_dome(2V, 0.5) -> fabrication_tables |
 | F8 dome | AAB apex angle (opposite B) | F8.face_AAB_apex_deg | 68.86197642 | 68.86197642 | deg | 2.1e-16 | 1e-09 | yes | generate_dome(2V, 0.5) -> fabrication_tables |
 | F8 dome | AAB base angle 1 | F8.face_AAB_base_deg | 55.56901179 | 55.56901179 | deg | 2.6e-16 | 1e-09 | yes | generate_dome(2V, 0.5) -> fabrication_tables |
 | F8 dome | AAB base angle 2 | F8.face_AAB_base_deg | 55.56901179 | 55.56901179 | deg | 2.6e-16 | 1e-09 | yes | generate_dome(2V, 0.5) -> fabrication_tables |
@@ -474,4 +474,4 @@ None.
 | F10 AISC | KL/r, E7 slender wall | F10.KLr_e7 | 26.52271999 | 26.52271999 | - | 0.0e+00 | 1e-09 | yes | buckling.compression_capacity (custom Section) |
 | F10 AISC | phi Pn, D/t above 0.45 E/Fy | F10.phiPn_scope | 0 | 0 | N | 0.0e+00 | 1e-09 | yes | buckling.compression_capacity (custom Section) |
 
-Run time 0.2 s.
+Run time 0.1 s.

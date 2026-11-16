@@ -474,7 +474,7 @@ def test_fabrication_tables_2v_dome():
         assert t["hubs"].rowCount() == 3
         assert t["panels"].rowCount() == 2
         assert t["summary"].rowCount() == len(tabs["summary"])
-        # published 2V chord factors (Kenner 1976): 0.54653, 0.61803
+        # published 2V chord factors (Domerama chart): 0.54653, 0.61803
         assert eu.cell_texts(t["struts"], 6) == ["0.54653", "0.61803"]
         assert eu.cell_texts(t["struts"], 0) == ["A", "B"]
         assert eu.cell_texts(t["struts"], 2) == ["30", "35"]

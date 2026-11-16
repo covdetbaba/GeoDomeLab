@@ -284,8 +284,8 @@ def export_html(res, path, sizing=None, project_title="Geodesic Dome Analysis",
         _, dmax = r.max_displacement()
         rows.append({
             "combination": name,
-            "max tension [kN]": round(float(r.N.max() / 1e3), 2),
-            "max compression [kN]": round(float(r.N.min() / 1e3), 2),
+            "max N [kN]": round(float(r.N.max() / 1e3), 2),
+            "min N [kN]": round(float(r.N.min() / 1e3), 2),
             "max |u| [mm]": round(dmax * 1e3, 3),
             "max utilisation": round(float(np.max(res.util[name])), 3),
             "vert. reaction [kN]": round(float(r.total_reaction()[2] / 1e3), 2),
@@ -328,7 +328,7 @@ def export_html(res, path, sizing=None, project_title="Geodesic Dome Analysis",
 
     parts.append("<h3>Twenty most highly utilised struts</h3>")
     parts.append(_table(worst, numeric_cols=(
-        "length_m", "KL_r", "N_tension_kN", "N_compr_kN", "phiPn_t_kN",
+        "length_m", "KL_r", "N_max_kN", "N_min_kN", "phiPn_t_kN",
         "phiPn_c_kN", "utilisation"),
         highlight=lambda r: r["utilisation"] > 1.0))
 
@@ -804,11 +804,20 @@ def _section_imperfection(value, res, num, include_figures):
             "sign": "" if a == 0.0 else ("+" if sign > 0 else "−"),
             "λ (+)": _fnum(r.get("lambda_plus"), "{:.4g}"),
             "λ (−)": _fnum(r.get("lambda_minus"), "{:.4g}"),
+            "hub rise left [mm]": _fnum(
+                1e3 * float(r["hub_rise_left_m"])
+                if r.get("hub_rise_left_m") is not None else float("nan"),
+                "{:.1f}"),
         })
     out.append(_table(table, numeric_cols=(
         "amplitude [mm]", "span / amplitude", "amplitude / strut", "λ_limit",
-        "λ_cr", "λ_limit / λ_cr", "first critical λ", "λ (+)", "λ (−)"),
+        "λ_cr", "λ_limit / λ_cr", "first critical λ", "λ (+)", "λ (−)",
+        "hub rise left [mm]"),
         highlight=lambda d: d["λ_limit"] in ("n/a", "-")))
+    notes = [r.get("note") for r in rows if r.get("note")]
+    if notes:
+        out.append("<div class='note'>" + "<br>".join(
+            html.escape(n) for n in dict.fromkeys(notes)) + "</div>")
     if any(not r.get("found", True) for r in rows):
         out.append("<div class='note'>Rows shown in red reached no load "
                    "maximum within the path limits.</div>")
