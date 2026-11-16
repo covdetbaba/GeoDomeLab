@@ -87,7 +87,8 @@ def run_analysis(model, n_buckling_modes=6, do_buckling=True, progress=None):
     for i, c in enumerate(combos):
         report(0.05 + 0.55 * i / nstep, f"Solving {c.name} ...")
         F = ld.combine(basic, c)
-        r = slv.solve_model(model, F, name=c.name)
+        r = slv.solve_model(model, F, name=c.name,
+                            T_factor=float(getattr(c, "T", 0.0)))
         res.cases[c.name] = r
         res.order.append(c.name)
 
@@ -167,6 +168,17 @@ def run_analysis(model, n_buckling_modes=6, do_buckling=True, progress=None):
     res.messages.append(
         f"Verification: max equilibrium residual {worst_equil:.2e}, "
         f"max strain-energy mismatch {worst_energy:.2e} (both should be ~1e-12).")
+
+    T_cases = [c.name for c in combos if abs(getattr(c, "T", 0.0)) > 1e-12]
+    if model.loads.has_self_straining:
+        if T_cases:
+            res.messages.append(
+                f"Self-straining load T (temperature / settlement) applied in "
+                f"{len(T_cases)} combination(s): {', '.join(T_cases)}.")
+        else:
+            res.messages.append(
+                "A temperature change or support settlement is defined, but "
+                "no combination has a T factor, so it was not applied.")
 
     slender = caps["slenderness"]
     if np.max(slender) > 200.0:
@@ -276,6 +288,14 @@ def summary_text(res):
 
 
 # ------------------------------------------------------------- tabulation ---
+def _support_nodes(model):
+    """Nodes with a restraint or a spring (base nodes for older models)."""
+    try:
+        return np.asarray(model.support_nodes(), dtype=int)
+    except AttributeError:                           # pragma: no cover
+        return np.asarray(model.geom.base_nodes, dtype=int)
+
+
 def member_table(res):
     """Rows of per-member results for the GUI table and CSV export."""
     m = res.model
@@ -312,6 +332,7 @@ def node_table(res, case=None):
     name = case or res.service_case
     r = res.cases[name]
     d = r.displacement_vectors()
+    supported = set(_support_nodes(m).tolist())
     rows = []
     for k in range(g.n_nodes):
         rows.append({
@@ -324,7 +345,7 @@ def node_table(res, case=None):
             "uy_mm": float(d[k, 1] * 1e3),
             "uz_mm": float(d[k, 2] * 1e3),
             "|u|_mm": float(np.linalg.norm(d[k]) * 1e3),
-            "support": "yes" if k in set(g.base_nodes.tolist()) else "",
+            "support": "yes" if k in supported else "",
         })
     return rows
 
@@ -337,7 +358,7 @@ def reaction_table(res, case=None):
     r = res.cases[name]
     R = r.reaction_vectors()
     rows = []
-    for k in g.base_nodes:
+    for k in _support_nodes(m):
         rx, ry, rz = R[k]
         rows.append({
             "node": int(k),

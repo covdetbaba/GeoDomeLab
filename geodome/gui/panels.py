@@ -395,6 +395,10 @@ class LoadPanel(QtWidgets.QWidget):
         ls.wind_G = self.wind_G.value()
         ls.wind_azimuth = self.wind_az.value()
 
+        # The table has no T column yet: keep the self-straining factor T of
+        # the combination already in the model at the same row and name, so a
+        # loaded v2 model does not silently lose its temperature cases.
+        old = list(getattr(model, "combinations", []) or [])
         combos = []
         for i in range(self.combos.rowCount()):
             def val(j):
@@ -406,9 +410,12 @@ class LoadPanel(QtWidgets.QWidget):
             name_item = self.combos.item(i, 0)
             name = (name_item.text().strip() if name_item else "") or f"LC{i + 1}"
             chk = self.combos.item(i, 5)
+            T = (float(getattr(old[i], "T", 0.0))
+                 if i < len(old) and old[i].name == name else 0.0)
             combos.append(LoadCombination(
                 name, D=val(1), S=val(2), L=val(3), W=val(4),
-                serviceability=bool(chk and chk.checkState() == Qt.Checked)))
+                serviceability=bool(chk and chk.checkState() == Qt.Checked),
+                T=T))
         if combos:
             model.combinations = combos
 
@@ -474,8 +481,8 @@ class DesignPanel(QtWidgets.QWidget):
         lay.addWidget(box2)
         lay.addWidget(st.hint(
             "Solves [K + lambda Kg]{phi} = 0.  Single-layer domes are "
-            "imperfection sensitive, so a knock-down factor of 0.3 to 0.5 on "
-            "lambda_cr is normal practice."))
+            "imperfection sensitive: the real limit load can be well below "
+            "lambda_cr; quantify it with the nonlinear imperfection study."))
 
         box3 = QtWidgets.QGroupBox("Auto-sizing (fully stressed design)")
         f3 = QtWidgets.QFormLayout(box3)

@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "All rights reserved by Jovdat Babazade. If you use GeoDomeLab or its results, credit the author and cite it as below."
+title: "GeoDomeLab: analysis, stability and fabrication of single-layer geodesic domes by matrix structural analysis"
+version: 2.0.0
+date-released: 2026-12-01
+authors:
+  - family-names: Babazade
+    given-names: Jovdat
+    affiliation: "Louisiana State University"
+license-url: "https://github.com/covdetbaba/GeoDomeLab/blob/main/LICENSE"
+repository-code: "https://github.com/covdetbaba/GeoDomeLab"
+keywords:
+  - geodesic dome
+  - space truss
+  - direct stiffness method
+  - geometric nonlinear analysis
+  - arc-length method
+  - linear buckling
+  - modal analysis
+  - AISC 360
+  - ASCE 7
+  - OpenSees

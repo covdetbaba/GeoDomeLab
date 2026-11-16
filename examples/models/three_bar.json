@@ -1,0 +1,158 @@
+{
+  "format": "GeoDomeLab model",
+  "version": 2,
+  "geometry": {
+    "kind": "custom",
+    "title": "Planar three-bar indeterminate truss",
+    "nodes": [
+      [
+        -4.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        3.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        3.0
+      ]
+    ],
+    "members": [
+      [
+        0,
+        3
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        3
+      ]
+    ],
+    "faces": [],
+    "base_nodes": [
+      0,
+      1,
+      2
+    ],
+    "groups": [
+      0,
+      1,
+      2
+    ]
+  },
+  "material": "ASTM A500 Gr. C (round)",
+  "group_sections": [
+    "CHS 88.9 x 4.0",
+    "CHS 76.1 x 4.0",
+    "CHS 88.9 x 4.0"
+  ],
+  "support_type": "custom",
+  "spring_stiffness": [
+    50000000.0,
+    50000000.0,
+    50000000.0
+  ],
+  "custom_supports": {
+    "0": [
+      true,
+      true,
+      true
+    ],
+    "1": [
+      true,
+      true,
+      true
+    ],
+    "2": [
+      true,
+      true,
+      true
+    ],
+    "3": [
+      false,
+      true,
+      false
+    ]
+  },
+  "loads": {
+    "include_self_weight": false,
+    "dead_pressure": 0.0,
+    "snow_pressure": 0.0,
+    "snow_unbalanced": false,
+    "live_pressure": 0.0,
+    "wind_enabled": false,
+    "wind_speed": 45.0,
+    "wind_Kz": 0.9,
+    "wind_Kzt": 1.0,
+    "wind_Kd": 0.95,
+    "wind_G": 0.85,
+    "wind_azimuth": 0.0,
+    "crown_point_load": 0.0,
+    "temperature_change": 30.0,
+    "settlements": [
+      {
+        "node": 2,
+        "ux": 0.0,
+        "uy": 0.0,
+        "uz": -0.005
+      }
+    ],
+    "nodal_loads": [
+      {
+        "node": 3,
+        "Fx": 15000.0,
+        "Fy": 0.0,
+        "Fz": -60000.0,
+        "case": "L"
+      }
+    ]
+  },
+  "combinations": [
+    {
+      "name": "P  1.0L",
+      "D": 0.0,
+      "S": 0.0,
+      "L": 1.0,
+      "W": 0.0,
+      "serviceability": false,
+      "T": 0.0
+    },
+    {
+      "name": "T  1.0T  temperature + settlement",
+      "D": 0.0,
+      "S": 0.0,
+      "L": 0.0,
+      "W": 0.0,
+      "serviceability": false,
+      "T": 1.0
+    },
+    {
+      "name": "P + T  1.0L + 1.0T",
+      "D": 0.0,
+      "S": 0.0,
+      "L": 1.0,
+      "W": 0.0,
+      "serviceability": false,
+      "T": 1.0
+    }
+  ],
+  "design": {
+    "K_effective": 1.0,
+    "deflection_limit": 240.0,
+    "phi_c": 0.9,
+    "phi_t": 0.9,
+    "design_thickness_factor": 1.0
+  }
+}

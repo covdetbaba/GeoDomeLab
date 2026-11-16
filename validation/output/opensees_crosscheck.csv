@@ -1,0 +1,836 @@
+section,case,structure,supports,combination,quantity,difference,tolerance,pass,note
+P,P1,single corotTruss bar,pinned + sp,-,N_OS vs engineering strain EA(l-L)/L,1.4600890237195352e-15,<= 1e-09,yes,"bar rotated 44.6 deg, stretched to l/L = 1.1403; N_OS = 2.806554e+07 N"
+P,P1,single corotTruss bar,pinned + sp,-,N_OS vs Green-Lagrange EA(l^2-L^2)/(2L^2) (must differ),0.06556366131661709,>= 1e-03,yes,different strain measure
+P,P1,single corotTruss bar,pinned + sp,-,N_OS vs logarithmic EA ln(l/L) (must differ),0.06862869936749223,>= 1e-03,yes,different strain measure
+P,P2,heated bar + bar between walls,fixed ends,dT = 30 C,u2 vs closed form,1.1583356543648554e-16,<= 1e-09,yes,"u2 = 2.340000e-04 m (exact 2.340000e-04), N = -4.680000e+04 N (exact -4.680000e+04)"
+P,P2,heated bar + bar between walls,fixed ends,dT = 30 C,"N1, N2 vs closed form",1.5546917979024414e-16,<= 1e-09,yes,InitStrainMaterial(-alpha dT) gives N = EA(eps - alpha dT)
+P,P3,4V R=12 m f=0.5,pinned,LC2,du with E x (1 + 1e-6) in OpenSees only (must be ~1e-6),9.999989990701286e-07,"in [5.0e-07, 2.0e-06]",yes,"the measure resolves a 1 ppm input change, 100x below the static target"
+S,S-1V-pinned,1V R=12 m f=0.276,pinned,LC1  1.4D,displacements u,0.0,<= 1e-08,yes,"3 free DOF, |u|max = 2.22 mm, |N|max = 19.74 kN, OS system FullGeneral"
+S,S-1V-pinned,1V R=12 m f=0.276,pinned,LC1  1.4D,member forces N,1.8431944084599594e-16,<= 1e-08,yes,
+S,S-1V-pinned,1V R=12 m f=0.276,pinned,LC1  1.4D,reactions R (incl. springs),7.011928211858543e-17,<= 1e-08,yes,
+S,S-1V-pinned,1V R=12 m f=0.276,pinned,LC1  1.4D,OpenSees residual at free DOFs / |F|,2.103578463557563e-16,<= 1e-08,yes,
+S,S-1V-pinned,1V R=12 m f=0.276,pinned,LC2  1.2D + 1.6S,displacements u,0.0,<= 1e-08,yes,"3 free DOF, |u|max = 9.404 mm, |N|max = 83.61 kN, OS system FullGeneral"
+S,S-1V-pinned,1V R=12 m f=0.276,pinned,LC2  1.2D + 1.6S,member forces N,1.7405485796383185e-16,<= 1e-08,yes,
+S,S-1V-pinned,1V R=12 m f=0.276,pinned,LC2  1.2D + 1.6S,reactions R (incl. springs),1.3242880548746378e-16,<= 1e-08,yes,
+S,S-1V-pinned,1V R=12 m f=0.276,pinned,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,1.6553600685932975e-16,<= 1e-08,yes,
+S,S-1V-pinned,1V R=12 m f=0.276,pinned,LC3  1.2D + 1.0W + 0.5S,displacements u,0.0,<= 1e-08,yes,"3 free DOF, |u|max = 0.1882 mm, |N|max = 1.673 kN, OS system FullGeneral"
+S,S-1V-pinned,1V R=12 m f=0.276,pinned,LC3  1.2D + 1.0W + 0.5S,member forces N,1.3588875760791642e-16,<= 1e-08,yes,
+S,S-1V-pinned,1V R=12 m f=0.276,pinned,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),1.2197114143988731e-17,<= 1e-08,yes,
+S,S-1V-pinned,1V R=12 m f=0.276,pinned,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,3.3542063895969013e-17,<= 1e-08,yes,
+S,S-1V-pinned,1V R=12 m f=0.276,pinned,LC4  0.9D + 1.0W,displacements u,0.0,<= 1e-08,yes,"3 free DOF, |u|max = 3.008 mm, |N|max = 26.74 kN, OS system FullGeneral"
+S,S-1V-pinned,1V R=12 m f=0.276,pinned,LC4  0.9D + 1.0W,member forces N,4.0811138257561625e-16,<= 1e-08,yes,
+S,S-1V-pinned,1V R=12 m f=0.276,pinned,LC4  0.9D + 1.0W,reactions R (incl. springs),1.5525479590910575e-16,<= 1e-08,yes,
+S,S-1V-pinned,1V R=12 m f=0.276,pinned,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,2.587579931818429e-16,<= 1e-08,yes,
+S,S-1V-pinned,1V R=12 m f=0.276,pinned,SLS  1.0D + 1.0S,displacements u,0.0,<= 1e-08,yes,"3 free DOF, |u|max = 6.274 mm, |N|max = 55.78 kN, OS system FullGeneral"
+S,S-1V-pinned,1V R=12 m f=0.276,pinned,SLS  1.0D + 1.0S,member forces N,1.304452524849645e-16,<= 1e-08,yes,
+S,S-1V-pinned,1V R=12 m f=0.276,pinned,SLS  1.0D + 1.0S,reactions R (incl. springs),9.924864591647368e-17,<= 1e-08,yes,
+S,S-1V-pinned,1V R=12 m f=0.276,pinned,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,1.7368513035382895e-16,<= 1e-08,yes,
+S,S-1V-roller3,1V R=12 m f=0.276,3 rollers,LC1  1.4D,displacements u,1.5375492890964347e-16,<= 1e-08,yes,"7 free DOF, |u|max = 2.821 mm, |N|max = 28.38 kN, OS system FullGeneral"
+S,S-1V-roller3,1V R=12 m f=0.276,3 rollers,LC1  1.4D,member forces N,1.2820048698611054e-16,<= 1e-08,yes,
+S,S-1V-roller3,1V R=12 m f=0.276,3 rollers,LC1  1.4D,reactions R (incl. springs),1.0517892317787815e-16,<= 1e-08,yes,
+S,S-1V-roller3,1V R=12 m f=0.276,3 rollers,LC1  1.4D,OpenSees residual at free DOFs / |F|,2.103578463557563e-16,<= 1e-08,yes,
+S,S-1V-roller3,1V R=12 m f=0.276,3 rollers,LC2  1.2D + 1.6S,displacements u,1.4519245604139658e-16,<= 1e-08,yes,"7 free DOF, |u|max = 11.95 mm, |N|max = 120.2 kN, OS system FullGeneral"
+S,S-1V-roller3,1V R=12 m f=0.276,3 rollers,LC2  1.2D + 1.6S,member forces N,1.8159167679907502e-16,<= 1e-08,yes,
+S,S-1V-roller3,1V R=12 m f=0.276,3 rollers,LC2  1.2D + 1.6S,reactions R (incl. springs),1.6553600685932975e-16,<= 1e-08,yes,
+S,S-1V-roller3,1V R=12 m f=0.276,3 rollers,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,2.6485761097492757e-16,<= 1e-08,yes,
+S,S-1V-roller3,1V R=12 m f=0.276,3 rollers,LC3  1.2D + 1.0W + 0.5S,displacements u,2.6031767920993187e-16,<= 1e-08,yes,"7 free DOF, |u|max = 1.666 mm, |N|max = 17.41 kN, OS system FullGeneral"
+S,S-1V-roller3,1V R=12 m f=0.276,3 rollers,LC3  1.2D + 1.0W + 0.5S,member forces N,4.178674766206122e-16,<= 1e-08,yes,
+S,S-1V-roller3,1V R=12 m f=0.276,3 rollers,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),2.328866477330474e-16,<= 1e-08,yes,
+S,S-1V-roller3,1V R=12 m f=0.276,3 rollers,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,1.8630931818643793e-16,<= 1e-08,yes,
+S,S-1V-roller3,1V R=12 m f=0.276,3 rollers,LC4  0.9D + 1.0W,displacements u,4.111430115452376e-17,<= 1e-08,yes,"7 free DOF, |u|max = 2.637 mm, |N|max = 31.06 kN, OS system FullGeneral"
+S,S-1V-roller3,1V R=12 m f=0.276,3 rollers,LC4  0.9D + 1.0W,member forces N,1.1713182528748932e-16,<= 1e-08,yes,
+S,S-1V-roller3,1V R=12 m f=0.276,3 rollers,LC4  0.9D + 1.0W,reactions R (incl. springs),1.0350319727273716e-16,<= 1e-08,yes,
+S,S-1V-roller3,1V R=12 m f=0.276,3 rollers,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,2.328821938636586e-16,<= 1e-08,yes,
+S,S-1V-roller3,1V R=12 m f=0.276,3 rollers,SLS  1.0D + 1.0S,displacements u,2.176287040625743e-16,<= 1e-08,yes,"7 free DOF, |u|max = 7.971 mm, |N|max = 80.19 kN, OS system FullGeneral"
+S,S-1V-roller3,1V R=12 m f=0.276,3 rollers,SLS  1.0D + 1.0S,member forces N,5.443748575899138e-16,<= 1e-08,yes,
+S,S-1V-roller3,1V R=12 m f=0.276,3 rollers,SLS  1.0D + 1.0S,reactions R (incl. springs),9.924864591647368e-17,<= 1e-08,yes,
+S,S-1V-roller3,1V R=12 m f=0.276,3 rollers,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,9.924864591647368e-17,<= 1e-08,yes,
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,LC1  1.4D,displacements u,1.3437641321918199e-16,<= 1e-08,yes,"18 free DOF, |u|max = 3.227 mm, |N|max = 19.74 kN, OS system FullGeneral"
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,LC1  1.4D,member forces N,3.686388816919916e-16,<= 1e-08,yes,
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,LC1  1.4D,reactions R (incl. springs),2.8047712847434173e-16,<= 1e-08,yes,
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,LC1  1.4D,spring forces,2.8047712847434173e-16,<= 1e-08,yes,
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,LC1  1.4D,OpenSees residual at free DOFs / |F|,5.258946158893907e-16,<= 1e-08,yes,
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,LC2  1.2D + 1.6S,displacements u,1.2734975116672696e-16,<= 1e-08,yes,"18 free DOF, |u|max = 13.62 mm, |N|max = 83.61 kN, OS system FullGeneral"
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,LC2  1.2D + 1.6S,member forces N,3.4810971592766355e-16,<= 1e-08,yes,
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,LC2  1.2D + 1.6S,reactions R (incl. springs),1.3242880548746378e-16,<= 1e-08,yes,
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,LC2  1.2D + 1.6S,spring forces,1.3242880548746378e-16,<= 1e-08,yes,
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,4.3039361783425734e-16,<= 1e-08,yes,
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,LC3  1.2D + 1.0W + 0.5S,displacements u,2.7040694667570114e-16,<= 1e-08,yes,"18 free DOF, |u|max = 0.8019 mm, |N|max = 6.472 kN, OS system FullGeneral"
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,LC3  1.2D + 1.0W + 0.5S,member forces N,4.567303011656678e-16,<= 1e-08,yes,
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),2.9273073945572955e-16,<= 1e-08,yes,
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,LC3  1.2D + 1.0W + 0.5S,spring forces,2.9273073945572955e-16,<= 1e-08,yes,
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,2.9273073945572955e-16,<= 1e-08,yes,
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,LC4  0.9D + 1.0W,displacements u,2.642791151647276e-16,<= 1e-08,yes,"18 free DOF, |u|max = 3.282 mm, |N|max = 28.22 kN, OS system FullGeneral"
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,LC4  0.9D + 1.0W,member forces N,3.867428596276515e-16,<= 1e-08,yes,
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,LC4  0.9D + 1.0W,reactions R (incl. springs),1.2937899659092145e-16,<= 1e-08,yes,
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,LC4  0.9D + 1.0W,spring forces,1.2937899659092145e-16,<= 1e-08,yes,
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,3.105095918182115e-16,<= 1e-08,yes,
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,SLS  1.0D + 1.0S,displacements u,5.725227333913153e-16,<= 1e-08,yes,"18 free DOF, |u|max = 9.09 mm, |N|max = 55.78 kN, OS system FullGeneral"
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,SLS  1.0D + 1.0S,member forces N,1.0435620198797164e-15,<= 1e-08,yes,
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,SLS  1.0D + 1.0S,reactions R (incl. springs),2.2330945331206577e-16,<= 1e-08,yes,
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,SLS  1.0D + 1.0S,spring forces,2.2330945331206577e-16,<= 1e-08,yes,
+S,S-1V-elastic,1V R=12 m f=0.276,elastic springs,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,6.203040369779606e-16,<= 1e-08,yes,
+S,S-2V-pinned,2V R=12 m f=0.5,pinned,LC1  1.4D,displacements u,1.2060333672501985e-15,<= 1e-08,yes,"48 free DOF, |u|max = 2.877 mm, |N|max = 19.63 kN, OS system FullGeneral"
+S,S-2V-pinned,2V R=12 m f=0.5,pinned,LC1  1.4D,member forces N,1.5750632742349582e-15,<= 1e-08,yes,
+S,S-2V-pinned,2V R=12 m f=0.5,pinned,LC1  1.4D,reactions R (incl. springs),5.386302689745346e-16,<= 1e-08,yes,
+S,S-2V-pinned,2V R=12 m f=0.5,pinned,LC1  1.4D,OpenSees residual at free DOFs / |F|,7.18173691966046e-16,<= 1e-08,yes,
+S,S-2V-pinned,2V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,displacements u,1.0971853031764498e-15,<= 1e-08,yes,"48 free DOF, |u|max = 12.65 mm, |N|max = 81.83 kN, OS system FullGeneral"
+S,S-2V-pinned,2V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,member forces N,1.6893470403038354e-15,<= 1e-08,yes,
+S,S-2V-pinned,2V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,reactions R (incl. springs),7.841082732123892e-16,<= 1e-08,yes,
+S,S-2V-pinned,2V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,1.0036585897118582e-15,<= 1e-08,yes,
+S,S-2V-pinned,2V R=12 m f=0.5,pinned,LC3  1.2D + 1.0W + 0.5S,displacements u,1.590623731060251e-15,<= 1e-08,yes,"48 free DOF, |u|max = 2.999 mm, |N|max = 42.1 kN, OS system FullGeneral"
+S,S-2V-pinned,2V R=12 m f=0.5,pinned,LC3  1.2D + 1.0W + 0.5S,member forces N,1.5987524852637578e-15,<= 1e-08,yes,
+S,S-2V-pinned,2V R=12 m f=0.5,pinned,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),7.322702119990247e-16,<= 1e-08,yes,
+S,S-2V-pinned,2V R=12 m f=0.5,pinned,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,1.1899390944984151e-15,<= 1e-08,yes,
+S,S-2V-pinned,2V R=12 m f=0.5,pinned,LC4  0.9D + 1.0W,displacements u,1.6554449403252945e-15,<= 1e-08,yes,"48 free DOF, |u|max = 2.358 mm, |N|max = 26.03 kN, OS system FullGeneral"
+S,S-2V-pinned,2V R=12 m f=0.5,pinned,LC4  0.9D + 1.0W,member forces N,1.6772208755151943e-15,<= 1e-08,yes,
+S,S-2V-pinned,2V R=12 m f=0.5,pinned,LC4  0.9D + 1.0W,reactions R (incl. springs),8.439193997663245e-16,<= 1e-08,yes,
+S,S-2V-pinned,2V R=12 m f=0.5,pinned,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,1.1512161377247144e-15,<= 1e-08,yes,
+S,S-2V-pinned,2V R=12 m f=0.5,pinned,SLS  1.0D + 1.0S,displacements u,7.211668938453397e-16,<= 1e-08,yes,"48 free DOF, |u|max = 8.419 mm, |N|max = 54.57 kN, OS system FullGeneral"
+S,S-2V-pinned,2V R=12 m f=0.5,pinned,SLS  1.0D + 1.0S,member forces N,1.5333103744126824e-15,<= 1e-08,yes,
+S,S-2V-pinned,2V R=12 m f=0.5,pinned,SLS  1.0D + 1.0S,reactions R (incl. springs),7.300513180745762e-16,<= 1e-08,yes,
+S,S-2V-pinned,2V R=12 m f=0.5,pinned,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,8.441218365237287e-16,<= 1e-08,yes,
+S,S-2V-roller3,2V R=12 m f=0.5,3 rollers,LC1  1.4D,displacements u,1.0976146994251607e-15,<= 1e-08,yes,"62 free DOF, |u|max = 3.161 mm, |N|max = 25.67 kN, OS system FullGeneral"
+S,S-2V-roller3,2V R=12 m f=0.5,3 rollers,LC1  1.4D,member forces N,1.6650023300557857e-15,<= 1e-08,yes,
+S,S-2V-roller3,2V R=12 m f=0.5,3 rollers,LC1  1.4D,reactions R (incl. springs),5.865219587998174e-16,<= 1e-08,yes,
+S,S-2V-roller3,2V R=12 m f=0.5,3 rollers,LC1  1.4D,OpenSees residual at free DOFs / |F|,8.293787073653668e-16,<= 1e-08,yes,
+S,S-2V-roller3,2V R=12 m f=0.5,3 rollers,LC2  1.2D + 1.6S,displacements u,8.940545132506132e-16,<= 1e-08,yes,"62 free DOF, |u|max = 13.58 mm, |N|max = 85.96 kN, OS system FullGeneral"
+S,S-2V-roller3,2V R=12 m f=0.5,3 rollers,LC2  1.2D + 1.6S,member forces N,1.862165952099803e-15,<= 1e-08,yes,
+S,S-2V-roller3,2V R=12 m f=0.5,3 rollers,LC2  1.2D + 1.6S,reactions R (incl. springs),7.987904871345636e-16,<= 1e-08,yes,
+S,S-2V-roller3,2V R=12 m f=0.5,3 rollers,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,1.2231479334248005e-15,<= 1e-08,yes,
+S,S-2V-roller3,2V R=12 m f=0.5,3 rollers,LC3  1.2D + 1.0W + 0.5S,displacements u,1.3846114743022178e-15,<= 1e-08,yes,"62 free DOF, |u|max = 3.445 mm, |N|max = 46.25 kN, OS system FullGeneral"
+S,S-2V-roller3,2V R=12 m f=0.5,3 rollers,LC3  1.2D + 1.0W + 0.5S,member forces N,9.438529577704724e-16,<= 1e-08,yes,
+S,S-2V-roller3,2V R=12 m f=0.5,3 rollers,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),8.42503538797667e-16,<= 1e-08,yes,
+S,S-2V-roller3,2V R=12 m f=0.5,3 rollers,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,7.522353024979169e-16,<= 1e-08,yes,
+S,S-2V-roller3,2V R=12 m f=0.5,3 rollers,LC4  0.9D + 1.0W,displacements u,1.1002837668302016e-15,<= 1e-08,yes,"62 free DOF, |u|max = 2.759 mm, |N|max = 27.9 kN, OS system FullGeneral"
+S,S-2V-roller3,2V R=12 m f=0.5,3 rollers,LC4  0.9D + 1.0W,member forces N,2.2640147478680192e-15,<= 1e-08,yes,
+S,S-2V-roller3,2V R=12 m f=0.5,3 rollers,LC4  0.9D + 1.0W,reactions R (incl. springs),1.0044474329179102e-15,<= 1e-08,yes,
+S,S-2V-roller3,2V R=12 m f=0.5,3 rollers,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,1.2660222852402825e-15,<= 1e-08,yes,
+S,S-2V-roller3,2V R=12 m f=0.5,3 rollers,SLS  1.0D + 1.0S,displacements u,8.622641262317682e-16,<= 1e-08,yes,"62 free DOF, |u|max = 9.053 mm, |N|max = 58.27 kN, OS system FullGeneral"
+S,S-2V-roller3,2V R=12 m f=0.5,3 rollers,SLS  1.0D + 1.0S,member forces N,1.8731036234850874e-15,<= 1e-08,yes,
+S,S-2V-roller3,2V R=12 m f=0.5,3 rollers,SLS  1.0D + 1.0S,reactions R (incl. springs),5.823789549781577e-16,<= 1e-08,yes,
+S,S-2V-roller3,2V R=12 m f=0.5,3 rollers,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,1.146558567613248e-15,<= 1e-08,yes,
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,LC1  1.4D,displacements u,1.0415649033757084e-15,<= 1e-08,yes,"78 free DOF, |u|max = 3.747 mm, |N|max = 19.63 kN, OS system FullGeneral"
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,LC1  1.4D,member forces N,3.057475767632564e-15,<= 1e-08,yes,
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,LC1  1.4D,reactions R (incl. springs),8.97717114957557e-16,<= 1e-08,yes,
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,LC1  1.4D,spring forces,8.97717114957557e-16,<= 1e-08,yes,
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,LC1  1.4D,OpenSees residual at free DOFs / |F|,1.7505483741672361e-15,<= 1e-08,yes,
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,LC2  1.2D + 1.6S,displacements u,1.0008562872149222e-15,<= 1e-08,yes,"78 free DOF, |u|max = 15.17 mm, |N|max = 81.83 kN, OS system FullGeneral"
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,LC2  1.2D + 1.6S,member forces N,2.5784770615163817e-15,<= 1e-08,yes,
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,LC2  1.2D + 1.6S,reactions R (incl. springs),7.527439422838938e-16,<= 1e-08,yes,
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,LC2  1.2D + 1.6S,spring forces,7.527439422838938e-16,<= 1e-08,yes,
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,2.352324819637168e-15,<= 1e-08,yes,
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,LC3  1.2D + 1.0W + 0.5S,displacements u,1.7148044924436059e-15,<= 1e-08,yes,"78 free DOF, |u|max = 3.794 mm, |N|max = 42.11 kN, OS system FullGeneral"
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,LC3  1.2D + 1.0W + 0.5S,member forces N,1.943623757073045e-15,<= 1e-08,yes,
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),7.311634469300932e-16,<= 1e-08,yes,
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,LC3  1.2D + 1.0W + 0.5S,spring forces,7.311634469300932e-16,<= 1e-08,yes,
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,1.2338383166945322e-15,<= 1e-08,yes,
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,LC4  0.9D + 1.0W,displacements u,1.6452661407743227e-15,<= 1e-08,yes,"78 free DOF, |u|max = 2.636 mm, |N|max = 26.05 kN, OS system FullGeneral"
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,LC4  0.9D + 1.0W,member forces N,1.536054768674473e-15,<= 1e-08,yes,
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,LC4  0.9D + 1.0W,reactions R (incl. springs),8.806115475822517e-16,<= 1e-08,yes,
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,LC4  0.9D + 1.0W,spring forces,8.806115475822517e-16,<= 1e-08,yes,
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,1.9263377603361755e-15,<= 1e-08,yes,
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,SLS  1.0D + 1.0S,displacements u,1.0256720313399218e-15,<= 1e-08,yes,"78 free DOF, |u|max = 10.15 mm, |N|max = 54.57 kN, OS system FullGeneral"
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,SLS  1.0D + 1.0S,member forces N,2.6999595723353776e-15,<= 1e-08,yes,
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,SLS  1.0D + 1.0S,reactions R (incl. springs),1.095076977111864e-15,<= 1e-08,yes,
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,SLS  1.0D + 1.0S,spring forces,1.095076977111864e-15,<= 1e-08,yes,
+S,S-2V-elastic,2V R=12 m f=0.5,elastic springs,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,1.916384709945762e-15,<= 1e-08,yes,
+S,S-3V-pinned,3V R=12 m f=0.414,pinned,LC1  1.4D,displacements u,1.9243934302667197e-15,<= 1e-08,yes,"93 free DOF, |u|max = 1.803 mm, |N|max = 14.58 kN, OS system FullGeneral"
+S,S-3V-pinned,3V R=12 m f=0.414,pinned,LC1  1.4D,member forces N,2.743942915491896e-15,<= 1e-08,yes,
+S,S-3V-pinned,3V R=12 m f=0.414,pinned,LC1  1.4D,reactions R (incl. springs),7.435477512475993e-16,<= 1e-08,yes,
+S,S-3V-pinned,3V R=12 m f=0.414,pinned,LC1  1.4D,OpenSees residual at free DOFs / |F|,9.294346890594993e-16,<= 1e-08,yes,
+S,S-3V-pinned,3V R=12 m f=0.414,pinned,LC2  1.2D + 1.6S,displacements u,1.3948119988166754e-15,<= 1e-08,yes,"93 free DOF, |u|max = 8.084 mm, |N|max = 59.01 kN, OS system FullGeneral"
+S,S-3V-pinned,3V R=12 m f=0.414,pinned,LC2  1.2D + 1.6S,member forces N,3.08268619447129e-15,<= 1e-08,yes,
+S,S-3V-pinned,3V R=12 m f=0.414,pinned,LC2  1.2D + 1.6S,reactions R (incl. springs),1.2054028445028923e-15,<= 1e-08,yes,
+S,S-3V-pinned,3V R=12 m f=0.414,pinned,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,1.4464834134034707e-15,<= 1e-08,yes,
+S,S-3V-pinned,3V R=12 m f=0.414,pinned,LC3  1.2D + 1.0W + 0.5S,displacements u,3.3505669783704158e-15,<= 1e-08,yes,"93 free DOF, |u|max = 1.942 mm, |N|max = 29.99 kN, OS system FullGeneral"
+S,S-3V-pinned,3V R=12 m f=0.414,pinned,LC3  1.2D + 1.0W + 0.5S,member forces N,2.6078113258189534e-15,<= 1e-08,yes,
+S,S-3V-pinned,3V R=12 m f=0.414,pinned,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),1.0392180636880649e-15,<= 1e-08,yes,
+S,S-3V-pinned,3V R=12 m f=0.414,pinned,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,2.8659685662647414e-15,<= 1e-08,yes,
+S,S-3V-pinned,3V R=12 m f=0.414,pinned,LC4  0.9D + 1.0W,displacements u,2.990585487705057e-15,<= 1e-08,yes,"93 free DOF, |u|max = 1.269 mm, |N|max = 16.57 kN, OS system FullGeneral"
+S,S-3V-pinned,3V R=12 m f=0.414,pinned,LC4  0.9D + 1.0W,member forces N,3.5135279447209835e-15,<= 1e-08,yes,
+S,S-3V-pinned,3V R=12 m f=0.414,pinned,LC4  0.9D + 1.0W,reactions R (incl. springs),1.7884282865739843e-15,<= 1e-08,yes,
+S,S-3V-pinned,3V R=12 m f=0.414,pinned,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,3.6726652313572895e-15,<= 1e-08,yes,
+S,S-3V-pinned,3V R=12 m f=0.414,pinned,SLS  1.0D + 1.0S,displacements u,1.6138579332954052e-15,<= 1e-08,yes,"93 free DOF, |u|max = 5.374 mm, |N|max = 39.48 kN, OS system FullGeneral"
+S,S-3V-pinned,3V R=12 m f=0.414,pinned,SLS  1.0D + 1.0S,member forces N,2.4712063976437948e-15,<= 1e-08,yes,
+S,S-3V-pinned,3V R=12 m f=0.414,pinned,SLS  1.0D + 1.0S,reactions R (incl. springs),9.70820440883502e-16,<= 1e-08,yes,
+S,S-3V-pinned,3V R=12 m f=0.414,pinned,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,1.0590768446001838e-15,<= 1e-08,yes,
+S,S-3V-roller3,3V R=12 m f=0.414,3 rollers,LC1  1.4D,displacements u,3.367282482461169e-15,<= 1e-08,yes,"117 free DOF, |u|max = 2.173 mm, |N|max = 23.54 kN, OS system FullGeneral"
+S,S-3V-roller3,3V R=12 m f=0.414,3 rollers,LC1  1.4D,member forces N,3.5358195757942342e-15,<= 1e-08,yes,
+S,S-3V-roller3,3V R=12 m f=0.414,3 rollers,LC1  1.4D,reactions R (incl. springs),2.9030777366446285e-15,<= 1e-08,yes,
+S,S-3V-roller3,3V R=12 m f=0.414,3 rollers,LC1  1.4D,OpenSees residual at free DOFs / |F|,1.4749507855533192e-15,<= 1e-08,yes,
+S,S-3V-roller3,3V R=12 m f=0.414,3 rollers,LC2  1.2D + 1.6S,displacements u,2.926939772818259e-15,<= 1e-08,yes,"117 free DOF, |u|max = 9.335 mm, |N|max = 80.58 kN, OS system FullGeneral"
+S,S-3V-roller3,3V R=12 m f=0.414,3 rollers,LC2  1.2D + 1.6S,member forces N,3.49897951967444e-15,<= 1e-08,yes,
+S,S-3V-roller3,3V R=12 m f=0.414,3 rollers,LC2  1.2D + 1.6S,reactions R (incl. springs),3.3412668471517003e-15,<= 1e-08,yes,
+S,S-3V-roller3,3V R=12 m f=0.414,3 rollers,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,1.758561498500895e-15,<= 1e-08,yes,
+S,S-3V-roller3,3V R=12 m f=0.414,3 rollers,LC3  1.2D + 1.0W + 0.5S,displacements u,5.484195869601238e-15,<= 1e-08,yes,"117 free DOF, |u|max = 2.372 mm, |N|max = 32.98 kN, OS system FullGeneral"
+S,S-3V-roller3,3V R=12 m f=0.414,3 rollers,LC3  1.2D + 1.0W + 0.5S,member forces N,3.695131676234771e-15,<= 1e-08,yes,
+S,S-3V-roller3,3V R=12 m f=0.414,3 rollers,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),2.842310282189594e-15,<= 1e-08,yes,
+S,S-3V-roller3,3V R=12 m f=0.414,3 rollers,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,1.4249181291118178e-15,<= 1e-08,yes,
+S,S-3V-roller3,3V R=12 m f=0.414,3 rollers,LC4  0.9D + 1.0W,displacements u,5.000881751879956e-15,<= 1e-08,yes,"117 free DOF, |u|max = 1.539 mm, |N|max = 19.16 kN, OS system FullGeneral"
+S,S-3V-roller3,3V R=12 m f=0.414,3 rollers,LC4  0.9D + 1.0W,member forces N,4.936877954164017e-15,<= 1e-08,yes,
+S,S-3V-roller3,3V R=12 m f=0.414,3 rollers,LC4  0.9D + 1.0W,reactions R (incl. springs),1.4638906292585898e-15,<= 1e-08,yes,
+S,S-3V-roller3,3V R=12 m f=0.414,3 rollers,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,1.89870962804827e-15,<= 1e-08,yes,
+S,S-3V-roller3,3V R=12 m f=0.414,3 rollers,SLS  1.0D + 1.0S,displacements u,3.197416567071314e-15,<= 1e-08,yes,"117 free DOF, |u|max = 6.222 mm, |N|max = 54.56 kN, OS system FullGeneral"
+S,S-3V-roller3,3V R=12 m f=0.414,3 rollers,SLS  1.0D + 1.0S,member forces N,4.317072304199449e-15,<= 1e-08,yes,
+S,S-3V-roller3,3V R=12 m f=0.414,3 rollers,SLS  1.0D + 1.0S,reactions R (incl. springs),3.013203372297484e-15,<= 1e-08,yes,
+S,S-3V-roller3,3V R=12 m f=0.414,3 rollers,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,1.80792202337849e-15,<= 1e-08,yes,
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,LC1  1.4D,displacements u,1.8438234114038326e-15,<= 1e-08,yes,"138 free DOF, |u|max = 2.352 mm, |N|max = 14.63 kN, OS system FullGeneral"
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,LC1  1.4D,member forces N,5.47233967194315e-15,<= 1e-08,yes,
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,LC1  1.4D,reactions R (incl. springs),1.3240309254996234e-15,<= 1e-08,yes,
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,LC1  1.4D,spring forces,1.3240309254996234e-15,<= 1e-08,yes,
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,LC1  1.4D,OpenSees residual at free DOFs / |F|,3.2705886721113507e-15,<= 1e-08,yes,
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,LC2  1.2D + 1.6S,displacements u,3.0105382753452668e-15,<= 1e-08,yes,"138 free DOF, |u|max = 9.796 mm, |N|max = 59.14 kN, OS system FullGeneral"
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,LC2  1.2D + 1.6S,member forces N,5.290167992089468e-15,<= 1e-08,yes,
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,LC2  1.2D + 1.6S,reactions R (incl. springs),2.3143836406261805e-15,<= 1e-08,yes,
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,LC2  1.2D + 1.6S,spring forces,2.3143836406261805e-15,<= 1e-08,yes,
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,2.989412202475483e-15,<= 1e-08,yes,
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,LC3  1.2D + 1.0W + 0.5S,displacements u,2.142927675783796e-15,<= 1e-08,yes,"138 free DOF, |u|max = 2.429 mm, |N|max = 29.82 kN, OS system FullGeneral"
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,LC3  1.2D + 1.0W + 0.5S,member forces N,3.2791880633532752e-15,<= 1e-08,yes,
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),1.500326822410489e-15,<= 1e-08,yes,
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,LC3  1.2D + 1.0W + 0.5S,spring forces,1.500326822410489e-15,<= 1e-08,yes,
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,2.7152653905581133e-15,<= 1e-08,yes,
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,LC4  0.9D + 1.0W,displacements u,3.672450147008977e-15,<= 1e-08,yes,"138 free DOF, |u|max = 1.358 mm, |N|max = 16.53 kN, OS system FullGeneral"
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,LC4  0.9D + 1.0W,member forces N,4.843007354870506e-15,<= 1e-08,yes,
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,LC4  0.9D + 1.0W,reactions R (incl. springs),2.299407797023694e-15,<= 1e-08,yes,
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,LC4  0.9D + 1.0W,spring forces,2.299407797023694e-15,<= 1e-08,yes,
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,2.7465148686671904e-15,<= 1e-08,yes,
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,SLS  1.0D + 1.0S,displacements u,1.3423431648003076e-15,<= 1e-08,yes,"138 free DOF, |u|max = 6.542 mm, |N|max = 39.57 kN, OS system FullGeneral"
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,SLS  1.0D + 1.0S,member forces N,5.699444050232659e-15,<= 1e-08,yes,
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,SLS  1.0D + 1.0S,reactions R (incl. springs),1.4120707539967197e-15,<= 1e-08,yes,
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,SLS  1.0D + 1.0S,spring forces,1.4120707539967197e-15,<= 1e-08,yes,
+S,S-3V-elastic,3V R=12 m f=0.414,elastic springs,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,3.5301768849917993e-15,<= 1e-08,yes,
+S,S-4V-pinned,4V R=12 m f=0.5,pinned,LC1  1.4D,displacements u,5.132968845297973e-15,<= 1e-08,yes,"213 free DOF, |u|max = 1.922 mm, |N|max = 16.19 kN, OS system FullGeneral"
+S,S-4V-pinned,4V R=12 m f=0.5,pinned,LC1  1.4D,member forces N,9.492601371675494e-15,<= 1e-08,yes,
+S,S-4V-pinned,4V R=12 m f=0.5,pinned,LC1  1.4D,reactions R (incl. springs),1.942539721283101e-15,<= 1e-08,yes,
+S,S-4V-pinned,4V R=12 m f=0.5,pinned,LC1  1.4D,OpenSees residual at free DOFs / |F|,3.399444512245427e-15,<= 1e-08,yes,
+S,S-4V-pinned,4V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,displacements u,5.14805398809063e-15,<= 1e-08,yes,"213 free DOF, |u|max = 7.792 mm, |N|max = 57.31 kN, OS system FullGeneral"
+S,S-4V-pinned,4V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,member forces N,1.0855616156024107e-14,<= 1e-08,yes,
+S,S-4V-pinned,4V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,reactions R (incl. springs),2.681203412376975e-15,<= 1e-08,yes,
+S,S-4V-pinned,4V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,4.716671971511327e-15,<= 1e-08,yes,
+S,S-4V-pinned,4V R=12 m f=0.5,pinned,LC3  1.2D + 1.0W + 0.5S,displacements u,9.453196543199491e-15,<= 1e-08,yes,"213 free DOF, |u|max = 2.248 mm, |N|max = 34.14 kN, OS system FullGeneral"
+S,S-4V-pinned,4V R=12 m f=0.5,pinned,LC3  1.2D + 1.0W + 0.5S,member forces N,5.861683128374027e-15,<= 1e-08,yes,
+S,S-4V-pinned,4V R=12 m f=0.5,pinned,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),2.4440537838690082e-15,<= 1e-08,yes,
+S,S-4V-pinned,4V R=12 m f=0.5,pinned,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,5.2205707662790214e-15,<= 1e-08,yes,
+S,S-4V-pinned,4V R=12 m f=0.5,pinned,LC4  0.9D + 1.0W,displacements u,8.332392124987006e-15,<= 1e-08,yes,"213 free DOF, |u|max = 1.278 mm, |N|max = 17.91 kN, OS system FullGeneral"
+S,S-4V-pinned,4V R=12 m f=0.5,pinned,LC4  0.9D + 1.0W,member forces N,8.800226688702792e-15,<= 1e-08,yes,
+S,S-4V-pinned,4V R=12 m f=0.5,pinned,LC4  0.9D + 1.0W,reactions R (incl. springs),3.3626577073398937e-15,<= 1e-08,yes,
+S,S-4V-pinned,4V R=12 m f=0.5,pinned,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,1.1462573063195786e-14,<= 1e-08,yes,
+S,S-4V-pinned,4V R=12 m f=0.5,pinned,SLS  1.0D + 1.0S,displacements u,5.032681700723271e-15,<= 1e-08,yes,"213 free DOF, |u|max = 5.213 mm, |N|max = 38.71 kN, OS system FullGeneral"
+S,S-4V-pinned,4V R=12 m f=0.5,pinned,SLS  1.0D + 1.0S,member forces N,1.183043907313881e-14,<= 1e-08,yes,
+S,S-4V-pinned,4V R=12 m f=0.5,pinned,SLS  1.0D + 1.0S,reactions R (incl. springs),2.4339234965852295e-15,<= 1e-08,yes,
+S,S-4V-pinned,4V R=12 m f=0.5,pinned,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,3.650885244877844e-15,<= 1e-08,yes,
+S,S-4V-roller3,4V R=12 m f=0.5,3 rollers,LC1  1.4D,displacements u,1.2171653277140304e-14,<= 1e-08,yes,"247 free DOF, |u|max = 2.031 mm, |N|max = 18.23 kN, OS system FullGeneral"
+S,S-4V-roller3,4V R=12 m f=0.5,3 rollers,LC1  1.4D,member forces N,1.1276700677423868e-14,<= 1e-08,yes,
+S,S-4V-roller3,4V R=12 m f=0.5,3 rollers,LC1  1.4D,reactions R (incl. springs),1.0801529370511872e-14,<= 1e-08,yes,
+S,S-4V-roller3,4V R=12 m f=0.5,3 rollers,LC1  1.4D,OpenSees residual at free DOFs / |F|,3.874461622031433e-15,<= 1e-08,yes,
+S,S-4V-roller3,4V R=12 m f=0.5,3 rollers,LC2  1.2D + 1.6S,displacements u,8.908059333014197e-15,<= 1e-08,yes,"247 free DOF, |u|max = 8.106 mm, |N|max = 62.24 kN, OS system FullGeneral"
+S,S-4V-roller3,4V R=12 m f=0.5,3 rollers,LC2  1.2D + 1.6S,member forces N,1.2509205290842726e-14,<= 1e-08,yes,
+S,S-4V-roller3,4V R=12 m f=0.5,3 rollers,LC2  1.2D + 1.6S,reactions R (incl. springs),9.804719706442243e-15,<= 1e-08,yes,
+S,S-4V-roller3,4V R=12 m f=0.5,3 rollers,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,4.3221026582049045e-15,<= 1e-08,yes,
+S,S-4V-roller3,4V R=12 m f=0.5,3 rollers,LC3  1.2D + 1.0W + 0.5S,displacements u,1.7197026803207582e-14,<= 1e-08,yes,"247 free DOF, |u|max = 2.421 mm, |N|max = 37.69 kN, OS system FullGeneral"
+S,S-4V-roller3,4V R=12 m f=0.5,3 rollers,LC3  1.2D + 1.0W + 0.5S,member forces N,9.386118626150488e-15,<= 1e-08,yes,
+S,S-4V-roller3,4V R=12 m f=0.5,3 rollers,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),9.882279779754242e-15,<= 1e-08,yes,
+S,S-4V-roller3,4V R=12 m f=0.5,3 rollers,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,5.179267113485658e-15,<= 1e-08,yes,
+S,S-4V-roller3,4V R=12 m f=0.5,3 rollers,LC4  0.9D + 1.0W,displacements u,1.0704296894193273e-14,<= 1e-08,yes,"247 free DOF, |u|max = 2.087 mm, |N|max = 24.93 kN, OS system FullGeneral"
+S,S-4V-roller3,4V R=12 m f=0.5,3 rollers,LC4  0.9D + 1.0W,member forces N,9.485866242770756e-15,<= 1e-08,yes,
+S,S-4V-roller3,4V R=12 m f=0.5,3 rollers,LC4  0.9D + 1.0W,reactions R (incl. springs),5.234585779722722e-15,<= 1e-08,yes,
+S,S-4V-roller3,4V R=12 m f=0.5,3 rollers,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,3.711086933385512e-15,<= 1e-08,yes,
+S,S-4V-roller3,4V R=12 m f=0.5,3 rollers,SLS  1.0D + 1.0S,displacements u,6.870057931978172e-15,<= 1e-08,yes,"247 free DOF, |u|max = 5.429 mm, |N|max = 42.15 kN, OS system FullGeneral"
+S,S-4V-roller3,4V R=12 m f=0.5,3 rollers,SLS  1.0D + 1.0S,member forces N,8.458391192948065e-15,<= 1e-08,yes,
+S,S-4V-roller3,4V R=12 m f=0.5,3 rollers,SLS  1.0D + 1.0S,reactions R (incl. springs),6.9063913520526314e-15,<= 1e-08,yes,
+S,S-4V-roller3,4V R=12 m f=0.5,3 rollers,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,3.594462771863756e-15,<= 1e-08,yes,
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,LC1  1.4D,displacements u,7.557468500961817e-15,<= 1e-08,yes,"273 free DOF, |u|max = 2.41 mm, |N|max = 16.32 kN, OS system FullGeneral"
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,LC1  1.4D,member forces N,1.1873234403792118e-14,<= 1e-08,yes,
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,LC1  1.4D,reactions R (incl. springs),1.997093089984353e-15,<= 1e-08,yes,
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,LC1  1.4D,spring forces,1.997093089984353e-15,<= 1e-08,yes,
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,LC1  1.4D,OpenSees residual at free DOFs / |F|,5.2624822655511864e-15,<= 1e-08,yes,
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,LC2  1.2D + 1.6S,displacements u,5.916252391205042e-15,<= 1e-08,yes,"273 free DOF, |u|max = 9.09 mm, |N|max = 57.74 kN, OS system FullGeneral"
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,LC2  1.2D + 1.6S,member forces N,1.0395488031343036e-14,<= 1e-08,yes,
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,LC2  1.2D + 1.6S,reactions R (incl. springs),1.8245411000668067e-15,<= 1e-08,yes,
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,LC2  1.2D + 1.6S,spring forces,1.8245411000668067e-15,<= 1e-08,yes,
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,6.7279953064963505e-15,<= 1e-08,yes,
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,LC3  1.2D + 1.0W + 0.5S,displacements u,8.44243112839975e-15,<= 1e-08,yes,"273 free DOF, |u|max = 2.671 mm, |N|max = 34.07 kN, OS system FullGeneral"
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,LC3  1.2D + 1.0W + 0.5S,member forces N,8.542542555157507e-15,<= 1e-08,yes,
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),3.0103282777192655e-15,<= 1e-08,yes,
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,LC3  1.2D + 1.0W + 0.5S,spring forces,3.0103282777192655e-15,<= 1e-08,yes,
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,6.7025500643259144e-15,<= 1e-08,yes,
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,LC4  0.9D + 1.0W,displacements u,9.300743900441157e-15,<= 1e-08,yes,"273 free DOF, |u|max = 1.469 mm, |N|max = 17.83 kN, OS system FullGeneral"
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,LC4  0.9D + 1.0W,member forces N,1.071419490255231e-14,<= 1e-08,yes,
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,LC4  0.9D + 1.0W,reactions R (incl. springs),6.446973581767562e-15,<= 1e-08,yes,
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,LC4  0.9D + 1.0W,spring forces,6.446973581767562e-15,<= 1e-08,yes,
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,1.1902105074032423e-14,<= 1e-08,yes,
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,SLS  1.0D + 1.0S,displacements u,5.960869211588711e-15,<= 1e-08,yes,"273 free DOF, |u|max = 6.111 mm, |N|max = 39 kN, OS system FullGeneral"
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,SLS  1.0D + 1.0S,member forces N,1.0353473038609514e-14,<= 1e-08,yes,
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,SLS  1.0D + 1.0S,reactions R (incl. springs),1.976800651743995e-15,<= 1e-08,yes,
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,SLS  1.0D + 1.0S,spring forces,1.976800651743995e-15,<= 1e-08,yes,
+S,S-4V-elastic,4V R=12 m f=0.5,elastic springs,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,6.053951995965985e-15,<= 1e-08,yes,
+S,S-5V-pinned,5V R=12 m f=0.448,pinned,LC1  1.4D,displacements u,1.4209606639222462e-14,<= 1e-08,yes,"303 free DOF, |u|max = 1.469 mm, |N|max = 12.02 kN, OS system FullGeneral"
+S,S-5V-pinned,5V R=12 m f=0.448,pinned,LC1  1.4D,member forces N,2.1634668976253413e-14,<= 1e-08,yes,
+S,S-5V-pinned,5V R=12 m f=0.448,pinned,LC1  1.4D,reactions R (incl. springs),4.165386531261546e-15,<= 1e-08,yes,
+S,S-5V-pinned,5V R=12 m f=0.448,pinned,LC1  1.4D,OpenSees residual at free DOFs / |F|,7.215044527363749e-15,<= 1e-08,yes,
+S,S-5V-pinned,5V R=12 m f=0.448,pinned,LC2  1.2D + 1.6S,displacements u,9.674588974735403e-15,<= 1e-08,yes,"303 free DOF, |u|max = 5.917 mm, |N|max = 43.68 kN, OS system FullGeneral"
+S,S-5V-pinned,5V R=12 m f=0.448,pinned,LC2  1.2D + 1.6S,member forces N,2.2237950516169956e-14,<= 1e-08,yes,
+S,S-5V-pinned,5V R=12 m f=0.448,pinned,LC2  1.2D + 1.6S,reactions R (incl. springs),7.591691036933613e-15,<= 1e-08,yes,
+S,S-5V-pinned,5V R=12 m f=0.448,pinned,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,6.0949918538801935e-15,<= 1e-08,yes,
+S,S-5V-pinned,5V R=12 m f=0.448,pinned,LC3  1.2D + 1.0W + 0.5S,displacements u,2.999543639501773e-14,<= 1e-08,yes,"303 free DOF, |u|max = 1.721 mm, |N|max = 26.39 kN, OS system FullGeneral"
+S,S-5V-pinned,5V R=12 m f=0.448,pinned,LC3  1.2D + 1.0W + 0.5S,member forces N,1.8335949349148377e-14,<= 1e-08,yes,
+S,S-5V-pinned,5V R=12 m f=0.448,pinned,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),7.520170788845947e-15,<= 1e-08,yes,
+S,S-5V-pinned,5V R=12 m f=0.448,pinned,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,8.146851687916442e-15,<= 1e-08,yes,
+S,S-5V-pinned,5V R=12 m f=0.448,pinned,LC4  0.9D + 1.0W,displacements u,2.2717084446235883e-14,<= 1e-08,yes,"303 free DOF, |u|max = 1.04 mm, |N|max = 13.72 kN, OS system FullGeneral"
+S,S-5V-pinned,5V R=12 m f=0.448,pinned,LC4  0.9D + 1.0W,member forces N,1.6768495136733078e-14,<= 1e-08,yes,
+S,S-5V-pinned,5V R=12 m f=0.448,pinned,LC4  0.9D + 1.0W,reactions R (incl. springs),1.1516069513064944e-14,<= 1e-08,yes,
+S,S-5V-pinned,5V R=12 m f=0.448,pinned,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,1.0046571059574885e-14,<= 1e-08,yes,
+S,S-5V-pinned,5V R=12 m f=0.448,pinned,SLS  1.0D + 1.0S,displacements u,1.0347910358119517e-14,<= 1e-08,yes,"303 free DOF, |u|max = 3.96 mm, |N|max = 29.45 kN, OS system FullGeneral"
+S,S-5V-pinned,5V R=12 m f=0.448,pinned,SLS  1.0D + 1.0S,member forces N,1.4207667258114277e-14,<= 1e-08,yes,
+S,S-5V-pinned,5V R=12 m f=0.448,pinned,SLS  1.0D + 1.0S,reactions R (incl. springs),6.7889488182461826e-15,<= 1e-08,yes,
+S,S-5V-pinned,5V R=12 m f=0.448,pinned,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,6.485112321568177e-15,<= 1e-08,yes,
+S,S-5V-roller3,5V R=12 m f=0.448,3 rollers,LC1  1.4D,displacements u,2.4106770661950583e-14,<= 1e-08,yes,"347 free DOF, |u|max = 1.666 mm, |N|max = 17.43 kN, OS system FullGeneral"
+S,S-5V-roller3,5V R=12 m f=0.448,3 rollers,LC1  1.4D,member forces N,2.0661781538441225e-14,<= 1e-08,yes,
+S,S-5V-roller3,5V R=12 m f=0.448,3 rollers,LC1  1.4D,reactions R (incl. springs),1.5640664260710184e-14,<= 1e-08,yes,
+S,S-5V-roller3,5V R=12 m f=0.448,3 rollers,LC1  1.4D,OpenSees residual at free DOFs / |F|,3.962701885630987e-15,<= 1e-08,yes,
+S,S-5V-roller3,5V R=12 m f=0.448,3 rollers,LC2  1.2D + 1.6S,displacements u,1.602514623303019e-14,<= 1e-08,yes,"347 free DOF, |u|max = 6.495 mm, |N|max = 58.36 kN, OS system FullGeneral"
+S,S-5V-roller3,5V R=12 m f=0.448,3 rollers,LC2  1.2D + 1.6S,member forces N,1.633120416827501e-14,<= 1e-08,yes,
+S,S-5V-roller3,5V R=12 m f=0.448,3 rollers,LC2  1.2D + 1.6S,reactions R (incl. springs),1.5901982939171245e-14,<= 1e-08,yes,
+S,S-5V-roller3,5V R=12 m f=0.448,3 rollers,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,7.152699153362166e-15,<= 1e-08,yes,
+S,S-5V-roller3,5V R=12 m f=0.448,3 rollers,LC3  1.2D + 1.0W + 0.5S,displacements u,3.125244184769092e-14,<= 1e-08,yes,"347 free DOF, |u|max = 1.929 mm, |N|max = 31.17 kN, OS system FullGeneral"
+S,S-5V-roller3,5V R=12 m f=0.448,3 rollers,LC3  1.2D + 1.0W + 0.5S,member forces N,1.7741967196559312e-14,<= 1e-08,yes,
+S,S-5V-roller3,5V R=12 m f=0.448,3 rollers,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),8.013542719016484e-15,<= 1e-08,yes,
+S,S-5V-roller3,5V R=12 m f=0.448,3 rollers,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,5.547837267011412e-15,<= 1e-08,yes,
+S,S-5V-roller3,5V R=12 m f=0.448,3 rollers,LC4  0.9D + 1.0W,displacements u,1.8687242366682505e-14,<= 1e-08,yes,"347 free DOF, |u|max = 1.3 mm, |N|max = 18.16 kN, OS system FullGeneral"
+S,S-5V-roller3,5V R=12 m f=0.448,3 rollers,LC4  0.9D + 1.0W,member forces N,1.840802805149795e-14,<= 1e-08,yes,
+S,S-5V-roller3,5V R=12 m f=0.448,3 rollers,LC4  0.9D + 1.0W,reactions R (incl. springs),5.456505849388281e-15,<= 1e-08,yes,
+S,S-5V-roller3,5V R=12 m f=0.448,3 rollers,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,5.261630640481556e-15,<= 1e-08,yes,
+S,S-5V-roller3,5V R=12 m f=0.448,3 rollers,SLS  1.0D + 1.0S,displacements u,2.0455066596378034e-14,<= 1e-08,yes,"347 free DOF, |u|max = 4.357 mm, |N|max = 39.52 kN, OS system FullGeneral"
+S,S-5V-roller3,5V R=12 m f=0.448,3 rollers,SLS  1.0D + 1.0S,member forces N,1.9654310549114717e-14,<= 1e-08,yes,
+S,S-5V-roller3,5V R=12 m f=0.448,3 rollers,SLS  1.0D + 1.0S,reactions R (incl. springs),1.5185391400651576e-14,<= 1e-08,yes,
+S,S-5V-roller3,5V R=12 m f=0.448,3 rollers,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,5.628800885781236e-15,<= 1e-08,yes,
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,LC1  1.4D,displacements u,1.8104641408021905e-14,<= 1e-08,yes,"378 free DOF, |u|max = 1.847 mm, |N|max = 11.99 kN, OS system FullGeneral"
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,LC1  1.4D,member forces N,2.9648262592738134e-14,<= 1e-08,yes,
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,LC1  1.4D,reactions R (incl. springs),7.234069325537348e-15,<= 1e-08,yes,
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,LC1  1.4D,spring forces,7.234069325537348e-15,<= 1e-08,yes,
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,LC1  1.4D,OpenSees residual at free DOFs / |F|,8.489984138998693e-15,<= 1e-08,yes,
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,LC2  1.2D + 1.6S,displacements u,1.8256959953698047e-14,<= 1e-08,yes,"378 free DOF, |u|max = 6.96 mm, |N|max = 43.61 kN, OS system FullGeneral"
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,LC2  1.2D + 1.6S,member forces N,3.1865252429078414e-14,<= 1e-08,yes,
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,LC2  1.2D + 1.6S,reactions R (incl. springs),5.648868397523776e-15,<= 1e-08,yes,
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,LC2  1.2D + 1.6S,spring forces,5.648868397523776e-15,<= 1e-08,yes,
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,1.546006087743349e-14,<= 1e-08,yes,
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,LC3  1.2D + 1.0W + 0.5S,displacements u,1.9845573423794677e-14,<= 1e-08,yes,"378 free DOF, |u|max = 2.01 mm, |N|max = 26.29 kN, OS system FullGeneral"
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,LC3  1.2D + 1.0W + 0.5S,member forces N,1.9166793242934807e-14,<= 1e-08,yes,
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),5.2055472352402e-15,<= 1e-08,yes,
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,LC3  1.2D + 1.0W + 0.5S,spring forces,5.2055472352402e-15,<= 1e-08,yes,
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,1.2629110248974051e-14,<= 1e-08,yes,
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,LC4  0.9D + 1.0W,displacements u,1.7113186734741693e-14,<= 1e-08,yes,"378 free DOF, |u|max = 1.159 mm, |N|max = 13.66 kN, OS system FullGeneral"
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,LC4  0.9D + 1.0W,member forces N,1.785849196686454e-14,<= 1e-08,yes,
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,LC4  0.9D + 1.0W,reactions R (incl. springs),9.934697622278298e-15,<= 1e-08,yes,
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,LC4  0.9D + 1.0W,spring forces,9.934697622278298e-15,<= 1e-08,yes,
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,1.9041503776033403e-14,<= 1e-08,yes,
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,SLS  1.0D + 1.0S,displacements u,1.7236381642072703e-14,<= 1e-08,yes,"378 free DOF, |u|max = 4.68 mm, |N|max = 29.4 kN, OS system FullGeneral"
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,SLS  1.0D + 1.0S,member forces N,2.623361278226859e-14,<= 1e-08,yes,
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,SLS  1.0D + 1.0S,reactions R (incl. springs),5.037755115687255e-15,<= 1e-08,yes,
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,SLS  1.0D + 1.0S,spring forces,5.037755115687255e-15,<= 1e-08,yes,
+S,S-5V-elastic,5V R=12 m f=0.448,elastic springs,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,1.0171625296081701e-14,<= 1e-08,yes,
+S,S-6V-pinned,6V R=12 m f=0.5,pinned,LC1  1.4D,displacements u,2.8633243516996545e-14,<= 1e-08,yes,"498 free DOF, |u|max = 1.534 mm, |N|max = 14.56 kN, OS system FullGeneral"
+S,S-6V-pinned,6V R=12 m f=0.5,pinned,LC1  1.4D,member forces N,3.7108488700187645e-14,<= 1e-08,yes,
+S,S-6V-pinned,6V R=12 m f=0.5,pinned,LC1  1.4D,reactions R (incl. springs),1.2180869938939253e-14,<= 1e-08,yes,
+S,S-6V-pinned,6V R=12 m f=0.5,pinned,LC1  1.4D,OpenSees residual at free DOFs / |F|,1.455639229217637e-14,<= 1e-08,yes,
+S,S-6V-pinned,6V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,displacements u,2.4671275211222854e-14,<= 1e-08,yes,"498 free DOF, |u|max = 5.704 mm, |N|max = 44.13 kN, OS system FullGeneral"
+S,S-6V-pinned,6V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,member forces N,4.088810431211523e-14,<= 1e-08,yes,
+S,S-6V-pinned,6V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,reactions R (incl. springs),1.7521918122910303e-14,<= 1e-08,yes,
+S,S-6V-pinned,6V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,1.5412798348856284e-14,<= 1e-08,yes,
+S,S-6V-pinned,6V R=12 m f=0.5,pinned,LC3  1.2D + 1.0W + 0.5S,displacements u,3.3147221452912294e-14,<= 1e-08,yes,"498 free DOF, |u|max = 1.773 mm, |N|max = 27.31 kN, OS system FullGeneral"
+S,S-6V-pinned,6V R=12 m f=0.5,pinned,LC3  1.2D + 1.0W + 0.5S,member forces N,3.4831511441264065e-14,<= 1e-08,yes,
+S,S-6V-pinned,6V R=12 m f=0.5,pinned,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),1.840107951558976e-14,<= 1e-08,yes,
+S,S-6V-pinned,6V R=12 m f=0.5,pinned,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,2.153229324007016e-14,<= 1e-08,yes,
+S,S-6V-pinned,6V R=12 m f=0.5,pinned,LC4  0.9D + 1.0W,displacements u,3.765805026547129e-14,<= 1e-08,yes,"498 free DOF, |u|max = 0.9875 mm, |N|max = 14.65 kN, OS system FullGeneral"
+S,S-6V-pinned,6V R=12 m f=0.5,pinned,LC4  0.9D + 1.0W,member forces N,3.9108177689055887e-14,<= 1e-08,yes,
+S,S-6V-pinned,6V R=12 m f=0.5,pinned,LC4  0.9D + 1.0W,reactions R (incl. springs),3.0071898207930997e-14,<= 1e-08,yes,
+S,S-6V-pinned,6V R=12 m f=0.5,pinned,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,3.10956874253758e-14,<= 1e-08,yes,
+S,S-6V-pinned,6V R=12 m f=0.5,pinned,SLS  1.0D + 1.0S,displacements u,2.389280068945153e-14,<= 1e-08,yes,"498 free DOF, |u|max = 3.839 mm, |N|max = 30.18 kN, OS system FullGeneral"
+S,S-6V-pinned,6V R=12 m f=0.5,pinned,SLS  1.0D + 1.0S,member forces N,3.40514441396912e-14,<= 1e-08,yes,
+S,S-6V-pinned,6V R=12 m f=0.5,pinned,SLS  1.0D + 1.0S,reactions R (incl. springs),1.4089590649057591e-14,<= 1e-08,yes,
+S,S-6V-pinned,6V R=12 m f=0.5,pinned,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,1.3216268914611874e-14,<= 1e-08,yes,
+S,S-6V-roller3,6V R=12 m f=0.5,3 rollers,LC1  1.4D,displacements u,3.9680372191794474e-14,<= 1e-08,yes,"552 free DOF, |u|max = 1.593 mm, |N|max = 16.64 kN, OS system FullGeneral"
+S,S-6V-roller3,6V R=12 m f=0.5,3 rollers,LC1  1.4D,member forces N,3.9140280249181424e-14,<= 1e-08,yes,
+S,S-6V-roller3,6V R=12 m f=0.5,3 rollers,LC1  1.4D,reactions R (incl. springs),2.036441054192202e-14,<= 1e-08,yes,
+S,S-6V-roller3,6V R=12 m f=0.5,3 rollers,LC1  1.4D,OpenSees residual at free DOFs / |F|,1.7270586632668482e-14,<= 1e-08,yes,
+S,S-6V-roller3,6V R=12 m f=0.5,3 rollers,LC2  1.2D + 1.6S,displacements u,4.058750616743287e-14,<= 1e-08,yes,"552 free DOF, |u|max = 5.861 mm, |N|max = 49.64 kN, OS system FullGeneral"
+S,S-6V-roller3,6V R=12 m f=0.5,3 rollers,LC2  1.2D + 1.6S,member forces N,5.001426515027394e-14,<= 1e-08,yes,
+S,S-6V-roller3,6V R=12 m f=0.5,3 rollers,LC2  1.2D + 1.6S,reactions R (incl. springs),3.6641597466731825e-14,<= 1e-08,yes,
+S,S-6V-roller3,6V R=12 m f=0.5,3 rollers,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,1.3399024836351511e-14,<= 1e-08,yes,
+S,S-6V-roller3,6V R=12 m f=0.5,3 rollers,LC3  1.2D + 1.0W + 0.5S,displacements u,1.0498899148673237e-13,<= 1e-08,yes,"552 free DOF, |u|max = 2.003 mm, |N|max = 31.03 kN, OS system FullGeneral"
+S,S-6V-roller3,6V R=12 m f=0.5,3 rollers,LC3  1.2D + 1.0W + 0.5S,member forces N,4.7601907928987326e-14,<= 1e-08,yes,
+S,S-6V-roller3,6V R=12 m f=0.5,3 rollers,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),5.0864257611150095e-14,<= 1e-08,yes,
+S,S-6V-roller3,6V R=12 m f=0.5,3 rollers,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,1.0238408184806937e-14,<= 1e-08,yes,
+S,S-6V-roller3,6V R=12 m f=0.5,3 rollers,LC4  0.9D + 1.0W,displacements u,6.297872208176934e-14,<= 1e-08,yes,"552 free DOF, |u|max = 1.642 mm, |N|max = 25.96 kN, OS system FullGeneral"
+S,S-6V-roller3,6V R=12 m f=0.5,3 rollers,LC4  0.9D + 1.0W,member forces N,4.4502631511010645e-14,<= 1e-08,yes,
+S,S-6V-roller3,6V R=12 m f=0.5,3 rollers,LC4  0.9D + 1.0W,reactions R (incl. springs),3.025059193760342e-14,<= 1e-08,yes,
+S,S-6V-roller3,6V R=12 m f=0.5,3 rollers,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,8.402410541352675e-15,<= 1e-08,yes,
+S,S-6V-roller3,6V R=12 m f=0.5,3 rollers,SLS  1.0D + 1.0S,displacements u,2.9635797872045404e-14,<= 1e-08,yes,"552 free DOF, |u|max = 3.947 mm, |N|max = 34 kN, OS system FullGeneral"
+S,S-6V-roller3,6V R=12 m f=0.5,3 rollers,SLS  1.0D + 1.0S,member forces N,3.670224917220814e-14,<= 1e-08,yes,
+S,S-6V-roller3,6V R=12 m f=0.5,3 rollers,SLS  1.0D + 1.0S,reactions R (incl. springs),3.516713364984812e-14,<= 1e-08,yes,
+S,S-6V-roller3,6V R=12 m f=0.5,3 rollers,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,1.0755430469052536e-14,<= 1e-08,yes,
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,LC1  1.4D,displacements u,3.903890269337781e-14,<= 1e-08,yes,"588 free DOF, |u|max = 1.891 mm, |N|max = 14.67 kN, OS system FullGeneral"
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,LC1  1.4D,member forces N,8.382828972743842e-14,<= 1e-08,yes,
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,LC1  1.4D,reactions R (incl. springs),1.3713263933053012e-14,<= 1e-08,yes,
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,LC1  1.4D,spring forces,1.3713263933053012e-14,<= 1e-08,yes,
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,LC1  1.4D,OpenSees residual at free DOFs / |F|,2.3844705197025014e-14,<= 1e-08,yes,
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,LC2  1.2D + 1.6S,displacements u,4.1930197430405874e-14,<= 1e-08,yes,"588 free DOF, |u|max = 6.594 mm, |N|max = 44.48 kN, OS system FullGeneral"
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,LC2  1.2D + 1.6S,member forces N,7.811526260338885e-14,<= 1e-08,yes,
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,LC2  1.2D + 1.6S,reactions R (incl. springs),2.172709794337546e-14,<= 1e-08,yes,
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,LC2  1.2D + 1.6S,spring forces,2.172709794337546e-14,<= 1e-08,yes,
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,2.411378673260989e-14,<= 1e-08,yes,
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,LC3  1.2D + 1.0W + 0.5S,displacements u,4.1113689688117365e-14,<= 1e-08,yes,"588 free DOF, |u|max = 2.078 mm, |N|max = 27.41 kN, OS system FullGeneral"
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,LC3  1.2D + 1.0W + 0.5S,member forces N,3.536578762589815e-14,<= 1e-08,yes,
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),1.298278704569242e-14,<= 1e-08,yes,
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,LC3  1.2D + 1.0W + 0.5S,spring forces,1.298278704569242e-14,<= 1e-08,yes,
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,1.8710487212909665e-14,<= 1e-08,yes,
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,LC4  0.9D + 1.0W,displacements u,4.259157759275361e-14,<= 1e-08,yes,"588 free DOF, |u|max = 1.12 mm, |N|max = 14.6 kN, OS system FullGeneral"
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,LC4  0.9D + 1.0W,member forces N,3.2340606686618084e-14,<= 1e-08,yes,
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,LC4  0.9D + 1.0W,reactions R (incl. springs),1.281787084974933e-14,<= 1e-08,yes,
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,LC4  0.9D + 1.0W,spring forces,1.281787084974933e-14,<= 1e-08,yes,
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,2.59174531467459e-14,<= 1e-08,yes,
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,SLS  1.0D + 1.0S,displacements u,3.2097558020898984e-14,<= 1e-08,yes,"588 free DOF, |u|max = 4.459 mm, |N|max = 30.42 kN, OS system FullGeneral"
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,SLS  1.0D + 1.0S,member forces N,6.422706215531879e-14,<= 1e-08,yes,
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,SLS  1.0D + 1.0S,reactions R (incl. springs),1.748032008118067e-14,<= 1e-08,yes,
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,SLS  1.0D + 1.0S,spring forces,1.748032008118067e-14,<= 1e-08,yes,
+S,S-6V-elastic,6V R=12 m f=0.5,elastic springs,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,2.2322841184750993e-14,<= 1e-08,yes,
+S,S-7V-pinned,7V R=12 m f=0.463,pinned,LC1  1.4D,displacements u,4.06118237638343e-14,<= 1e-08,yes,"633 free DOF, |u|max = 1.279 mm, |N|max = 11.84 kN, OS system FullGeneral"
+S,S-7V-pinned,7V R=12 m f=0.463,pinned,LC1  1.4D,member forces N,5.15451774833053e-14,<= 1e-08,yes,
+S,S-7V-pinned,7V R=12 m f=0.463,pinned,LC1  1.4D,reactions R (incl. springs),1.404353375175718e-14,<= 1e-08,yes,
+S,S-7V-pinned,7V R=12 m f=0.463,pinned,LC1  1.4D,OpenSees residual at free DOFs / |F|,1.4188548502454673e-14,<= 1e-08,yes,
+S,S-7V-pinned,7V R=12 m f=0.463,pinned,LC2  1.2D + 1.6S,displacements u,3.4298049951709735e-14,<= 1e-08,yes,"633 free DOF, |u|max = 4.701 mm, |N|max = 36.84 kN, OS system FullGeneral"
+S,S-7V-pinned,7V R=12 m f=0.463,pinned,LC2  1.2D + 1.6S,member forces N,6.054062341206274e-14,<= 1e-08,yes,
+S,S-7V-pinned,7V R=12 m f=0.463,pinned,LC2  1.2D + 1.6S,reactions R (incl. springs),2.1379086522992455e-14,<= 1e-08,yes,
+S,S-7V-pinned,7V R=12 m f=0.463,pinned,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,2.1409223380228137e-14,<= 1e-08,yes,
+S,S-7V-pinned,7V R=12 m f=0.463,pinned,LC3  1.2D + 1.0W + 0.5S,displacements u,6.844949583141192e-14,<= 1e-08,yes,"633 free DOF, |u|max = 1.44 mm, |N|max = 22.59 kN, OS system FullGeneral"
+S,S-7V-pinned,7V R=12 m f=0.463,pinned,LC3  1.2D + 1.0W + 0.5S,member forces N,6.599169960622394e-14,<= 1e-08,yes,
+S,S-7V-pinned,7V R=12 m f=0.463,pinned,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),2.1613478006139677e-14,<= 1e-08,yes,
+S,S-7V-pinned,7V R=12 m f=0.463,pinned,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,2.536997670242088e-14,<= 1e-08,yes,
+S,S-7V-pinned,7V R=12 m f=0.463,pinned,LC4  0.9D + 1.0W,displacements u,6.441359632808689e-14,<= 1e-08,yes,"633 free DOF, |u|max = 0.8483 mm, |N|max = 11.96 kN, OS system FullGeneral"
+S,S-7V-pinned,7V R=12 m f=0.463,pinned,LC4  0.9D + 1.0W,member forces N,5.543757330811445e-14,<= 1e-08,yes,
+S,S-7V-pinned,7V R=12 m f=0.463,pinned,LC4  0.9D + 1.0W,reactions R (incl. springs),3.951252889430928e-14,<= 1e-08,yes,
+S,S-7V-pinned,7V R=12 m f=0.463,pinned,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,3.06781238490722e-14,<= 1e-08,yes,
+S,S-7V-pinned,7V R=12 m f=0.463,pinned,SLS  1.0D + 1.0S,displacements u,2.9311857029754606e-14,<= 1e-08,yes,"633 free DOF, |u|max = 3.166 mm, |N|max = 25.14 kN, OS system FullGeneral"
+S,S-7V-pinned,7V R=12 m f=0.463,pinned,SLS  1.0D + 1.0S,member forces N,4.949676140666576e-14,<= 1e-08,yes,
+S,S-7V-pinned,7V R=12 m f=0.463,pinned,SLS  1.0D + 1.0S,reactions R (incl. springs),1.816417976245915e-14,<= 1e-08,yes,
+S,S-7V-pinned,7V R=12 m f=0.463,pinned,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,1.8060186366872552e-14,<= 1e-08,yes,
+S,S-7V-roller3,7V R=12 m f=0.463,3 rollers,LC1  1.4D,displacements u,6.760580560275903e-14,<= 1e-08,yes,"697 free DOF, |u|max = 1.403 mm, |N|max = 16.1 kN, OS system FullGeneral"
+S,S-7V-roller3,7V R=12 m f=0.463,3 rollers,LC1  1.4D,member forces N,5.229482341253073e-14,<= 1e-08,yes,
+S,S-7V-roller3,7V R=12 m f=0.463,3 rollers,LC1  1.4D,reactions R (incl. springs),3.400834422419641e-14,<= 1e-08,yes,
+S,S-7V-roller3,7V R=12 m f=0.463,3 rollers,LC1  1.4D,OpenSees residual at free DOFs / |F|,1.6082152352109564e-14,<= 1e-08,yes,
+S,S-7V-roller3,7V R=12 m f=0.463,3 rollers,LC2  1.2D + 1.6S,displacements u,7.197917006257386e-14,<= 1e-08,yes,"697 free DOF, |u|max = 5.031 mm, |N|max = 47.96 kN, OS system FullGeneral"
+S,S-7V-roller3,7V R=12 m f=0.463,3 rollers,LC2  1.2D + 1.6S,member forces N,9.238476335840651e-14,<= 1e-08,yes,
+S,S-7V-roller3,7V R=12 m f=0.463,3 rollers,LC2  1.2D + 1.6S,reactions R (incl. springs),4.5516599238692635e-14,<= 1e-08,yes,
+S,S-7V-roller3,7V R=12 m f=0.463,3 rollers,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,1.7618442096619552e-14,<= 1e-08,yes,
+S,S-7V-roller3,7V R=12 m f=0.463,3 rollers,LC3  1.2D + 1.0W + 0.5S,displacements u,8.266868945607815e-14,<= 1e-08,yes,"697 free DOF, |u|max = 1.587 mm, |N|max = 27.64 kN, OS system FullGeneral"
+S,S-7V-roller3,7V R=12 m f=0.463,3 rollers,LC3  1.2D + 1.0W + 0.5S,member forces N,6.785706238901286e-14,<= 1e-08,yes,
+S,S-7V-roller3,7V R=12 m f=0.463,3 rollers,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),3.288562393304507e-14,<= 1e-08,yes,
+S,S-7V-roller3,7V R=12 m f=0.463,3 rollers,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,2.181658012317934e-14,<= 1e-08,yes,
+S,S-7V-roller3,7V R=12 m f=0.463,3 rollers,LC4  0.9D + 1.0W,displacements u,1.2822401265665677e-13,<= 1e-08,yes,"697 free DOF, |u|max = 1.05 mm, |N|max = 19.32 kN, OS system FullGeneral"
+S,S-7V-roller3,7V R=12 m f=0.463,3 rollers,LC4  0.9D + 1.0W,member forces N,7.004949394422326e-14,<= 1e-08,yes,
+S,S-7V-roller3,7V R=12 m f=0.463,3 rollers,LC4  0.9D + 1.0W,reactions R (incl. springs),2.5278606649659964e-14,<= 1e-08,yes,
+S,S-7V-roller3,7V R=12 m f=0.463,3 rollers,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,1.730060667866799e-14,<= 1e-08,yes,
+S,S-7V-roller3,7V R=12 m f=0.463,3 rollers,SLS  1.0D + 1.0S,displacements u,8.766428471692188e-14,<= 1e-08,yes,"697 free DOF, |u|max = 3.395 mm, |N|max = 32.85 kN, OS system FullGeneral"
+S,S-7V-roller3,7V R=12 m f=0.463,3 rollers,SLS  1.0D + 1.0S,member forces N,7.66292054154696e-14,<= 1e-08,yes,
+S,S-7V-roller3,7V R=12 m f=0.463,3 rollers,SLS  1.0D + 1.0S,reactions R (incl. springs),3.7653342936423636e-14,<= 1e-08,yes,
+S,S-7V-roller3,7V R=12 m f=0.463,3 rollers,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,1.765866556219237e-14,<= 1e-08,yes,
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,LC1  1.4D,displacements u,6.753323438310905e-14,<= 1e-08,yes,"738 free DOF, |u|max = 1.581 mm, |N|max = 11.84 kN, OS system FullGeneral"
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,LC1  1.4D,member forces N,9.55596691650847e-14,<= 1e-08,yes,
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,LC1  1.4D,reactions R (incl. springs),1.8279166412535846e-14,<= 1e-08,yes,
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,LC1  1.4D,spring forces,1.8279166412535846e-14,<= 1e-08,yes,
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,LC1  1.4D,OpenSees residual at free DOFs / |F|,3.019767694503388e-14,<= 1e-08,yes,
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,LC2  1.2D + 1.6S,displacements u,5.265335054010902e-14,<= 1e-08,yes,"738 free DOF, |u|max = 5.465 mm, |N|max = 36.87 kN, OS system FullGeneral"
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,LC2  1.2D + 1.6S,member forces N,8.555644943261856e-14,<= 1e-08,yes,
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,LC2  1.2D + 1.6S,reactions R (incl. springs),2.5193410934851278e-14,<= 1e-08,yes,
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,LC2  1.2D + 1.6S,spring forces,2.5193410934851278e-14,<= 1e-08,yes,
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,4.003604063290319e-14,<= 1e-08,yes,
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,LC3  1.2D + 1.0W + 0.5S,displacements u,7.417499991443016e-14,<= 1e-08,yes,"738 free DOF, |u|max = 1.696 mm, |N|max = 22.59 kN, OS system FullGeneral"
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,LC3  1.2D + 1.0W + 0.5S,member forces N,5.71808919011914e-14,<= 1e-08,yes,
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),1.567883957955439e-14,<= 1e-08,yes,
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,LC3  1.2D + 1.0W + 0.5S,spring forces,1.567883957955439e-14,<= 1e-08,yes,
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,2.7272347719365737e-14,<= 1e-08,yes,
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,LC4  0.9D + 1.0W,displacements u,6.272077351831749e-14,<= 1e-08,yes,"738 free DOF, |u|max = 0.9654 mm, |N|max = 11.92 kN, OS system FullGeneral"
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,LC4  0.9D + 1.0W,member forces N,6.95479138622655e-14,<= 1e-08,yes,
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,LC4  0.9D + 1.0W,reactions R (incl. springs),2.543227380751287e-14,<= 1e-08,yes,
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,LC4  0.9D + 1.0W,spring forces,2.543227380751287e-14,<= 1e-08,yes,
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,2.632038495634665e-14,<= 1e-08,yes,
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,SLS  1.0D + 1.0S,displacements u,6.045780100758432e-14,<= 1e-08,yes,"738 free DOF, |u|max = 3.698 mm, |N|max = 25.16 kN, OS system FullGeneral"
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,SLS  1.0D + 1.0S,member forces N,8.98809728402753e-14,<= 1e-08,yes,
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,SLS  1.0D + 1.0S,reactions R (incl. springs),1.8811246629295814e-14,<= 1e-08,yes,
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,SLS  1.0D + 1.0S,spring forces,1.8811246629295814e-14,<= 1e-08,yes,
+S,S-7V-elastic,7V R=12 m f=0.463,elastic springs,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,4.0912706638249244e-14,<= 1e-08,yes,
+S,S-8V-pinned,8V R=12 m f=0.5,pinned,LC1  1.4D,displacements u,3.343413913098122e-14,<= 1e-08,yes,"903 free DOF, |u|max = 1.323 mm, |N|max = 13.11 kN, OS system UmfPack"
+S,S-8V-pinned,8V R=12 m f=0.5,pinned,LC1  1.4D,member forces N,4.038951812169555e-14,<= 1e-08,yes,
+S,S-8V-pinned,8V R=12 m f=0.5,pinned,LC1  1.4D,reactions R (incl. springs),2.2418658559433556e-14,<= 1e-08,yes,
+S,S-8V-pinned,8V R=12 m f=0.5,pinned,LC1  1.4D,OpenSees residual at free DOFs / |F|,3.5526835968501266e-15,<= 1e-08,yes,
+S,S-8V-pinned,8V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,displacements u,3.1859417758764764e-14,<= 1e-08,yes,"903 free DOF, |u|max = 4.56 mm, |N|max = 35.76 kN, OS system UmfPack"
+S,S-8V-pinned,8V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,member forces N,4.950691707226552e-14,<= 1e-08,yes,
+S,S-8V-pinned,8V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,reactions R (incl. springs),2.944627883506972e-14,<= 1e-08,yes,
+S,S-8V-pinned,8V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,4.0201479969864685e-15,<= 1e-08,yes,
+S,S-8V-pinned,8V R=12 m f=0.5,pinned,LC3  1.2D + 1.0W + 0.5S,displacements u,5.584974731438506e-14,<= 1e-08,yes,"903 free DOF, |u|max = 1.479 mm, |N|max = 22.72 kN, OS system UmfPack"
+S,S-8V-pinned,8V R=12 m f=0.5,pinned,LC3  1.2D + 1.0W + 0.5S,member forces N,4.4832078747519666e-14,<= 1e-08,yes,
+S,S-8V-pinned,8V R=12 m f=0.5,pinned,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),2.154531277268084e-14,<= 1e-08,yes,
+S,S-8V-pinned,8V R=12 m f=0.5,pinned,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,4.559854555064728e-15,<= 1e-08,yes,
+S,S-8V-pinned,8V R=12 m f=0.5,pinned,LC4  0.9D + 1.0W,displacements u,9.677533456076066e-14,<= 1e-08,yes,"903 free DOF, |u|max = 0.8033 mm, |N|max = 12.57 kN, OS system UmfPack"
+S,S-8V-pinned,8V R=12 m f=0.5,pinned,LC4  0.9D + 1.0W,member forces N,6.867979861375753e-14,<= 1e-08,yes,
+S,S-8V-pinned,8V R=12 m f=0.5,pinned,LC4  0.9D + 1.0W,reactions R (incl. springs),2.9596833619085004e-14,<= 1e-08,yes,
+S,S-8V-pinned,8V R=12 m f=0.5,pinned,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,7.577933245466209e-15,<= 1e-08,yes,
+S,S-8V-pinned,8V R=12 m f=0.5,pinned,SLS  1.0D + 1.0S,displacements u,2.898144985689092e-14,<= 1e-08,yes,"903 free DOF, |u|max = 3.086 mm, |N|max = 24.69 kN, OS system UmfPack"
+S,S-8V-pinned,8V R=12 m f=0.5,pinned,SLS  1.0D + 1.0S,member forces N,4.937277558206977e-14,<= 1e-08,yes,
+S,S-8V-pinned,8V R=12 m f=0.5,pinned,SLS  1.0D + 1.0S,reactions R (incl. springs),1.5880281888103947e-14,<= 1e-08,yes,
+S,S-8V-pinned,8V R=12 m f=0.5,pinned,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,4.840414174568612e-15,<= 1e-08,yes,
+S,S-8V-roller3,8V R=12 m f=0.5,3 rollers,LC1  1.4D,displacements u,9.629537600191011e-14,<= 1e-08,yes,"977 free DOF, |u|max = 1.361 mm, |N|max = 14.82 kN, OS system UmfPack"
+S,S-8V-roller3,8V R=12 m f=0.5,3 rollers,LC1  1.4D,member forces N,5.3086606096363824e-14,<= 1e-08,yes,
+S,S-8V-roller3,8V R=12 m f=0.5,3 rollers,LC1  1.4D,reactions R (incl. springs),6.137230320835744e-14,<= 1e-08,yes,
+S,S-8V-roller3,8V R=12 m f=0.5,3 rollers,LC1  1.4D,OpenSees residual at free DOFs / |F|,3.166401076000232e-15,<= 1e-08,yes,
+S,S-8V-roller3,8V R=12 m f=0.5,3 rollers,LC2  1.2D + 1.6S,displacements u,4.100302202658712e-14,<= 1e-08,yes,"977 free DOF, |u|max = 4.654 mm, |N|max = 39.89 kN, OS system UmfPack"
+S,S-8V-roller3,8V R=12 m f=0.5,3 rollers,LC2  1.2D + 1.6S,member forces N,5.435857491744639e-14,<= 1e-08,yes,
+S,S-8V-roller3,8V R=12 m f=0.5,3 rollers,LC2  1.2D + 1.6S,reactions R (incl. springs),3.210478022326331e-14,<= 1e-08,yes,
+S,S-8V-roller3,8V R=12 m f=0.5,3 rollers,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,3.2943704034109583e-15,<= 1e-08,yes,
+S,S-8V-roller3,8V R=12 m f=0.5,3 rollers,LC3  1.2D + 1.0W + 0.5S,displacements u,6.192925137515204e-14,<= 1e-08,yes,"977 free DOF, |u|max = 1.838 mm, |N|max = 28.58 kN, OS system UmfPack"
+S,S-8V-roller3,8V R=12 m f=0.5,3 rollers,LC3  1.2D + 1.0W + 0.5S,member forces N,6.364550128433036e-14,<= 1e-08,yes,
+S,S-8V-roller3,8V R=12 m f=0.5,3 rollers,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),2.446597504510344e-14,<= 1e-08,yes,
+S,S-8V-roller3,8V R=12 m f=0.5,3 rollers,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,1.9830819616636575e-15,<= 1e-08,yes,
+S,S-8V-roller3,8V R=12 m f=0.5,3 rollers,LC4  0.9D + 1.0W,displacements u,1.0109404953957019e-13,<= 1e-08,yes,"977 free DOF, |u|max = 1.549 mm, |N|max = 24.96 kN, OS system UmfPack"
+S,S-8V-roller3,8V R=12 m f=0.5,3 rollers,LC4  0.9D + 1.0W,member forces N,4.1469860855838256e-14,<= 1e-08,yes,
+S,S-8V-roller3,8V R=12 m f=0.5,3 rollers,LC4  0.9D + 1.0W,reactions R (incl. springs),3.374784870993573e-14,<= 1e-08,yes,
+S,S-8V-roller3,8V R=12 m f=0.5,3 rollers,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,1.978453362927461e-15,<= 1e-08,yes,
+S,S-8V-roller3,8V R=12 m f=0.5,3 rollers,SLS  1.0D + 1.0S,displacements u,4.258791906629649e-14,<= 1e-08,yes,"977 free DOF, |u|max = 3.152 mm, |N|max = 27.58 kN, OS system UmfPack"
+S,S-8V-roller3,8V R=12 m f=0.5,3 rollers,SLS  1.0D + 1.0S,member forces N,7.559305760686495e-14,<= 1e-08,yes,
+S,S-8V-roller3,8V R=12 m f=0.5,3 rollers,SLS  1.0D + 1.0S,reactions R (incl. springs),5.896241643883116e-14,<= 1e-08,yes,
+S,S-8V-roller3,8V R=12 m f=0.5,3 rollers,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,4.315690176606463e-15,<= 1e-08,yes,
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,LC1  1.4D,displacements u,5.011966953312301e-14,<= 1e-08,yes,"1023 free DOF, |u|max = 1.616 mm, |N|max = 13.23 kN, OS system UmfPack"
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,LC1  1.4D,member forces N,7.612236819095799e-14,<= 1e-08,yes,
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,LC1  1.4D,reactions R (incl. springs),7.543310326622142e-15,<= 1e-08,yes,
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,LC1  1.4D,spring forces,7.543310326622142e-15,<= 1e-08,yes,
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,LC1  1.4D,OpenSees residual at free DOFs / |F|,5.6806691496590924e-15,<= 1e-08,yes,
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,LC2  1.2D + 1.6S,displacements u,3.934119019696936e-14,<= 1e-08,yes,"1023 free DOF, |u|max = 5.247 mm, |N|max = 36.11 kN, OS system UmfPack"
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,LC2  1.2D + 1.6S,member forces N,8.191833460378818e-14,<= 1e-08,yes,
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,LC2  1.2D + 1.6S,reactions R (incl. springs),1.3076435825258827e-14,<= 1e-08,yes,
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,LC2  1.2D + 1.6S,spring forces,1.3076435825258827e-14,<= 1e-08,yes,
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,7.816861335058956e-15,<= 1e-08,yes,
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,LC3  1.2D + 1.0W + 0.5S,displacements u,2.191366810976449e-13,<= 1e-08,yes,"1023 free DOF, |u|max = 1.728 mm, |N|max = 22.77 kN, OS system UmfPack"
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,LC3  1.2D + 1.0W + 0.5S,member forces N,1.7239067566030702e-13,<= 1e-08,yes,
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),4.5858697021140817e-14,<= 1e-08,yes,
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,LC3  1.2D + 1.0W + 0.5S,spring forces,4.5858697021140817e-14,<= 1e-08,yes,
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,6.680543269057168e-15,<= 1e-08,yes,
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,LC4  0.9D + 1.0W,displacements u,1.1098737544278134e-13,<= 1e-08,yes,"1023 free DOF, |u|max = 0.9236 mm, |N|max = 12.4 kN, OS system UmfPack"
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,LC4  0.9D + 1.0W,member forces N,8.82988056968861e-14,<= 1e-08,yes,
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,LC4  0.9D + 1.0W,reactions R (incl. springs),4.349633259583287e-14,<= 1e-08,yes,
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,LC4  0.9D + 1.0W,spring forces,4.349633259583287e-14,<= 1e-08,yes,
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,1.1359866932245012e-14,<= 1e-08,yes,
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,SLS  1.0D + 1.0S,displacements u,4.880022793334399e-14,<= 1e-08,yes,"1023 free DOF, |u|max = 3.568 mm, |N|max = 24.93 kN, OS system UmfPack"
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,SLS  1.0D + 1.0S,member forces N,6.078484389288901e-14,<= 1e-08,yes,
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,SLS  1.0D + 1.0S,reactions R (incl. springs),1.0829164401693999e-14,<= 1e-08,yes,
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,SLS  1.0D + 1.0S,spring forces,1.0829164401693999e-14,<= 1e-08,yes,
+S,S-8V-elastic,8V R=12 m f=0.5,elastic springs,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,5.564987261981638e-15,<= 1e-08,yes,
+S,S-validation_a,1V R=5 m f=0.276,pinned,A1  1.0L,displacements u,0.0,<= 1e-08,yes,"3 free DOF, |u|max = 1.07 mm, |N|max = 32.23 kN, OS system FullGeneral"
+S,S-validation_a,1V R=5 m f=0.276,pinned,A1  1.0L,member forces N,2.2575164684290763e-16,<= 1e-08,yes,
+S,S-validation_a,1V R=5 m f=0.276,pinned,A1  1.0L,reactions R (incl. springs),6.063298011819522e-17,<= 1e-08,yes,
+S,S-validation_a,1V R=5 m f=0.276,pinned,A1  1.0L,OpenSees residual at free DOFs / |F|,2.1221543041368325e-16,<= 1e-08,yes,
+S,S-validation_a,1V R=5 m f=0.276,pinned,A2  1.2D + 1.6S,displacements u,0.0,<= 1e-08,yes,"3 free DOF, |u|max = 0.6937 mm, |N|max = 14.8 kN, OS system FullGeneral"
+S,S-validation_a,1V R=5 m f=0.276,pinned,A2  1.2D + 1.6S,member forces N,2.457716058153732e-16,<= 1e-08,yes,
+S,S-validation_a,1V R=5 m f=0.276,pinned,A2  1.2D + 1.6S,reactions R (incl. springs),9.349707489241382e-17,<= 1e-08,yes,
+S,S-validation_a,1V R=5 m f=0.276,pinned,A2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,2.3374268723103456e-16,<= 1e-08,yes,
+S,S-validation_b,1V R=5 m f=0.724,pinned,B1  1.0L,displacements u,1.968311310852704e-16,<= 1e-08,yes,"18 free DOF, |u|max = 1.645 mm, |N|max = 19.02 kN, OS system FullGeneral"
+S,S-validation_b,1V R=5 m f=0.724,pinned,B1  1.0L,member forces N,3.825197288236329e-16,<= 1e-08,yes,
+S,S-validation_b,1V R=5 m f=0.724,pinned,B1  1.0L,reactions R (incl. springs),1.8189894035458566e-16,<= 1e-08,yes,
+S,S-validation_b,1V R=5 m f=0.724,pinned,B1  1.0L,OpenSees residual at free DOFs / |F|,1.5294372011087817e-16,<= 1e-08,yes,
+S,S-validation_b,1V R=5 m f=0.724,pinned,B2  1.2D + 1.6S,displacements u,2.7182937867920356e-16,<= 1e-08,yes,"18 free DOF, |u|max = 1.859 mm, |N|max = 19.25 kN, OS system FullGeneral"
+S,S-validation_b,1V R=5 m f=0.724,pinned,B2  1.2D + 1.6S,member forces N,5.67088899201667e-16,<= 1e-08,yes,
+S,S-validation_b,1V R=5 m f=0.724,pinned,B2  1.2D + 1.6S,reactions R (incl. springs),1.7161092107773398e-16,<= 1e-08,yes,
+S,S-validation_b,1V R=5 m f=0.724,pinned,B2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,2.1451365134716747e-16,<= 1e-08,yes,
+S,S-three_bar,Planar three-bar indeterminate truss,custom,P  1.0L,displacements u,0.0,<= 1e-08,yes,"2 free DOF, |u|max = 0.5838 mm, |N|max = 35.26 kN, OS system FullGeneral"
+S,S-three_bar,Planar three-bar indeterminate truss,custom,P  1.0L,member forces N,2.579351042522893e-17,<= 1e-08,yes,
+S,S-three_bar,Planar three-bar indeterminate truss,custom,P  1.0L,reactions R (incl. springs),3.031649005909761e-17,<= 1e-08,yes,
+S,S-three_bar,Planar three-bar indeterminate truss,custom,P  1.0L,spring forces,0.0,<= 1e-08,yes,
+S,S-three_bar,Planar three-bar indeterminate truss,custom,P  1.0L,OpenSees residual at free DOFs / |F|,1.8189894035458566e-16,<= 1e-08,yes,
+S,S-three_bar,Planar three-bar indeterminate truss,custom,T  1.0T  temperature + settlement,displacements u,3.252606517456513e-17,<= 1e-08,yes,"2 free DOF, |u|max = 5 mm, |N|max = 35.02 kN, OS system FullGeneral"
+S,S-three_bar,Planar three-bar indeterminate truss,custom,T  1.0T  temperature + settlement,member forces N,6.800385521571243e-16,<= 1e-08,yes,
+S,S-three_bar,Planar three-bar indeterminate truss,custom,T  1.0T  temperature + settlement,reactions R (incl. springs),5.194328723574093e-16,<= 1e-08,yes,
+S,S-three_bar,Planar three-bar indeterminate truss,custom,T  1.0T  temperature + settlement,spring forces,0.0,<= 1e-08,yes,
+S,S-three_bar,Planar three-bar indeterminate truss,custom,T  1.0T  temperature + settlement,OpenSees residual at free DOFs / |F|,1.2466388936577822e-15,<= 1e-08,yes,
+S,S-three_bar,Planar three-bar indeterminate truss,custom,P + T  1.0L + 1.0T,displacements u,2.981555974335137e-17,<= 1e-08,yes,"2 free DOF, |u|max = 5 mm, |N|max = 70.28 kN, OS system FullGeneral"
+S,S-three_bar,Planar three-bar indeterminate truss,custom,P + T  1.0L + 1.0T,member forces N,9.71483645938749e-17,<= 1e-08,yes,
+S,S-three_bar,Planar three-bar indeterminate truss,custom,P + T  1.0L + 1.0T,reactions R (incl. springs),2.0705816421915547e-16,<= 1e-08,yes,
+S,S-three_bar,Planar three-bar indeterminate truss,custom,P + T  1.0L + 1.0T,spring forces,0.0,<= 1e-08,yes,
+S,S-three_bar,Planar three-bar indeterminate truss,custom,P + T  1.0L + 1.0T,OpenSees residual at free DOFs / |F|,4.933807819284564e-16,<= 1e-08,yes,
+S,S-case_study_6v,6V R=15 m f=0.5,pinned,LC1  1.4D,displacements u,2.4948160109379572e-14,<= 1e-08,yes,"498 free DOF, |u|max = 2.238 mm, |N|max = 27.31 kN, OS system FullGeneral"
+S,S-case_study_6v,6V R=15 m f=0.5,pinned,LC1  1.4D,member forces N,4.328647143699991e-14,<= 1e-08,yes,
+S,S-case_study_6v,6V R=15 m f=0.5,pinned,LC1  1.4D,reactions R (incl. springs),9.906759720718585e-15,<= 1e-08,yes,
+S,S-case_study_6v,6V R=15 m f=0.5,pinned,LC1  1.4D,OpenSees residual at free DOFs / |F|,1.2295957887060364e-14,<= 1e-08,yes,
+S,S-case_study_6v,6V R=15 m f=0.5,pinned,LC2  1.2D + 1.6S,displacements u,3.2557433188855374e-14,<= 1e-08,yes,"498 free DOF, |u|max = 4.582 mm, |N|max = 48.14 kN, OS system FullGeneral"
+S,S-case_study_6v,6V R=15 m f=0.5,pinned,LC2  1.2D + 1.6S,member forces N,5.486345747010721e-14,<= 1e-08,yes,
+S,S-case_study_6v,6V R=15 m f=0.5,pinned,LC2  1.2D + 1.6S,reactions R (incl. springs),1.4147157779261955e-14,<= 1e-08,yes,
+S,S-case_study_6v,6V R=15 m f=0.5,pinned,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,1.4917547559320776e-14,<= 1e-08,yes,
+S,S-case_study_6v,6V R=15 m f=0.5,pinned,LC3  1.2D + 1.0W + 0.5S,displacements u,4.760840719950144e-14,<= 1e-08,yes,"498 free DOF, |u|max = 2.332 mm, |N|max = 45.39 kN, OS system FullGeneral"
+S,S-case_study_6v,6V R=15 m f=0.5,pinned,LC3  1.2D + 1.0W + 0.5S,member forces N,2.869444291861479e-14,<= 1e-08,yes,
+S,S-case_study_6v,6V R=15 m f=0.5,pinned,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),2.1711908534371048e-14,<= 1e-08,yes,
+S,S-case_study_6v,6V R=15 m f=0.5,pinned,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,2.920326912336651e-14,<= 1e-08,yes,
+S,S-case_study_6v,6V R=15 m f=0.5,pinned,LC4  0.9D + 1.0W,displacements u,4.925113803482928e-14,<= 1e-08,yes,"498 free DOF, |u|max = 2.043 mm, |N|max = 32.32 kN, OS system FullGeneral"
+S,S-case_study_6v,6V R=15 m f=0.5,pinned,LC4  0.9D + 1.0W,member forces N,4.006790094530079e-14,<= 1e-08,yes,
+S,S-case_study_6v,6V R=15 m f=0.5,pinned,LC4  0.9D + 1.0W,reactions R (incl. springs),2.0695023634931357e-14,<= 1e-08,yes,
+S,S-case_study_6v,6V R=15 m f=0.5,pinned,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,2.030553863955484e-14,<= 1e-08,yes,
+S,S-case_study_6v,6V R=15 m f=0.5,pinned,SLS  1.0D + 1.0S,displacements u,3.262342075455284e-14,<= 1e-08,yes,"498 free DOF, |u|max = 3.264 mm, |N|max = 34.97 kN, OS system FullGeneral"
+S,S-case_study_6v,6V R=15 m f=0.5,pinned,SLS  1.0D + 1.0S,member forces N,4.7756445987117673e-14,<= 1e-08,yes,
+S,S-case_study_6v,6V R=15 m f=0.5,pinned,SLS  1.0D + 1.0S,reactions R (incl. springs),1.9253714932151702e-14,<= 1e-08,yes,
+S,S-case_study_6v,6V R=15 m f=0.5,pinned,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,1.4410755961487777e-14,<= 1e-08,yes,
+S,S-4V-T-pinned,4V R=12 m f=0.5,pinned,T1  1.2D + 1.6S + 1.0T,displacements u,6.4522616114601415e-15,<= 1e-08,yes,"213 free DOF, |u|max = 10.08 mm, |N|max = 278.4 kN, OS system FullGeneral"
+S,S-4V-T-pinned,4V R=12 m f=0.5,pinned,T1  1.2D + 1.6S + 1.0T,member forces N,3.2144101918216708e-15,<= 1e-08,yes,
+S,S-4V-T-pinned,4V R=12 m f=0.5,pinned,T1  1.2D + 1.6S + 1.0T,reactions R (incl. springs),7.774771342711575e-16,<= 1e-08,yes,
+S,S-4V-T-pinned,4V R=12 m f=0.5,pinned,T1  1.2D + 1.6S + 1.0T,OpenSees residual at free DOFs / |F|,1.9777074603022568e-15,<= 1e-08,yes,
+S,S-4V-T-pinned,4V R=12 m f=0.5,pinned,T2  1.0T,displacements u,4.9439619065339e-15,<= 1e-08,yes,"213 free DOF, |u|max = 10 mm, |N|max = 278.4 kN, OS system FullGeneral"
+S,S-4V-T-pinned,4V R=12 m f=0.5,pinned,T2  1.0T,member forces N,2.381407550648372e-15,<= 1e-08,yes,
+S,S-4V-T-pinned,4V R=12 m f=0.5,pinned,T2  1.0T,reactions R (incl. springs),6.870424849370474e-16,<= 1e-08,yes,
+S,S-4V-T-pinned,4V R=12 m f=0.5,pinned,T2  1.0T,OpenSees residual at free DOFs / |F|,1.0992679758992758e-15,<= 1e-08,yes,
+S,S-4V-T-pinned,4V R=12 m f=0.5,pinned,T3  1.2D + 1.0W + 0.5S + 1.2T,displacements u,5.71013144175699e-15,<= 1e-08,yes,"213 free DOF, |u|max = 12 mm, |N|max = 334.1 kN, OS system FullGeneral"
+S,S-4V-T-pinned,4V R=12 m f=0.5,pinned,T3  1.2D + 1.0W + 0.5S + 1.2T,member forces N,2.9998984005652788e-15,<= 1e-08,yes,
+S,S-4V-T-pinned,4V R=12 m f=0.5,pinned,T3  1.2D + 1.0W + 0.5S + 1.2T,reactions R (incl. springs),6.617762759824227e-16,<= 1e-08,yes,
+S,S-4V-T-pinned,4V R=12 m f=0.5,pinned,T3  1.2D + 1.0W + 0.5S + 1.2T,OpenSees residual at free DOFs / |F|,7.715239751599054e-16,<= 1e-08,yes,
+S,S-4V-T-roller3,4V R=12 m f=0.5,3 rollers,T1  1.2D + 1.6S + 1.0T,displacements u,1.0965952110355018e-14,<= 1e-08,yes,"247 free DOF, |u|max = 27.37 mm, |N|max = 145.2 kN, OS system FullGeneral"
+S,S-4V-T-roller3,4V R=12 m f=0.5,3 rollers,T1  1.2D + 1.6S + 1.0T,member forces N,2.0063680919019508e-14,<= 1e-08,yes,
+S,S-4V-T-roller3,4V R=12 m f=0.5,3 rollers,T1  1.2D + 1.6S + 1.0T,reactions R (incl. springs),1.6922263765373864e-14,<= 1e-08,yes,
+S,S-4V-T-roller3,4V R=12 m f=0.5,3 rollers,T1  1.2D + 1.6S + 1.0T,OpenSees residual at free DOFs / |F|,4.127739685824701e-15,<= 1e-08,yes,
+S,S-4V-T-roller3,4V R=12 m f=0.5,3 rollers,T2  1.0T,displacements u,6.652396082092514e-15,<= 1e-08,yes,"247 free DOF, |u|max = 29.47 mm, |N|max = 99.29 kN, OS system FullGeneral"
+S,S-4V-T-roller3,4V R=12 m f=0.5,3 rollers,T2  1.0T,member forces N,2.9156046508477586e-14,<= 1e-08,yes,
+S,S-4V-T-roller3,4V R=12 m f=0.5,3 rollers,T2  1.0T,reactions R (incl. springs),1.961850766933499e-14,<= 1e-08,yes,
+S,S-4V-T-roller3,4V R=12 m f=0.5,3 rollers,T2  1.0T,OpenSees residual at free DOFs / |F|,4.297047013336685e-15,<= 1e-08,yes,
+S,S-4V-T-roller3,4V R=12 m f=0.5,3 rollers,T3  1.2D + 1.0W + 0.5S + 1.2T,displacements u,5.524992865096469e-15,<= 1e-08,yes,"247 free DOF, |u|max = 33.6 mm, |N|max = 142 kN, OS system FullGeneral"
+S,S-4V-T-roller3,4V R=12 m f=0.5,3 rollers,T3  1.2D + 1.0W + 0.5S + 1.2T,member forces N,1.608067801036537e-14,<= 1e-08,yes,
+S,S-4V-T-roller3,4V R=12 m f=0.5,3 rollers,T3  1.2D + 1.0W + 0.5S + 1.2T,reactions R (incl. springs),8.604212472364937e-15,<= 1e-08,yes,
+S,S-4V-T-roller3,4V R=12 m f=0.5,3 rollers,T3  1.2D + 1.0W + 0.5S + 1.2T,OpenSees residual at free DOFs / |F|,4.024123987075294e-15,<= 1e-08,yes,
+S,S-4V-T-elastic,4V R=12 m f=0.5,elastic springs,T1  1.2D + 1.6S + 1.0T,displacements u,9.915738741323829e-15,<= 1e-08,yes,"273 free DOF, |u|max = 8.835 mm, |N|max = 119.2 kN, OS system FullGeneral"
+S,S-4V-T-elastic,4V R=12 m f=0.5,elastic springs,T1  1.2D + 1.6S + 1.0T,member forces N,9.341518989552232e-15,<= 1e-08,yes,
+S,S-4V-T-elastic,4V R=12 m f=0.5,elastic springs,T1  1.2D + 1.6S + 1.0T,reactions R (incl. springs),1.7491768473755885e-15,<= 1e-08,yes,
+S,S-4V-T-elastic,4V R=12 m f=0.5,elastic springs,T1  1.2D + 1.6S + 1.0T,spring forces,1.7491768473755885e-15,<= 1e-08,yes,
+S,S-4V-T-elastic,4V R=12 m f=0.5,elastic springs,T1  1.2D + 1.6S + 1.0T,OpenSees residual at free DOFs / |F|,4.736232694432363e-15,<= 1e-08,yes,
+S,S-4V-T-elastic,4V R=12 m f=0.5,elastic springs,T2  1.0T,displacements u,8.444316298394126e-15,<= 1e-08,yes,"273 free DOF, |u|max = 6.163 mm, |N|max = 118.9 kN, OS system FullGeneral"
+S,S-4V-T-elastic,4V R=12 m f=0.5,elastic springs,T2  1.0T,member forces N,5.704889872709855e-15,<= 1e-08,yes,
+S,S-4V-T-elastic,4V R=12 m f=0.5,elastic springs,T2  1.0T,reactions R (incl. springs),1.3652826985390739e-15,<= 1e-08,yes,
+S,S-4V-T-elastic,4V R=12 m f=0.5,elastic springs,T2  1.0T,spring forces,1.3652826985390739e-15,<= 1e-08,yes,
+S,S-4V-T-elastic,4V R=12 m f=0.5,elastic springs,T2  1.0T,OpenSees residual at free DOFs / |F|,1.8703010057569237e-15,<= 1e-08,yes,
+S,S-4V-T-elastic,4V R=12 m f=0.5,elastic springs,T3  1.2D + 1.0W + 0.5S + 1.2T,displacements u,1.1025482687910857e-14,<= 1e-08,yes,"273 free DOF, |u|max = 8.654 mm, |N|max = 143.1 kN, OS system FullGeneral"
+S,S-4V-T-elastic,4V R=12 m f=0.5,elastic springs,T3  1.2D + 1.0W + 0.5S + 1.2T,member forces N,7.550646517496563e-15,<= 1e-08,yes,
+S,S-4V-T-elastic,4V R=12 m f=0.5,elastic springs,T3  1.2D + 1.0W + 0.5S + 1.2T,reactions R (incl. springs),1.6940923849003243e-15,<= 1e-08,yes,
+S,S-4V-T-elastic,4V R=12 m f=0.5,elastic springs,T3  1.2D + 1.0W + 0.5S + 1.2T,spring forces,1.6940923849003243e-15,<= 1e-08,yes,
+S,S-4V-T-elastic,4V R=12 m f=0.5,elastic springs,T3  1.2D + 1.0W + 0.5S + 1.2T,OpenSees residual at free DOFs / |F|,2.5874614160001046e-15,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,LC1  1.4D,displacements u,2.6244322533971915e-15,<= 1e-08,yes,"118 free DOF, |u|max = 1.198 mm, |N|max = 13.3 kN, OS system FullGeneral"
+S,S-3V-custom,3V R=10 m f=0.414,custom,LC1  1.4D,member forces N,2.8724697491801976e-15,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,LC1  1.4D,reactions R (incl. springs),1.2039881714358399e-15,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,LC1  1.4D,spring forces,4.514955642884399e-16,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,LC1  1.4D,OpenSees residual at free DOFs / |F|,1.3074559049186074e-15,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,LC2  1.2D + 1.6S,displacements u,2.4752937996899356e-15,<= 1e-08,yes,"118 free DOF, |u|max = 5.081 mm, |N|max = 44.25 kN, OS system FullGeneral"
+S,S-3V-custom,3V R=10 m f=0.414,custom,LC2  1.2D + 1.6S,member forces N,3.781962175442324e-15,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,LC2  1.2D + 1.6S,reactions R (incl. springs),1.184742657351688e-15,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,LC2  1.2D + 1.6S,spring forces,5.92371328675844e-16,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,1.4685872523421964e-15,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,LC3  1.2D + 1.0W + 0.5S,displacements u,3.0832768353962883e-15,<= 1e-08,yes,"118 free DOF, |u|max = 1.266 mm, |N|max = 22.2 kN, OS system FullGeneral"
+S,S-3V-custom,3V R=10 m f=0.414,custom,LC3  1.2D + 1.0W + 0.5S,member forces N,2.908437964990878e-15,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),8.716947302648832e-16,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,LC3  1.2D + 1.0W + 0.5S,spring forces,4.358473651324416e-16,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,1.2666814049161583e-15,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,LC4  0.9D + 1.0W,displacements u,2.480830420588693e-15,<= 1e-08,yes,"118 free DOF, |u|max = 0.8085 mm, |N|max = 12.26 kN, OS system FullGeneral"
+S,S-3V-custom,3V R=10 m f=0.414,custom,LC4  0.9D + 1.0W,member forces N,3.2650785143532623e-15,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,LC4  0.9D + 1.0W,reactions R (incl. springs),1.0304673227319025e-15,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,LC4  0.9D + 1.0W,spring forces,2.7944876548661764e-16,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,2.0260035497779778e-15,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,SLS  1.0D + 1.0S,displacements u,2.878832960454294e-15,<= 1e-08,yes,"118 free DOF, |u|max = 3.39 mm, |N|max = 30.03 kN, OS system FullGeneral"
+S,S-3V-custom,3V R=10 m f=0.414,custom,SLS  1.0D + 1.0S,member forces N,3.3920388625419662e-15,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,SLS  1.0D + 1.0S,reactions R (incl. springs),1.0290658628237394e-15,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,SLS  1.0D + 1.0S,spring forces,5.055060378783282e-16,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,1.4804105395008181e-15,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,T1  1.2D + 1.6S + 1.0T,displacements u,3.367797222326581e-15,<= 1e-08,yes,"118 free DOF, |u|max = 9.272 mm, |N|max = 155.6 kN, OS system FullGeneral"
+S,S-3V-custom,3V R=10 m f=0.414,custom,T1  1.2D + 1.6S + 1.0T,member forces N,4.051270822295091e-15,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,T1  1.2D + 1.6S + 1.0T,reactions R (incl. springs),1.1673943802844757e-15,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,T1  1.2D + 1.6S + 1.0T,spring forces,4.4280476493549075e-16,<= 1e-08,yes,
+S,S-3V-custom,3V R=10 m f=0.414,custom,T1  1.2D + 1.6S + 1.0T,OpenSees residual at free DOFs / |F|,1.8316015276877116e-15,<= 1e-08,yes,
+S,S-5V-f0.625,5V R=15 m f=0.648,pinned,LC1  1.4D,displacements u,2.911587556496724e-14,<= 1e-08,yes,"393 free DOF, |u|max = 3.731 mm, |N|max = 30.41 kN, OS system FullGeneral"
+S,S-5V-f0.625,5V R=15 m f=0.648,pinned,LC1  1.4D,member forces N,2.4522685684275495e-14,<= 1e-08,yes,
+S,S-5V-f0.625,5V R=15 m f=0.648,pinned,LC1  1.4D,reactions R (incl. springs),7.390284005070425e-15,<= 1e-08,yes,
+S,S-5V-f0.625,5V R=15 m f=0.648,pinned,LC1  1.4D,OpenSees residual at free DOFs / |F|,9.648426339953056e-15,<= 1e-08,yes,
+S,S-5V-f0.625,5V R=15 m f=0.648,pinned,LC2  1.2D + 1.6S,displacements u,1.467603170409983e-14,<= 1e-08,yes,"393 free DOF, |u|max = 17.2 mm, |N|max = 113.2 kN, OS system FullGeneral"
+S,S-5V-f0.625,5V R=15 m f=0.648,pinned,LC2  1.2D + 1.6S,member forces N,2.1076991357298343e-14,<= 1e-08,yes,
+S,S-5V-f0.625,5V R=15 m f=0.648,pinned,LC2  1.2D + 1.6S,reactions R (incl. springs),8.772515993941692e-15,<= 1e-08,yes,
+S,S-5V-f0.625,5V R=15 m f=0.648,pinned,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,6.846841751369125e-15,<= 1e-08,yes,
+S,S-5V-f0.625,5V R=15 m f=0.648,pinned,LC3  1.2D + 1.0W + 0.5S,displacements u,1.939509942149106e-14,<= 1e-08,yes,"393 free DOF, |u|max = 5.501 mm, |N|max = 63.74 kN, OS system FullGeneral"
+S,S-5V-f0.625,5V R=15 m f=0.648,pinned,LC3  1.2D + 1.0W + 0.5S,member forces N,1.6267355156784593e-14,<= 1e-08,yes,
+S,S-5V-f0.625,5V R=15 m f=0.648,pinned,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),8.031760668984632e-15,<= 1e-08,yes,
+S,S-5V-f0.625,5V R=15 m f=0.648,pinned,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,7.335079939720307e-15,<= 1e-08,yes,
+S,S-5V-f0.625,5V R=15 m f=0.648,pinned,LC4  0.9D + 1.0W,displacements u,3.8868597441612794e-14,<= 1e-08,yes,"393 free DOF, |u|max = 2.421 mm, |N|max = 30.42 kN, OS system FullGeneral"
+S,S-5V-f0.625,5V R=15 m f=0.648,pinned,LC4  0.9D + 1.0W,member forces N,2.4756990211498934e-14,<= 1e-08,yes,
+S,S-5V-f0.625,5V R=15 m f=0.648,pinned,LC4  0.9D + 1.0W,reactions R (incl. springs),8.43153855804696e-15,<= 1e-08,yes,
+S,S-5V-f0.625,5V R=15 m f=0.648,pinned,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,1.5150420846490628e-14,<= 1e-08,yes,
+S,S-5V-f0.625,5V R=15 m f=0.648,pinned,SLS  1.0D + 1.0S,displacements u,1.3600966310987777e-14,<= 1e-08,yes,"393 free DOF, |u|max = 11.42 mm, |N|max = 76.2 kN, OS system FullGeneral"
+S,S-5V-f0.625,5V R=15 m f=0.648,pinned,SLS  1.0D + 1.0S,member forces N,1.785605278674743e-14,<= 1e-08,yes,
+S,S-5V-f0.625,5V R=15 m f=0.648,pinned,SLS  1.0D + 1.0S,reactions R (incl. springs),1.0805262840856937e-14,<= 1e-08,yes,
+S,S-5V-f0.625,5V R=15 m f=0.648,pinned,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,7.516704584943956e-15,<= 1e-08,yes,
+S,S-3V-f0.375,3V R=8 m f=0.406,pinned,LC1  1.4D,displacements u,1.803509750913879e-15,<= 1e-08,yes,"48 free DOF, |u|max = 0.3908 mm, |N|max = 5.545 kN, OS system FullGeneral"
+S,S-3V-f0.375,3V R=8 m f=0.406,pinned,LC1  1.4D,member forces N,2.542200030716678e-15,<= 1e-08,yes,
+S,S-3V-f0.375,3V R=8 m f=0.406,pinned,LC1  1.4D,reactions R (incl. springs),4.161465135801878e-16,<= 1e-08,yes,
+S,S-3V-f0.375,3V R=8 m f=0.406,pinned,LC1  1.4D,OpenSees residual at free DOFs / |F|,8.322930271603756e-16,<= 1e-08,yes,
+S,S-3V-f0.375,3V R=8 m f=0.406,pinned,LC2  1.2D + 1.6S,displacements u,1.7382109285143027e-15,<= 1e-08,yes,"48 free DOF, |u|max = 2.495 mm, |N|max = 33.01 kN, OS system FullGeneral"
+S,S-3V-f0.375,3V R=8 m f=0.406,pinned,LC2  1.2D + 1.6S,member forces N,2.093881074355927e-15,<= 1e-08,yes,
+S,S-3V-f0.375,3V R=8 m f=0.406,pinned,LC2  1.2D + 1.6S,reactions R (incl. springs),5.750676033795279e-16,<= 1e-08,yes,
+S,S-3V-f0.375,3V R=8 m f=0.406,pinned,LC2  1.2D + 1.6S,OpenSees residual at free DOFs / |F|,8.626014050692919e-16,<= 1e-08,yes,
+S,S-3V-f0.375,3V R=8 m f=0.406,pinned,LC3  1.2D + 1.0W + 0.5S,displacements u,1.4055766609606895e-15,<= 1e-08,yes,"48 free DOF, |u|max = 0.5785 mm, |N|max = 8.323 kN, OS system FullGeneral"
+S,S-3V-f0.375,3V R=8 m f=0.406,pinned,LC3  1.2D + 1.0W + 0.5S,member forces N,1.8577494157913773e-15,<= 1e-08,yes,
+S,S-3V-f0.375,3V R=8 m f=0.406,pinned,LC3  1.2D + 1.0W + 0.5S,reactions R (incl. springs),9.212453978675644e-16,<= 1e-08,yes,
+S,S-3V-f0.375,3V R=8 m f=0.406,pinned,LC3  1.2D + 1.0W + 0.5S,OpenSees residual at free DOFs / |F|,9.903388027076318e-16,<= 1e-08,yes,
+S,S-3V-f0.375,3V R=8 m f=0.406,pinned,LC4  0.9D + 1.0W,displacements u,2.2803824568922514e-15,<= 1e-08,yes,"48 free DOF, |u|max = 0.2258 mm, |N|max = 6.196 kN, OS system FullGeneral"
+S,S-3V-f0.375,3V R=8 m f=0.406,pinned,LC4  0.9D + 1.0W,member forces N,1.6605057464099236e-15,<= 1e-08,yes,
+S,S-3V-f0.375,3V R=8 m f=0.406,pinned,LC4  0.9D + 1.0W,reactions R (incl. springs),1.2838925650481915e-15,<= 1e-08,yes,
+S,S-3V-f0.375,3V R=8 m f=0.406,pinned,LC4  0.9D + 1.0W,OpenSees residual at free DOFs / |F|,1.4814144981325287e-15,<= 1e-08,yes,
+S,S-3V-f0.375,3V R=8 m f=0.406,pinned,SLS  1.0D + 1.0S,displacements u,7.986055984211017e-16,<= 1e-08,yes,"48 free DOF, |u|max = 1.629 mm, |N|max = 21.58 kN, OS system FullGeneral"
+S,S-3V-f0.375,3V R=8 m f=0.406,pinned,SLS  1.0D + 1.0S,member forces N,1.1803175220889925e-15,<= 1e-08,yes,
+S,S-3V-f0.375,3V R=8 m f=0.406,pinned,SLS  1.0D + 1.0S,reactions R (incl. springs),5.755329795718572e-16,<= 1e-08,yes,
+S,S-3V-f0.375,3V R=8 m f=0.406,pinned,SLS  1.0D + 1.0S,OpenSees residual at free DOFs / |F|,1.1150951479204733e-15,<= 1e-08,yes,
+M,M-1V-pinned,1V R=12 m f=0.276,pinned,lumped mass,natural frequencies f,0.0,<= 1e-06,yes,"3 modes (1 single, 2 in repeated clusters), f1 = 12.516074 Hz, OS -fullGenLapack"
+M,M-1V-pinned,1V R=12 m f=0.276,pinned,lumped mass,1 - MAC (single modes),0.0,<= 1e-06,yes,
+M,M-1V-pinned,1V R=12 m f=0.276,pinned,lumped mass,1 - subspace MAC (repeated pairs),0.0,<= 1e-06,yes,
+M,M-1V-roller3,1V R=12 m f=0.276,3 rollers,lumped mass,natural frequencies f,3.437990927120415e-16,<= 1e-06,yes,"7 modes (5 single, 2 in repeated clusters), f1 = 10.100402 Hz, OS -fullGenLapack"
+M,M-1V-roller3,1V R=12 m f=0.276,3 rollers,lumped mass,1 - MAC (single modes),1.1102230246251565e-16,<= 1e-06,yes,
+M,M-1V-roller3,1V R=12 m f=0.276,3 rollers,lumped mass,1 - subspace MAC (repeated pairs),0.0,<= 1e-06,yes,
+M,M-1V-elastic,1V R=12 m f=0.276,elastic springs,lumped mass,natural frequencies f,1.2923611401579402e-15,<= 1e-06,yes,"12 modes (2 single, 10 in repeated clusters), f1 = 10.996040 Hz, OS -genBandArpack"
+M,M-1V-elastic,1V R=12 m f=0.276,elastic springs,lumped mass,1 - MAC (single modes),2.220446049250313e-16,<= 1e-06,yes,
+M,M-1V-elastic,1V R=12 m f=0.276,elastic springs,lumped mass,1 - subspace MAC (repeated pairs),2.220446049250313e-16,<= 1e-06,yes,
+M,M-2V-pinned,2V R=12 m f=0.5,pinned,lumped mass,natural frequencies f,1.3369459069945223e-15,<= 1e-06,yes,"12 modes (2 single, 10 in repeated clusters), f1 = 7.972006 Hz, OS -genBandArpack"
+M,M-2V-pinned,2V R=12 m f=0.5,pinned,lumped mass,1 - MAC (single modes),2.220446049250313e-16,<= 1e-06,yes,
+M,M-2V-pinned,2V R=12 m f=0.5,pinned,lumped mass,1 - subspace MAC (repeated pairs),9.992007221626409e-16,<= 1e-06,yes,
+M,M-2V-roller3,2V R=12 m f=0.5,3 rollers,lumped mass,natural frequencies f,1.8690876361654057e-15,<= 1e-06,yes,"12 modes (12 single, 0 in repeated clusters), f1 = 5.577929 Hz, OS -genBandArpack"
+M,M-2V-roller3,2V R=12 m f=0.5,3 rollers,lumped mass,1 - MAC (single modes),4.440892098500626e-16,<= 1e-06,yes,
+M,M-2V-elastic,2V R=12 m f=0.5,elastic springs,lumped mass,natural frequencies f,2.7055810983435845e-15,<= 1e-06,yes,"12 modes (2 single, 10 in repeated clusters), f1 = 7.222081 Hz, OS -genBandArpack"
+M,M-2V-elastic,2V R=12 m f=0.5,elastic springs,lumped mass,1 - MAC (single modes),5.551115123125783e-16,<= 1e-06,yes,
+M,M-2V-elastic,2V R=12 m f=0.5,elastic springs,lumped mass,1 - subspace MAC (repeated pairs),9.992007221626409e-16,<= 1e-06,yes,
+M,M-3V-pinned,3V R=12 m f=0.414,pinned,lumped mass,natural frequencies f,7.451639209694872e-15,<= 1e-06,yes,"12 modes (2 single, 10 in repeated clusters), f1 = 10.727312 Hz, OS -genBandArpack"
+M,M-3V-pinned,3V R=12 m f=0.414,pinned,lumped mass,1 - MAC (single modes),4.440892098500626e-16,<= 1e-06,yes,
+M,M-3V-pinned,3V R=12 m f=0.414,pinned,lumped mass,1 - subspace MAC (repeated pairs),1.5543122344752192e-15,<= 1e-06,yes,
+M,M-3V-roller3,3V R=12 m f=0.414,3 rollers,lumped mass,natural frequencies f,5.958407597792876e-15,<= 1e-06,yes,"12 modes (12 single, 0 in repeated clusters), f1 = 7.155026 Hz, OS -genBandArpack"
+M,M-3V-roller3,3V R=12 m f=0.414,3 rollers,lumped mass,1 - MAC (single modes),6.661338147750939e-16,<= 1e-06,yes,
+M,M-3V-elastic,3V R=12 m f=0.414,elastic springs,lumped mass,natural frequencies f,9.086339372357591e-15,<= 1e-06,yes,"12 modes (2 single, 10 in repeated clusters), f1 = 9.774876 Hz, OS -genBandArpack"
+M,M-3V-elastic,3V R=12 m f=0.414,elastic springs,lumped mass,1 - MAC (single modes),5.551115123125783e-16,<= 1e-06,yes,
+M,M-3V-elastic,3V R=12 m f=0.414,elastic springs,lumped mass,1 - subspace MAC (repeated pairs),1.6653345369377348e-15,<= 1e-06,yes,
+M,M-4V-pinned,4V R=12 m f=0.5,pinned,lumped mass,natural frequencies f,1.680754028369267e-14,<= 1e-06,yes,"12 modes (2 single, 10 in repeated clusters), f1 = 10.040369 Hz, OS -genBandArpack"
+M,M-4V-pinned,4V R=12 m f=0.5,pinned,lumped mass,1 - MAC (single modes),7.771561172376096e-16,<= 1e-06,yes,
+M,M-4V-pinned,4V R=12 m f=0.5,pinned,lumped mass,1 - subspace MAC (repeated pairs),1.7763568394002505e-15,<= 1e-06,yes,
+M,M-4V-roller3,4V R=12 m f=0.5,3 rollers,lumped mass,natural frequencies f,5.6810361363832625e-14,<= 1e-06,yes,"12 modes (12 single, 0 in repeated clusters), f1 = 5.972223 Hz, OS -genBandArpack"
+M,M-4V-roller3,4V R=12 m f=0.5,3 rollers,lumped mass,1 - MAC (single modes),6.661338147750939e-16,<= 1e-06,yes,
+M,M-4V-elastic,4V R=12 m f=0.5,elastic springs,lumped mass,natural frequencies f,1.659391606962432e-14,<= 1e-06,yes,"12 modes (2 single, 10 in repeated clusters), f1 = 8.964835 Hz, OS -genBandArpack"
+M,M-4V-elastic,4V R=12 m f=0.5,elastic springs,lumped mass,1 - MAC (single modes),1.6653345369377348e-15,<= 1e-06,yes,
+M,M-4V-elastic,4V R=12 m f=0.5,elastic springs,lumped mass,1 - subspace MAC (repeated pairs),7.771561172376096e-16,<= 1e-06,yes,
+M,M-5V-pinned,5V R=12 m f=0.448,pinned,lumped mass,natural frequencies f,1.233392907442127e-14,<= 1e-06,yes,"12 modes (2 single, 10 in repeated clusters), f1 = 12.046212 Hz, OS -genBandArpack"
+M,M-5V-pinned,5V R=12 m f=0.448,pinned,lumped mass,1 - MAC (single modes),7.771561172376096e-16,<= 1e-06,yes,
+M,M-5V-pinned,5V R=12 m f=0.448,pinned,lumped mass,1 - subspace MAC (repeated pairs),1.2212453270876722e-15,<= 1e-06,yes,
+M,M-5V-roller3,5V R=12 m f=0.448,3 rollers,lumped mass,natural frequencies f,8.148901564310165e-14,<= 1e-06,yes,"12 modes (12 single, 0 in repeated clusters), f1 = 7.575058 Hz, OS -genBandArpack"
+M,M-5V-roller3,5V R=12 m f=0.448,3 rollers,lumped mass,1 - MAC (single modes),8.881784197001252e-16,<= 1e-06,yes,
+M,M-5V-elastic,5V R=12 m f=0.448,elastic springs,lumped mass,natural frequencies f,1.3404199690572003e-14,<= 1e-06,yes,"12 modes (2 single, 10 in repeated clusters), f1 = 10.800846 Hz, OS -genBandArpack"
+M,M-5V-elastic,5V R=12 m f=0.448,elastic springs,lumped mass,1 - MAC (single modes),8.881784197001252e-16,<= 1e-06,yes,
+M,M-5V-elastic,5V R=12 m f=0.448,elastic springs,lumped mass,1 - subspace MAC (repeated pairs),2.7755575615628914e-15,<= 1e-06,yes,
+M,M-6V-pinned,6V R=12 m f=0.5,pinned,lumped mass,natural frequencies f,3.4135810907515895e-14,<= 1e-06,yes,"12 modes (2 single, 10 in repeated clusters), f1 = 11.500382 Hz, OS -genBandArpack"
+M,M-6V-pinned,6V R=12 m f=0.5,pinned,lumped mass,1 - MAC (single modes),8.881784197001252e-16,<= 1e-06,yes,
+M,M-6V-pinned,6V R=12 m f=0.5,pinned,lumped mass,1 - subspace MAC (repeated pairs),1.887379141862766e-15,<= 1e-06,yes,
+M,M-6V-roller3,6V R=12 m f=0.5,3 rollers,lumped mass,natural frequencies f,2.7913242881379454e-14,<= 1e-06,yes,"12 modes (12 single, 0 in repeated clusters), f1 = 6.236573 Hz, OS -genBandArpack"
+M,M-6V-roller3,6V R=12 m f=0.5,3 rollers,lumped mass,1 - MAC (single modes),1.2212453270876722e-15,<= 1e-06,yes,
+M,M-6V-elastic,6V R=12 m f=0.5,elastic springs,lumped mass,natural frequencies f,5.570188372975236e-14,<= 1e-06,yes,"12 modes (2 single, 10 in repeated clusters), f1 = 10.204937 Hz, OS -genBandArpack"
+M,M-6V-elastic,6V R=12 m f=0.5,elastic springs,lumped mass,1 - MAC (single modes),7.771561172376096e-16,<= 1e-06,yes,
+M,M-6V-elastic,6V R=12 m f=0.5,elastic springs,lumped mass,1 - subspace MAC (repeated pairs),1.887379141862766e-15,<= 1e-06,yes,
+M,M-7V-pinned,7V R=12 m f=0.463,pinned,lumped mass,natural frequencies f,2.887058535075107e-14,<= 1e-06,yes,"12 modes (2 single, 10 in repeated clusters), f1 = 13.063831 Hz, OS -genBandArpack"
+M,M-7V-pinned,7V R=12 m f=0.463,pinned,lumped mass,1 - MAC (single modes),2.220446049250313e-16,<= 1e-06,yes,
+M,M-7V-pinned,7V R=12 m f=0.463,pinned,lumped mass,1 - subspace MAC (repeated pairs),1.3322676295501878e-15,<= 1e-06,yes,
+M,M-7V-roller3,7V R=12 m f=0.463,3 rollers,lumped mass,natural frequencies f,1.16365498866922e-13,<= 1e-06,yes,"12 modes (12 single, 0 in repeated clusters), f1 = 7.701355 Hz, OS -genBandArpack"
+M,M-7V-roller3,7V R=12 m f=0.463,3 rollers,lumped mass,1 - MAC (single modes),9.992007221626409e-16,<= 1e-06,yes,
+M,M-7V-elastic,7V R=12 m f=0.463,elastic springs,lumped mass,natural frequencies f,8.200034121606486e-14,<= 1e-06,yes,"12 modes (2 single, 10 in repeated clusters), f1 = 11.632923 Hz, OS -genBandArpack"
+M,M-7V-elastic,7V R=12 m f=0.463,elastic springs,lumped mass,1 - MAC (single modes),5.551115123125783e-16,<= 1e-06,yes,
+M,M-7V-elastic,7V R=12 m f=0.463,elastic springs,lumped mass,1 - subspace MAC (repeated pairs),1.7763568394002505e-15,<= 1e-06,yes,
+M,M-8V-pinned,8V R=12 m f=0.5,pinned,lumped mass,natural frequencies f,1.2625580421739488e-13,<= 1e-06,yes,"12 modes (2 single, 10 in repeated clusters), f1 = 12.592208 Hz, OS -genBandArpack"
+M,M-8V-pinned,8V R=12 m f=0.5,pinned,lumped mass,1 - MAC (single modes),0.0,<= 1e-06,yes,
+M,M-8V-pinned,8V R=12 m f=0.5,pinned,lumped mass,1 - subspace MAC (repeated pairs),3.774758283725532e-15,<= 1e-06,yes,
+M,M-8V-roller3,8V R=12 m f=0.5,3 rollers,lumped mass,natural frequencies f,2.720549224116009e-13,<= 1e-06,yes,"12 modes (12 single, 0 in repeated clusters), f1 = 6.793846 Hz, OS -genBandArpack"
+M,M-8V-roller3,8V R=12 m f=0.5,3 rollers,lumped mass,1 - MAC (single modes),1.5543122344752192e-15,<= 1e-06,yes,
+M,M-8V-elastic,8V R=12 m f=0.5,elastic springs,lumped mass,natural frequencies f,4.3871173666244857e-14,<= 1e-06,yes,"12 modes (2 single, 10 in repeated clusters), f1 = 11.134832 Hz, OS -genBandArpack"
+M,M-8V-elastic,8V R=12 m f=0.5,elastic springs,lumped mass,1 - MAC (single modes),3.3306690738754696e-15,<= 1e-06,yes,
+M,M-8V-elastic,8V R=12 m f=0.5,elastic springs,lumped mass,1 - subspace MAC (repeated pairs),3.9968028886505635e-15,<= 1e-06,yes,
+M,M-1V-all-lumped,1V R=12 m f=0.276,pinned,lumped mass,natural frequencies f,0.0,<= 1e-06,yes,"3 modes (1 single, 2 in repeated clusters), f1 = 12.516074 Hz, OS -fullGenLapack"
+M,M-1V-all-lumped,1V R=12 m f=0.276,pinned,lumped mass,1 - MAC (single modes),0.0,<= 1e-06,yes,
+M,M-1V-all-lumped,1V R=12 m f=0.276,pinned,lumped mass,1 - subspace MAC (repeated pairs),0.0,<= 1e-06,yes,
+M,M-1V-all-consistent,1V R=12 m f=0.276,pinned,consistent mass,natural frequencies f,1.4026265883313425e-16,<= 1e-06,yes,"3 modes (1 single, 2 in repeated clusters), f1 = 12.664503 Hz, OS -fullGenLapack"
+M,M-1V-all-consistent,1V R=12 m f=0.276,pinned,consistent mass,1 - MAC (single modes),0.0,<= 1e-06,yes,
+M,M-1V-all-consistent,1V R=12 m f=0.276,pinned,consistent mass,1 - subspace MAC (repeated pairs),0.0,<= 1e-06,yes,
+M,M-2V-all-lumped,2V R=12 m f=0.5,pinned,lumped mass,natural frequencies f,2.343127535650812e-15,<= 1e-06,yes,"48 modes (10 single, 38 in repeated clusters), f1 = 7.972006 Hz, OS -fullGenLapack"
+M,M-2V-all-lumped,2V R=12 m f=0.5,pinned,lumped mass,1 - MAC (single modes),3.3306690738754696e-16,<= 1e-06,yes,
+M,M-2V-all-lumped,2V R=12 m f=0.5,pinned,lumped mass,1 - subspace MAC (repeated pairs),1.1102230246251565e-15,<= 1e-06,yes,
+M,M-2V-all-consistent,2V R=12 m f=0.5,pinned,consistent mass,natural frequencies f,3.0952652463888835e-15,<= 1e-06,yes,"48 modes (10 single, 38 in repeated clusters), f1 = 8.005464 Hz, OS -fullGenLapack"
+M,M-2V-all-consistent,2V R=12 m f=0.5,pinned,consistent mass,1 - MAC (single modes),4.440892098500626e-16,<= 1e-06,yes,
+M,M-2V-all-consistent,2V R=12 m f=0.5,pinned,consistent mass,1 - subspace MAC (repeated pairs),7.771561172376096e-16,<= 1e-06,yes,
+M,M-3V-all-lumped,3V R=12 m f=0.414,pinned,lumped mass,natural frequencies f,1.0841765156272716e-14,<= 1e-06,yes,"93 modes (19 single, 74 in repeated clusters), f1 = 10.727312 Hz, OS -fullGenLapack"
+M,M-3V-all-lumped,3V R=12 m f=0.414,pinned,lumped mass,1 - MAC (single modes),4.440892098500626e-16,<= 1e-06,yes,
+M,M-3V-all-lumped,3V R=12 m f=0.414,pinned,lumped mass,1 - subspace MAC (repeated pairs),1.3322676295501878e-15,<= 1e-06,yes,
+M,M-3V-all-consistent,3V R=12 m f=0.414,pinned,consistent mass,natural frequencies f,1.6163613915556665e-14,<= 1e-06,yes,"93 modes (19 single, 74 in repeated clusters), f1 = 10.770052 Hz, OS -fullGenLapack"
+M,M-3V-all-consistent,3V R=12 m f=0.414,pinned,consistent mass,1 - MAC (single modes),6.661338147750939e-16,<= 1e-06,yes,
+M,M-3V-all-consistent,3V R=12 m f=0.414,pinned,consistent mass,1 - subspace MAC (repeated pairs),9.992007221626409e-16,<= 1e-06,yes,
+M,M-case6V-lumped,6V R=15 m f=0.5,pinned,lumped mass,natural frequencies f,2.5733857707024867e-14,<= 1e-06,yes,"20 modes (4 single, 16 in repeated clusters), f1 = 9.525865 Hz, OS -genBandArpack"
+M,M-case6V-lumped,6V R=15 m f=0.5,pinned,lumped mass,1 - MAC (single modes),9.992007221626409e-16,<= 1e-06,yes,
+M,M-case6V-lumped,6V R=15 m f=0.5,pinned,lumped mass,1 - subspace MAC (repeated pairs),2.220446049250313e-15,<= 1e-06,yes,
+M,M-case6V-consistent,6V R=15 m f=0.5,pinned,consistent mass,natural frequencies f,5.1562924886019665e-14,<= 1e-06,yes,"20 modes (4 single, 16 in repeated clusters), f1 = 9.542726 Hz, OS -genBandArpack"
+M,M-case6V-consistent,6V R=15 m f=0.5,pinned,consistent mass,1 - MAC (single modes),2.220446049250313e-16,<= 1e-06,yes,
+M,M-case6V-consistent,6V R=15 m f=0.5,pinned,consistent mass,1 - subspace MAC (repeated pairs),2.55351295663786e-15,<= 1e-06,yes,
+M,M-validation_a,1V R=5 m f=0.276,pinned,lumped mass,natural frequencies f,1.398325638517978e-16,<= 1e-06,yes,"3 modes (1 single, 2 in repeated clusters), f1 = 44.412911 Hz, OS -fullGenLapack"
+M,M-validation_a,1V R=5 m f=0.276,pinned,lumped mass,1 - MAC (single modes),0.0,<= 1e-06,yes,
+M,M-validation_a,1V R=5 m f=0.276,pinned,lumped mass,1 - subspace MAC (repeated pairs),0.0,<= 1e-06,yes,
+M,M-star_dome,24-member shallow star dome,pinned,lumped mass,natural frequencies f,1.2537443744877744e-14,<= 1e-06,yes,"21 modes (7 single, 14 in repeated clusters), f1 = 274.324562 Hz, OS -fullGenLapack"
+M,M-star_dome,24-member shallow star dome,pinned,lumped mass,1 - MAC (single modes),1.1102230246251565e-16,<= 1e-06,yes,
+M,M-star_dome,24-member shallow star dome,pinned,lumped mass,1 - subspace MAC (repeated pairs),4.440892098500626e-16,<= 1e-06,yes,
+M,M-three_bar,Planar three-bar indeterminate truss,custom,lumped mass,natural frequencies f,1.2463656360199024e-16,<= 1e-06,yes,"2 modes (2 single, 0 in repeated clusters), f1 = 163.357857 Hz, OS -fullGenLapack"
+M,M-three_bar,Planar three-bar indeterminate truss,custom,lumped mass,1 - MAC (single modes),0.0,<= 1e-06,yes,
+N,N-von-mises,von Mises two-bar truss,custom,P  1.0L  apex reference load,lambda at matched states / max|lambda|,9.602689938430902e-14,<= 1e-05,yes,"22/22 states, 1 control segment(s) on DOF(s) [8]; lambda in [-1.022, 3.977], control in [-303.9, 0] mm, max |strain| 1.31e-03; |control displacement| exceeded 0.3 m"
+N,N-von-mises,von Mises two-bar truss,custom,P  1.0L  apex reference load,lambda pointwise (|lambda| > 5 % of max),4.481550964733121e-13,<= 1e-05,yes,
+N,N-von-mises,von Mises two-bar truss,custom,P  1.0L  apex reference load,displacements at matched states,0.0,<= 1e-05,yes,
+N,N-von-mises,von Mises two-bar truss,custom,P  1.0L  apex reference load,lambda at the refined first limit point,3.7728394881100403e-14,<= 1e-05,yes,"lambda_limit GDL 1.02404996, OS 1.02404996 (limit)"
+N,N-von-mises,von Mises two-bar truss,custom,P  1.0L  apex reference load,GDL equilibrium residual of OpenSees states,3.725062924786471e-13,<= 1e-08,yes,OpenSees states checked with GeoDomeLab's corotational equations
+N,N-von-mises,von Mises two-bar truss,custom,P  1.0L  apex reference load,GDL residual of OpenSees ArcLength points,3.1386662158183755e-13,<= 1e-08,yes,"301 independent OpenSees ArcLength points, control in [-198, 0] mm, max lambda 1.02383 (step limit reached)"
+N,N-von-mises,von Mises two-bar truss,custom,P  1.0L  apex reference load,OpenSees P(w) vs exact closed form,9.604476485396191e-14,<= 1e-05,yes,"22 points, w up to 303.9 mm (h = 125 mm)"
+N,N-von-mises,von Mises two-bar truss,custom,P  1.0L  apex reference load,OpenSees limit load vs closed form P*,1.2789145277213058e-14,<= 1e-05,yes,P* = 10.2405 kN at w* = 52.8613 mm
+N,N-von-mises-deep,von Mises two-bar truss,custom,P  1.0L  apex reference load,lambda at matched states / max|lambda|,1.0447527202658194e-11,<= 1e-05,yes,"13/13 states, 1 control segment(s) on DOF(s) [8]; lambda in [-38.51, 120.9], control in [-2600, 0] mm, max |strain| 3.34e-01; |control displacement| exceeded 2.4 m"
+N,N-von-mises-deep,von Mises two-bar truss,custom,P  1.0L  apex reference load,lambda pointwise (|lambda| > 5 % of max),3.1595417724414366e-11,<= 1e-05,yes,
+N,N-von-mises-deep,von Mises two-bar truss,custom,P  1.0L  apex reference load,displacements at matched states,0.0,<= 1e-05,yes,
+N,N-von-mises-deep,von Mises two-bar truss,custom,P  1.0L  apex reference load,lambda at the refined first limit point,3.1595417724414366e-11,<= 1e-05,yes,"lambda_limit GDL 39.9875436, OS 39.9875436 (limit)"
+N,N-von-mises-deep,von Mises two-bar truss,custom,P  1.0L  apex reference load,GDL equilibrium residual of OpenSees states,7.376388136944093e-13,<= 1e-08,yes,OpenSees states checked with GeoDomeLab's corotational equations
+N,N-von-mises-deep,von Mises two-bar truss,custom,P  1.0L  apex reference load,OpenSees P(w) vs exact closed form,2.1563678284352946e-13,<= 1e-05,yes,"13 points, w up to 2600 mm (h = 1000 mm)"
+N,N-von-mises-deep,von Mises two-bar truss,custom,P  1.0L  apex reference load,OpenSees limit load vs closed form P*,1.0545855629310309e-12,<= 1e-05,yes,P* = 39987.544 kN at w* = 490.175 mm
+N,N-star-dome,24-member shallow star dome,pinned,P  1.0L  crown reference load,lambda at matched states / max|lambda|,8.931762579714769e-13,<= 1e-05,yes,"284/284 states, 5 control segment(s) on DOF(s) [2, 3, 5]; lambda in [-88.65, 88.64], control in [-171.8, 0] mm, max |strain| 1.69e-02; |control displacement| exceeded 0.17 m"
+N,N-star-dome,24-member shallow star dome,pinned,P  1.0L  crown reference load,lambda pointwise (|lambda| > 5 % of max),3.647204647463486e-12,<= 1e-05,yes,
+N,N-star-dome,24-member shallow star dome,pinned,P  1.0L  crown reference load,displacements at matched states,2.658679628883493e-13,<= 1e-05,yes,
+N,N-star-dome,24-member shallow star dome,pinned,P  1.0L  crown reference load,lambda at the refined first limit point,2.7996979558571308e-14,<= 1e-05,yes,"lambda_limit GDL 3.156545962, OS 3.156545962 (limit)"
+N,N-star-dome,24-member shallow star dome,pinned,P  1.0L  crown reference load,GDL equilibrium residual of OpenSees states,3.374936064544546e-11,<= 1e-08,yes,OpenSees states checked with GeoDomeLab's corotational equations
+N,N-star-dome,24-member shallow star dome,pinned,P  1.0L  crown reference load,GDL residual of OpenSees ArcLength points,6.380657584186672e-12,<= 1e-08,yes,"126 independent OpenSees ArcLength points, control in [-7.879, 170.7] mm, max lambda 3.15497 (control limit reached)"
+N,N-star-dome,24-member shallow star dome,pinned,P  1.0L  crown reference load,"OpenSees P/EA at limit vs reference 3.15655e-4 (absolute, 6 digits)",4.03848736732753e-10,<= 5e-10 (abs),yes,"P/EA = 3.156545962e-04; reference = research notes 5d (agrees with Greco & Venturini 2006, Fig. 8)"
+N,N-2V-LC2,2V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,lambda at matched states / max|lambda|,1.2370988353156438e-13,<= 1e-05,yes,"24/24 states, 1 control segment(s) on DOF(s) [2]; lambda in [0, 86.73], control in [-2637, 0] mm, max |strain| 9.22e-02; first limit point passed (10 steps traced beyond it)"
+N,N-2V-LC2,2V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,lambda pointwise (|lambda| > 5 % of max),1.8429048725590232e-13,<= 1e-05,yes,
+N,N-2V-LC2,2V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,displacements at matched states,6.85305823436141e-13,<= 1e-05,yes,
+N,N-2V-LC2,2V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,lambda at the refined first limit point,0.0,<= 1e-05,yes,"lambda_limit GDL 86.73435804, OS 86.73435804 (limit)"
+N,N-2V-LC2,2V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,GDL equilibrium residual of OpenSees states,8.272676382546153e-13,<= 1e-08,yes,OpenSees states checked with GeoDomeLab's corotational equations
+N,N-3V-LC2,3V R=12 m f=0.414,pinned,LC2  1.2D + 1.6S,lambda at matched states / max|lambda|,4.786714698571132e-13,<= 1e-05,yes,"23/23 states, 1 control segment(s) on DOF(s) [2]; lambda in [0, 48.72], control in [-578.7, 0] mm, max |strain| 1.49e-02; first limit point passed (10 steps traced beyond it)"
+N,N-3V-LC2,3V R=12 m f=0.414,pinned,LC2  1.2D + 1.6S,lambda pointwise (|lambda| > 5 % of max),9.260596060044416e-13,<= 1e-05,yes,
+N,N-3V-LC2,3V R=12 m f=0.414,pinned,LC2  1.2D + 1.6S,displacements at matched states,5.269277177355242e-13,<= 1e-05,yes,
+N,N-3V-LC2,3V R=12 m f=0.414,pinned,LC2  1.2D + 1.6S,lambda at the refined first limit point,6.271396871116541e-15,<= 1e-05,yes,"lambda_limit GDL 48.71855229, OS 48.71855229 (limit)"
+N,N-3V-LC2,3V R=12 m f=0.414,pinned,LC2  1.2D + 1.6S,GDL equilibrium residual of OpenSees states,1.5334961322425895e-12,<= 1e-08,yes,OpenSees states checked with GeoDomeLab's corotational equations
+N,N-4V-LC2,4V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,lambda at matched states / max|lambda|,1.4460075512603165e-11,<= 1e-05,yes,"22/22 states, 2 control segment(s) on DOF(s) [2, 3]; lambda in [0, 36.45], control in [-356.2, 0] mm, max |strain| 1.22e-02; first limit point passed (10 steps traced beyond it)"
+N,N-4V-LC2,4V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,lambda pointwise (|lambda| > 5 % of max),1.4525785754281956e-11,<= 1e-05,yes,
+N,N-4V-LC2,4V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,displacements at matched states,1.4019339244057633e-11,<= 1e-05,yes,
+N,N-4V-LC2,4V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,lambda at the refined first limit point,3.0408489994016995e-14,<= 1e-05,yes,"lambda_limit GDL 36.4518813, OS 36.4518813 (limit)"
+N,N-4V-LC2,4V R=12 m f=0.5,pinned,LC2  1.2D + 1.6S,GDL equilibrium residual of OpenSees states,1.5683652370927391e-12,<= 1e-08,yes,OpenSees states checked with GeoDomeLab's corotational equations
+N,N-3V-elastic-LC2,3V R=12 m f=0.414,elastic springs,LC2  1.2D + 1.6S,lambda at matched states / max|lambda|,2.8579089585202395e-12,<= 1e-05,yes,"21/21 states, 2 control segment(s) on DOF(s) [2, 3]; lambda in [0, 48.89], control in [-622.8, 0] mm, max |strain| 1.49e-02; first limit point passed (10 steps traced beyond it)"
+N,N-3V-elastic-LC2,3V R=12 m f=0.414,elastic springs,LC2  1.2D + 1.6S,lambda pointwise (|lambda| > 5 % of max),2.8596745749314497e-12,<= 1e-05,yes,
+N,N-3V-elastic-LC2,3V R=12 m f=0.414,elastic springs,LC2  1.2D + 1.6S,displacements at matched states,2.5000540887413662e-12,<= 1e-05,yes,
+N,N-3V-elastic-LC2,3V R=12 m f=0.414,elastic springs,LC2  1.2D + 1.6S,lambda at the refined first limit point,6.537914157504447e-15,<= 1e-05,yes,"lambda_limit GDL 48.90615315, OS 48.90615315 (limit)"
+N,N-3V-elastic-LC2,3V R=12 m f=0.414,elastic springs,LC2  1.2D + 1.6S,GDL equilibrium residual of OpenSees states,7.706431545606973e-13,<= 1e-08,yes,OpenSees states checked with GeoDomeLab's corotational equations
+N,N-case6V-LC2,6V R=15 m f=0.5,pinned,LC2  1.2D + 1.6S,lambda at matched states / max|lambda|,4.135288468679547e-11,<= 1e-05,yes,"23/23 states, 1 control segment(s) on DOF(s) [2]; lambda in [0, 34.24], control in [-193.5, 0] mm, max |strain| 5.85e-03; first limit point passed (10 steps traced beyond it)"
+N,N-case6V-LC2,6V R=15 m f=0.5,pinned,LC2  1.2D + 1.6S,lambda pointwise (|lambda| > 5 % of max),4.376658697501815e-11,<= 1e-05,yes,
+N,N-case6V-LC2,6V R=15 m f=0.5,pinned,LC2  1.2D + 1.6S,displacements at matched states,3.8638076597192416e-11,<= 1e-05,yes,
+N,N-case6V-LC2,6V R=15 m f=0.5,pinned,LC2  1.2D + 1.6S,lambda at the refined first limit point,2.573455853637373e-14,<= 1e-05,yes,"lambda_limit GDL 34.23695771, OS 34.23695771 (limit)"
+N,N-case6V-LC2,6V R=15 m f=0.5,pinned,LC2  1.2D + 1.6S,GDL equilibrium residual of OpenSees states,6.454340959011978e-12,<= 1e-08,yes,OpenSees states checked with GeoDomeLab's corotational equations
+X,X1,3V R=10 m f=0.414,elastic springs,T1  1.2D + 1.6S + 1.0T,exported static script: u,6.324987623391998e-15,<= 1e-08,yes,write_openseespy_script + run_script
+X,X1,3V R=10 m f=0.414,elastic springs,T1  1.2D + 1.6S + 1.0T,exported static script: N,5.7875507801542434e-15,<= 1e-08,yes,
+X,X1,3V R=10 m f=0.414,elastic springs,T1  1.2D + 1.6S + 1.0T,exported static script: R,2.0046740958292478e-15,<= 1e-08,yes,
+X,X2,3V R=10 m f=0.414,elastic springs,-,exported modal script: f (10 modes),2.757803014851994e-15,<= 1e-06,yes,
+X,X3,3V R=10 m f=0.414,elastic springs,LC2,exported nonlinear script: GDL residual of its states,9.862772040271665e-13,<= 1e-08,yes,"20 DisplacementControl states to 400 mm, lambda up to 60.633"

@@ -92,6 +92,8 @@ def draw_model(ax, model, color_by_family=True, show_nodes=True,
                show_panels=False, show_supports=True, show_labels=False,
                title=None):
     geom = model.geom
+    if title is None and getattr(geom, "kind", "geodesic") == "custom":
+        title = f"{geom.title or 'Custom truss'}  --  {geom.n_members} struts"
     prepare_axes(ax, title or f"Geodesic dome model  --  {geom.frequency}V, "
                               f"R = {geom.radius:.1f} m")
     segs = _segments(geom.nodes, geom.members)
@@ -144,7 +146,7 @@ def draw_loads(ax, model, F, title="Applied nodal loads", arrow_frac=0.09):
     mag = np.linalg.norm(V, axis=1)
     mmax = mag.max()
     if mmax > 1e-9:
-        scale = arrow_frac * geom.radius / mmax
+        scale = arrow_frac * geom.length_scale / mmax
         ax.quiver(geom.nodes[:, 0], geom.nodes[:, 1], geom.nodes[:, 2],
                   V[:, 0] * scale, V[:, 1] * scale, V[:, 2] * scale,
                   color="#c1121f", linewidth=0.9, arrow_length_ratio=0.28)
@@ -165,7 +167,7 @@ def auto_scale(geom, u, target_frac=0.05):
     dmax = np.max(np.linalg.norm(np.asarray(u).reshape(-1, 3), axis=1))
     if dmax < 1e-12:
         return 1.0
-    return float(target_frac * geom.radius / dmax)
+    return float(target_frac * geom.length_scale / dmax)
 
 
 def draw_deflected(ax, model, result, scale=None, show_undeformed=True,
@@ -277,7 +279,7 @@ def draw_buckling_mode(ax, model, bres, k=0, scale_frac=0.10, title=None):
     k = int(np.clip(k, 0, len(bres.load_factors) - 1))
     phi = bres.mode(k)
     pmax = np.max(np.linalg.norm(phi, axis=1))
-    scale = scale_frac * geom.radius / max(pmax, 1e-12)
+    scale = scale_frac * geom.length_scale / max(pmax, 1e-12)
     defo = geom.nodes + scale * phi
     mag = np.linalg.norm(phi, axis=1)
 

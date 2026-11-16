@@ -10,6 +10,15 @@ Area loads are lumped at the nodes using the tributary areas computed in
     * dead cladding  -> applied on the **faceted surface** area
     * snow and live  -> applied on the **horizontally projected** area
     * wind           -> pressure normal to the surface, on surface area
+
+Explicit nodal loads (``LoadSpec.nodal_loads``: node, Fx, Fy, Fz, case) are
+added to the vector of their case (D, S, L or W).
+
+The self-straining load T (uniform temperature change + support settlement,
+ASCE 7 notation) is *not* a nodal load vector: it enters the solver as member
+initial strains alpha*dT and prescribed support displacements
+(``solver.solve_model(..., T_factor)``).  ``combine`` therefore skips the T
+factor; ``postprocess.run_analysis`` passes it to the solver instead.
 """
 
 from __future__ import annotations
@@ -125,20 +134,66 @@ def wind_load(model):
 
 
 # ------------------------------------------------------------ combination ---
+CASE_KEYS = ("D", "S", "L", "W")
+
+
+def nodal_load_vectors(model):
+    """Explicit nodal loads, one vector per case: {'D','S','L','W'} -> (3n,).
+
+    Every entry of ``model.loads.nodal_loads`` is a dict
+    ``{"node": int, "Fx": N, "Fy": N, "Fz": N, "case": "D"|"S"|"L"|"W"}``
+    (missing force components are 0, a missing case is "L").
+    """
+    n = model.geom.n_nodes
+    out = {k: np.zeros(3 * n) for k in CASE_KEYS}
+    for k, p in enumerate(getattr(model.loads, "nodal_loads", None) or []):
+        nd = int(p["node"])
+        if nd < 0 or nd >= n:
+            raise ValueError(f"Nodal load {k}: node {nd} is outside "
+                             f"0..{n - 1}.")
+        case = str(p.get("case", "L") or "L").strip().upper()
+        if case not in out:
+            raise ValueError(f"Nodal load {k}: case {case!r} is not one of "
+                             f"{', '.join(CASE_KEYS)} (temperature and "
+                             f"settlement belong to T, not to nodal loads).")
+        for a, key in enumerate(("Fx", "Fy", "Fz")):
+            v = float(p.get(key, 0.0) or 0.0)
+            if not np.isfinite(v):
+                raise ValueError(f"Nodal load {k}: {key} is not finite.")
+            out[case][3 * nd + a] += v
+    return out
+
+
 def basic_load_vectors(model):
-    """Return the dictionary of unfactored load vectors {'D','S','L','W'}."""
-    return {
+    """Return the dictionary of unfactored load vectors {'D','S','L','W'}.
+
+    Explicit nodal loads are included in their case.  The self-straining
+    load T is not a load vector and is not in this dictionary.
+    """
+    basic = {
         "D": dead_load(model),
         "S": snow_load(model),
         "L": live_load(model),
         "W": wind_load(model),
     }
+    if getattr(model.loads, "nodal_loads", None):
+        extra = nodal_load_vectors(model)
+        for k in CASE_KEYS:
+            if np.any(extra[k] != 0.0):
+                basic[k] = basic[k] + extra[k]
+    return basic
 
 
 def combine(basic, combination):
-    """Factored load vector for one :class:`LoadCombination`."""
+    """Factored load vector for one :class:`LoadCombination`.
+
+    Keys without a load vector in ``basic`` (the self-straining factor T)
+    are skipped; T is applied by the solver (``solve_model(T_factor=...)``).
+    """
     F = np.zeros_like(basic["D"])
     for key, factor in combination.factors().items():
+        if key not in basic:
+            continue
         if abs(factor) > 1e-12:
             F = F + factor * basic[key]
     return F
@@ -165,4 +220,33 @@ def describe_loads(model):
         q = velocity_pressure(model)
         lines.append(f"{'Velocity pressure qz':<34s} {q / 1e3:.3f} kPa "
                      f"(V = {model.loads.wind_speed:.1f} m/s)")
+    nl = getattr(model.loads, "nodal_loads", None) or []
+    if nl:
+        lines.append(f"{'Explicit nodal loads':<34s} {len(nl)} entr"
+                     f"{'y' if len(nl) == 1 else 'ies'} (included above)")
+    lines += describe_self_straining(model)
+    return lines
+
+
+def describe_self_straining(model):
+    """Text lines describing the self-straining load T."""
+    ls = model.loads
+    dT = float(getattr(ls, "temperature_change", 0.0) or 0.0)
+    sets = getattr(ls, "settlements", None) or []
+    name = "Self-straining T"
+    if dT == 0.0 and not any(
+            float(s.get(k, 0.0) or 0.0) != 0.0
+            for s in sets for k in ("ux", "uy", "uz")):
+        return [f"{name:<34s} none (no temperature change or settlement)"]
+    lines = []
+    if dT != 0.0:
+        a = model.material.alpha
+        lines.append(f"{name + ': temperature':<34s} dT = {dT:+.1f} C on every "
+                     f"strut, alpha = {a * 1e6:.1f}e-6 /C, free strain "
+                     f"alpha*dT = {a * dT:.3e}")
+    if sets:
+        mx = max(max(abs(float(s.get(k, 0.0) or 0.0))
+                     for k in ("ux", "uy", "uz")) for s in sets)
+        lines.append(f"{name + ': settlement':<34s} {len(sets)} support "
+                     f"node(s), largest movement {mx * 1e3:.2f} mm")
     return lines

@@ -30,13 +30,22 @@ postprocess Result objects, utilisation and summary statistics
 plotting    Matplotlib 3D renderers
 report      CSV / JSON / HTML export
 verification Built-in benchmark suite
+nonlinear   Corotational geometric nonlinear analysis (Newton-Raphson,
+            displacement control, Crisfield arc-length, imperfections)
+modal       Natural frequencies, mode shapes, effective modal mass
+fabrication Cut lists, hub and panel types, axial and dihedral angles
+study       Parameter studies over frequency, radius and dome fraction
+benchmarks  Published and closed-form benchmark models
+opensees_bridge  Independent cross-check against OpenSees (optional)
 gui         Qt front end
 """
 
-__version__ = "1.0.0"
-__author__ = "GeoDomeLab"
+__version__ = "2.0.0"
+__author__ = "Jovdat Babazade"
+__url__ = "https://github.com/covdetbaba/GeoDomeLab"
 __all__ = [
     "geometry", "sections", "materials", "model", "loads", "solver",
     "buckling", "optimize", "postprocess", "plotting", "report",
-    "verification",
+    "verification", "nonlinear", "modal", "fabrication", "study",
+    "benchmarks", "opensees_bridge",
 ]

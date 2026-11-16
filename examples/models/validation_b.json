@@ -1,0 +1,66 @@
+{
+  "format": "GeoDomeLab model",
+  "version": 2,
+  "geometry": {
+    "kind": "geodesic",
+    "frequency": 1,
+    "radius": 5.0,
+    "dome_fraction": 0.7236067977499789
+  },
+  "material": "ASTM A500 Gr. C (round)",
+  "group_sections": [
+    "CHS 88.9 x 4.0"
+  ],
+  "support_type": "pinned",
+  "spring_stiffness": [
+    50000000.0,
+    50000000.0,
+    50000000.0
+  ],
+  "custom_supports": {},
+  "loads": {
+    "include_self_weight": true,
+    "dead_pressure": 300.0,
+    "snow_pressure": 1200.0,
+    "snow_unbalanced": false,
+    "live_pressure": 0.0,
+    "wind_enabled": false,
+    "wind_speed": 45.0,
+    "wind_Kz": 0.9,
+    "wind_Kzt": 1.0,
+    "wind_Kd": 0.95,
+    "wind_G": 0.85,
+    "wind_azimuth": 0.0,
+    "crown_point_load": 50000.0,
+    "temperature_change": 0.0,
+    "settlements": [],
+    "nodal_loads": []
+  },
+  "combinations": [
+    {
+      "name": "B1  1.0L",
+      "D": 0.0,
+      "S": 0.0,
+      "L": 1.0,
+      "W": 0.0,
+      "serviceability": true,
+      "T": 0.0
+    },
+    {
+      "name": "B2  1.2D + 1.6S",
+      "D": 1.2,
+      "S": 1.6,
+      "L": 0.0,
+      "W": 0.0,
+      "serviceability": false,
+      "T": 0.0
+    }
+  ],
+  "design": {
+    "K_effective": 1.0,
+    "deflection_limit": 240.0,
+    "phi_c": 0.9,
+    "phi_t": 0.9,
+    "design_thickness_factor": 1.0
+  }
+}

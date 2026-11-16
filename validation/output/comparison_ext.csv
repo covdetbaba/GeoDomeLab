@@ -1,0 +1,357 @@
+case,sub,key,quantity,hand,program,unit,difference,rel_diff,scale,tolerance,kind,pass,source
+F1,F1a,F1.L,bar length L,3.0,3.0,m,0.0,0.0,3.0,1e-09,linear,yes,custom_geometry
+F1,F1a,F1.N,axial force N,-74895.31753416844,-74895.31753416843,N,1.9429672918774976e-16,1.9429672918774976e-16,74895.31753416844,1e-09,linear,yes,"custom_geometry + CUSTOM pins, LoadSpec.temperature_change, run_analysis (T = 1.0)"
+F1,F1a,F1.sigma,axial stress N/A,-70200000.00000001,-70200000.0,Pa,2.1226725347361329e-16,2.1226725347361329e-16,70200000.00000001,1e-09,linear,yes,"custom_geometry + CUSTOM pins, LoadSpec.temperature_change, run_analysis (T = 1.0)"
+F1,F1a,F1.R1_x,reaction Rx at node 1,49930.21168944563,49930.21168944561,N,2.914450937816246e-16,2.914450937816246e-16,49930.21168944563,1e-09,linear,yes,"custom_geometry + CUSTOM pins, LoadSpec.temperature_change, run_analysis (T = 1.0)"
+F1,F1a,F1.R2_x,reaction Rx at node 2,-49930.21168944563,-49930.21168944561,N,2.914450937816246e-16,2.914450937816246e-16,49930.21168944563,1e-09,linear,yes,"custom_geometry + CUSTOM pins, LoadSpec.temperature_change, run_analysis (T = 1.0)"
+F1,F1a,F1.R1_y,reaction Ry at node 1,24965.105844722813,24965.105844722806,N,2.914450937816246e-16,2.914450937816246e-16,24965.105844722813,1e-09,linear,yes,"custom_geometry + CUSTOM pins, LoadSpec.temperature_change, run_analysis (T = 1.0)"
+F1,F1a,F1.R2_y,reaction Ry at node 2,-24965.105844722813,-24965.105844722806,N,2.914450937816246e-16,2.914450937816246e-16,24965.105844722813,1e-09,linear,yes,"custom_geometry + CUSTOM pins, LoadSpec.temperature_change, run_analysis (T = 1.0)"
+F1,F1a,F1.R1_z,reaction Rz at node 1,49930.21168944563,49930.21168944561,N,2.914450937816246e-16,2.914450937816246e-16,49930.21168944563,1e-09,linear,yes,"custom_geometry + CUSTOM pins, LoadSpec.temperature_change, run_analysis (T = 1.0)"
+F1,F1a,F1.R2_z,reaction Rz at node 2,-49930.21168944563,-49930.21168944561,N,2.914450937816246e-16,2.914450937816246e-16,49930.21168944563,1e-09,linear,yes,"custom_geometry + CUSTOM pins, LoadSpec.temperature_change, run_analysis (T = 1.0)"
+F1,F1a,F1.free_elongation,free thermal elongation eps0 L,0.001053,0.001053,m,0.0,0.0,0.001053,1e-09,linear,yes,StaticResult.eps0 x L
+F1,F1a,F1.dT_euler,temperature rise at the Euler load,84.63689564282237,84.63689564282237,degC,0.0,0.0,84.63689564282237,1e-09,linear,yes,buckling.euler_load / (EA alpha)
+F1,F1a,identity,F1a: equilibrium residual,0.0,0.0,-,0.0,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F1,F1a,identity,F1a: energy identity mismatch,0.0,0.0,-,0.0,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F1,F1a,identity,"F1a: |sum F + sum R| / max(|F|, |R|)",0.0,0.0,-,0.0,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F1,F1b,F1.stepped_N,force in segment 1,-69599.82831797974,-69599.82831797974,N,0.0,0.0,69599.82831797974,1e-09,linear,yes,"two sections, run_analysis (T = 1.0)"
+F1,F1b,F1.stepped_N,force in segment 2,-69599.82831797974,-69599.82831797974,N,0.0,0.0,69599.82831797974,1e-09,linear,yes,"two sections, run_analysis (T = 1.0)"
+F1,F1b,F1.stepped_u2,x displacement of the middle node,4.963505800036831e-05,4.963505800036839e-05,m,1.6382606611602921e-15,1.6382606611602921e-15,4.963505800036831e-05,1e-09,linear,yes,"two sections, run_analysis (T = 1.0)"
+F1,F1b,F1.stepped_R1x,x reaction at node 1,69599.82831797974,69599.82831797974,N,0.0,0.0,69599.82831797974,1e-09,linear,yes,"two sections, run_analysis (T = 1.0)"
+F1,F1b,identity,F1b: equilibrium residual,0.0,7.356496860646382e-17,-,7.356496860646382e-17,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F1,F1b,identity,F1b: energy identity mismatch,0.0,0.0,-,0.0,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F1,F1b,identity,"F1b: |sum F + sum R| / max(|F|, |R|)",0.0,0.0,-,0.0,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F2,F2a,F2.crown_uz,crown uz,0.003510000000000001,0.0035099999999999997,m,3.7066740939675357e-16,3.7066740939675357e-16,0.003510000000000001,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.crown_ux,crown ux,0.0,-2.9155340663784047e-19,m,8.306364861476934e-17,nan,0.003510000000000001,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.crown_ux,"crown uy (symmetry, 0)",0.0,9.909771543868295e-20,m,2.8232967361448126e-17,nan,0.003510000000000001,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.N_spoke,N spoke 1,0.0,-1.4551915228366852e-11,N,1.6527866974371673e-16,nan,88044.72622469216,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.N_spoke,N spoke 2,0.0,1.4551915228366852e-11,N,1.6527866974371673e-16,nan,88044.72622469216,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.N_spoke,N spoke 3,0.0,0.0,N,0.0,nan,88044.72622469216,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.N_spoke,N spoke 4,0.0,0.0,N,0.0,nan,88044.72622469216,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.N_spoke,N spoke 5,0.0,1.4551915228366852e-11,N,1.6527866974371673e-16,nan,88044.72622469216,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.N_ring,N ring member 6,-74895.31753416844,-74895.31753416843,N,1.9429672918774976e-16,1.9429672918774976e-16,74895.31753416844,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.N_ring,N ring member 7,-74895.31753416844,-74895.31753416843,N,1.9429672918774976e-16,1.9429672918774976e-16,74895.31753416844,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.N_ring,N ring member 8,-74895.31753416844,-74895.31753416843,N,1.9429672918774976e-16,1.9429672918774976e-16,74895.31753416844,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.N_ring,N ring member 9,-74895.31753416844,-74895.31753416843,N,1.9429672918774976e-16,1.9429672918774976e-16,74895.31753416844,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.N_ring,N ring member 10,-74895.31753416844,-74895.31753416843,N,1.9429672918774976e-16,1.9429672918774976e-16,74895.31753416844,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R_radial,radial reaction at hand node 2,-88044.72622469216,-88044.72622469216,N,0.0,0.0,88044.72622469216,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R_z,vertical reaction at hand node 2,0.0,7.275957614183426e-12,N,8.263933487185837e-17,nan,88044.72622469216,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R2_x,Rx at hand node 2,-88044.72622469213,-88044.72622469216,N,3.305573394874336e-16,3.305573394874336e-16,88044.72622469213,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R2_y,Ry at hand node 2,0.0,0.0,N,0.0,nan,88044.72622469216,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R2_z,Rz at hand node 2,0.0,7.275957614183426e-12,N,8.263933487185837e-17,nan,88044.72622469216,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R_radial,radial reaction at hand node 3,-88044.72622469216,-88044.7262246921,N,6.611146789748669e-16,6.611146789748669e-16,88044.72622469216,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R_z,vertical reaction at hand node 3,0.0,-7.275957614183426e-12,N,8.263933487185837e-17,nan,88044.72622469216,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R3_x,Rx at hand node 3,-27207.316668519474,-27207.31666851947,N,1.3371325263035132e-16,1.3371325263035132e-16,27207.316668519474,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R3_y,Ry at hand node 3,-83735.51060141623,-83735.51060141623,N,0.0,0.0,83735.51060141623,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R3_z,Rz at hand node 3,0.0,-7.275957614183426e-12,N,8.263933487185837e-17,nan,88044.72622469216,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R_radial,radial reaction at hand node 4,-88044.72622469216,-88044.72622469213,N,3.3055733948743346e-16,3.3055733948743346e-16,88044.72622469216,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R_z,vertical reaction at hand node 4,0.0,0.0,N,0.0,nan,88044.72622469216,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R4_x,Rx at hand node 4,71229.67978086552,71229.67978086552,N,0.0,0.0,71229.67978086552,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R4_y,Ry at hand node 4,-51751.39161700239,-51751.39161700242,N,5.623777360833702e-16,5.623777360833702e-16,51751.39161700239,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R4_z,Rz at hand node 4,0.0,0.0,N,0.0,nan,88044.72622469216,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R_radial,radial reaction at hand node 5,-88044.72622469216,-88044.72622469215,N,1.6527866974371673e-16,1.6527866974371673e-16,88044.72622469216,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R_z,vertical reaction at hand node 5,0.0,-7.275957614183426e-12,N,8.263933487185837e-17,nan,88044.72622469216,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R5_x,Rx at hand node 5,71229.67978086555,71229.67978086557,N,2.0429567103397165e-16,2.0429567103397165e-16,71229.67978086555,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R5_y,Ry at hand node 5,51751.3916170024,51751.39161700238,N,4.217833020625275e-16,4.217833020625275e-16,51751.3916170024,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R5_z,Rz at hand node 5,0.0,-7.275957614183426e-12,N,8.263933487185837e-17,nan,88044.72622469216,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R_radial,radial reaction at hand node 6,-88044.72622469216,-88044.72622469215,N,1.6527866974371673e-16,1.6527866974371673e-16,88044.72622469216,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R_z,vertical reaction at hand node 6,0.0,-7.275957614183426e-12,N,8.263933487185837e-17,nan,88044.72622469216,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R6_x,Rx at hand node 6,-27207.31666851946,-27207.31666851946,N,0.0,0.0,27207.31666851946,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R6_y,Ry at hand node 6,83735.51060141623,83735.51060141626,N,3.47568555415741e-16,3.47568555415741e-16,83735.51060141623,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,F2.R6_z,Rz at hand node 6,0.0,-7.275957614183426e-12,N,8.263933487185837e-17,nan,88044.72622469216,1e-09,linear,yes,"validation_model_a, LoadSpec.temperature_change, run_analysis"
+F2,F2a,identity,F2a: equilibrium residual,0.0,0.0,-,0.0,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F2,F2a,identity,F2a: energy identity mismatch,0.0,0.0,-,0.0,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F2,F2a,identity,"F2a: |sum F + sum R| / max(|F|, |R|)",0.0,1.6527866974371678e-16,-,1.6527866974371678e-16,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F2,F2b,F2.oneSpoke_crown_ux,crown ux,-0.0008677197202048525,-0.0008677197202048524,m,1.2494843060954572e-16,1.2494843060954572e-16,0.0008677197202048525,1e-09,linear,yes,"solver.solve_static, eps0 on spoke 1 only"
+F2,F2b,F2.oneSpoke_crown_uy,crown uy,0.0,-2.2013194729828884e-20,m,2.5369015152302837e-17,nan,0.0008677197202048525,1e-09,linear,yes,"solver.solve_static, eps0 on spoke 1 only"
+F2,F2b,F2.oneSpoke_crown_uz,crown uz,0.0007020000000000003,0.0007019999999999998,m,6.177790156612559e-16,6.177790156612559e-16,0.0007020000000000003,1e-09,linear,yes,"solver.solve_static, eps0 on spoke 1 only"
+F2,F2b,F2.oneSpoke_N1,N spoke 1,-29958.127013667363,-29958.12701366737,N,2.4287091148468733e-16,2.4287091148468733e-16,29958.127013667363,1e-09,linear,yes,"solver.solve_static, eps0 on spoke 1 only"
+F2,F2b,F2.oneSpoke_N2,N spoke 2,24236.6338737001,24236.6338737001,N,0.0,0.0,24236.6338737001,1e-09,linear,yes,"solver.solve_static, eps0 on spoke 1 only"
+F2,F2b,F2.oneSpoke_N3,N spoke 3,-9257.570366866412,-9257.570366866414,N,1.9648669483044553e-16,1.9648669483044553e-16,9257.570366866412,1e-09,linear,yes,"solver.solve_static, eps0 on spoke 1 only"
+F2,F2b,F2.oneSpoke_N4,N spoke 4,-9257.570366866415,-9257.570366866417,N,1.9648669483044546e-16,1.9648669483044546e-16,9257.570366866415,1e-09,linear,yes,"solver.solve_static, eps0 on spoke 1 only"
+F2,F2b,F2.oneSpoke_N5,N spoke 5,24236.6338737001,24236.633873700095,N,1.5010247817620389e-16,1.5010247817620389e-16,24236.6338737001,1e-09,linear,yes,"solver.solve_static, eps0 on spoke 1 only"
+F2,F2b,identity,F2b: equilibrium residual,0.0,1.906648932778811e-33,-,1.906648932778811e-33,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F2,F2b,identity,F2b: energy identity mismatch,0.0,0.0,-,0.0,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F2,F2b,identity,"F2b: |sum F + sum R| / max(|F|, |R|)",0.0,2.1723034713483806e-16,-,2.1723034713483806e-16,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F3,F3a,F3.vert_crown_ux,crown ux,0.0012360679774997894,0.0012360679774997896,m,1.7542759657580225e-16,1.7542759657580225e-16,0.0012360679774997894,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_crown_uy,crown uy,-0.0,3.1357827250468494e-20,m,2.536901515230285e-17,nan,0.0012360679774997894,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_crown_uz,crown uz,-0.001,-0.0009999999999999998,m,2.1684043449710089e-16,2.1684043449710089e-16,0.001,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_N1,N member 1,42675.39460636378,42675.39460636377,N,1.7049537986225044e-16,1.7049537986225044e-16,42675.39460636378,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_N2,N member 2,-34525.119478205255,-34525.11947820527,N,4.2148775871878066e-16,4.2148775871878066e-16,34525.119478205255,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_N3,N member 3,13187.422175023372,13187.42217502338,N,5.517346390838913e-16,5.517346390838913e-16,13187.422175023372,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_N4,N member 4,13187.422175023376,13187.422175023383,N,5.517346390838912e-16,5.517346390838912e-16,13187.422175023376,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_N5,N member 5,-34525.119478205255,-34525.11947820526,N,2.1074387935939033e-16,2.1074387935939033e-16,34525.119478205255,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_N6,N member 6,0.0,0.0,N,0.0,nan,42675.39460636378,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_N7,N member 7,0.0,0.0,N,0.0,nan,42675.39460636378,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_N8,N member 8,0.0,0.0,N,0.0,nan,42675.39460636378,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_N9,N member 9,0.0,0.0,N,0.0,nan,42675.39460636378,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_N10,N member 10,0.0,0.0,N,0.0,nan,42675.39460636378,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_R2_x,Rx at hand node 2,36301.85891864563,36301.85891864562,N,2.0042933973406785e-16,2.0042933973406785e-16,36301.85891864563,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_R2_y,Ry at hand node 2,-0.0,0.0,N,0.0,nan,42675.39460636378,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_R2_z,Rz at hand node 2,-22435.7826665265,-22435.782666526495,N,1.6215074201621083e-16,1.6215074201621083e-16,22435.7826665265,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_R3_x,Rx at hand node 3,-9075.464729661406,-9075.46472966141,N,4.008586794681358e-16,4.008586794681358e-16,9075.464729661406,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_R3_y,Ry at hand node 3,-27931.408390693567,-27931.408390693578,N,3.90740641095332e-16,3.90740641095332e-16,27931.408390693567,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_R3_z,Rz at hand node 3,18150.929459322808,18150.92945932282,N,6.012880192022038e-16,6.012880192022038e-16,18150.929459322808,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_R4_x,Rx at hand node 4,-9075.464729661404,-9075.464729661406,N,2.0042933973406792e-16,2.0042933973406792e-16,9075.464729661404,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_R4_y,Ry at hand node 4,6593.711087511689,6593.711087511694,N,8.276019586258368e-16,8.276019586258368e-16,6593.711087511689,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_R4_z,Rz at hand node 4,-6933.03812605956,-6933.038126059564,N,5.247308237664897e-16,5.247308237664897e-16,6933.03812605956,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_R5_x,Rx at hand node 5,-9075.464729661408,-9075.464729661415,N,8.017173589362714e-16,8.017173589362714e-16,9075.464729661408,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_R5_y,Ry at hand node 5,-6593.711087511686,-6593.711087511694,N,1.2414029379387556e-15,1.2414029379387556e-15,6593.711087511686,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_R5_z,Rz at hand node 5,-6933.038126059561,-6933.038126059568,N,9.182789415913569e-16,9.182789415913569e-16,6933.038126059561,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_R6_x,Rx at hand node 6,-9075.464729661402,-9075.464729661398,N,4.0085867946813594e-16,4.0085867946813594e-16,9075.464729661402,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_R6_y,Ry at hand node 6,27931.408390693574,27931.408390693578,N,1.3024688036511063e-16,1.3024688036511063e-16,27931.408390693574,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_R6_z,Rz at hand node 6,18150.92945932281,18150.92945932281,N,0.0,0.0,18150.92945932281,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3a,F3.vert_energy,strain energy sum N^2 L/(2EA),56.08945666631624,56.08945666631625,J,2.533605344003295e-16,2.533605344003295e-16,56.08945666631624,1e-09,linear,yes,StaticResult.strain_energy_int
+F3,F3a,F3.vert_energy,work 1/2 R . us (Clapeyron),56.08945666631624,56.08945666631624,J,0.0,0.0,56.08945666631624,1e-09,linear,yes,StaticResult.strain_energy_ext
+F3,F3a,identity,F3a: equilibrium residual,0.0,1.078307461800633e-16,-,1.078307461800633e-16,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F3,F3a,identity,F3a: energy identity mismatch,0.0,1.0134421376013179e-16,-,1.0134421376013179e-16,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F3,F3a,identity,"F3a: |sum F + sum R| / max(|F|, |R|)",0.0,9.719732110594021e-17,-,9.719732110594021e-17,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F3,F3b,F3.spread_crown_ux,crown ux,0.000618033988749895,0.0006180339887498954,m,5.262827897274065e-16,5.262827897274065e-16,0.000618033988749895,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_crown_uy,crown uy,0.0019021130325903074,0.001902113032590307,m,2.2799952556111395e-16,2.2799952556111395e-16,0.0019021130325903074,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_crown_uz,crown uz,-0.0016180339887498952,-0.001618033988749895,m,1.3401475865450354e-16,1.3401475865450354e-16,0.0016180339887498952,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_N1,N member 1,-55862.816781387155,-55862.81678138718,N,3.9074064109533184e-16,3.9074064109533184e-16,55862.816781387155,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_N2,N member 2,69050.23895641051,69050.23895641057,N,8.429755174375613e-16,8.429755174375613e-16,69050.23895641051,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_N3,N member 3,-55862.81678138718,-55862.81678138717,N,1.3024688036511055e-16,1.3024688036511055e-16,55862.81678138718,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_N4,N member 4,21337.69730318189,21337.697303181892,N,1.7049537986225044e-16,1.7049537986225044e-16,21337.69730318189,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_N5,N member 5,21337.697303181907,21337.697303181903,N,1.704953798622503e-16,1.704953798622503e-16,21337.697303181907,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_N6,N member 6,119281.3541330716,119281.35413307163,N,2.4399312590185007e-16,2.4399312590185007e-16,119281.3541330716,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_N7,N member 7,119281.3541330716,119281.35413307163,N,2.4399312590185007e-16,2.4399312590185007e-16,119281.3541330716,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_N8,N member 8,0.0,0.0,N,0.0,nan,189223.4249262739,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_N9,N member 9,0.0,0.0,N,0.0,nan,189223.4249262739,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_N10,N member 10,0.0,0.0,N,0.0,nan,189223.4249262739,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_R2_x,Rx at hand node 2,22592.070580986438,22592.070580986445,N,3.2205802421257025e-16,3.2205802421257025e-16,22592.070580986438,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_R2_y,Ry at hand node 2,-96500.64260571128,-96500.64260571131,N,3.015920896573514e-16,3.015920896573514e-16,96500.64260571128,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_R2_z,Rz at hand node 2,29368.820792586062,29368.820792586066,N,1.2387214429835377e-16,1.2387214429835377e-16,29368.820792586062,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_R3_x,Rx at hand node 3,61482.4177471951,61482.4177471951,N,0.0,0.0,61482.4177471951,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_R3_y,Ry at hand node 3,189223.4249262739,189223.42492627396,N,3.0761339900779483e-16,3.0761339900779483e-16,189223.4249262739,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_R3_z,Rz at hand node 3,-36301.858918645616,-36301.85891864564,N,6.012880192022038e-16,6.012880192022038e-16,36301.858918645616,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_R4_x,Rx at hand node 4,-74999.02359852011,-74999.02359852011,N,0.0,0.0,74999.02359852011,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_R4_y,Ry at hand node 4,-64791.373929869085,-64791.37392986908,N,1.1229824547414296e-16,1.1229824547414296e-16,64791.373929869085,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_R4_z,Rz at hand node 4,29368.82079258608,29368.820792586073,N,2.4774428859670734e-16,2.4774428859670734e-16,29368.82079258608,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_R5_x,Rx at hand node 5,-14684.410396293035,-14684.410396293042,N,4.954885771934149e-16,4.954885771934149e-16,14684.410396293035,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_R5_y,Ry at hand node 5,-10668.848651590943,-10668.848651590946,N,3.4099075972450094e-16,3.4099075972450094e-16,10668.848651590943,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_R5_z,Rz at hand node 5,-11217.89133326325,-11217.891333263255,N,4.864522260486324e-16,4.864522260486324e-16,11217.89133326325,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_R6_x,Rx at hand node 6,5608.945666631628,5608.945666631624,N,8.107537100810536e-16,8.107537100810536e-16,5608.945666631628,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_R6_y,Ry at hand node 6,-17262.55973910265,-17262.559739102642,N,4.2148775871878017e-16,4.2148775871878017e-16,17262.55973910265,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_R6_z,Rz at hand node 6,-11217.891333263262,-11217.891333263255,N,6.486029680648425e-16,6.486029680648425e-16,11217.891333263262,1e-09,linear,yes,"validation_model_a, LoadSpec.settlements, run_analysis"
+F3,F3b,F3.spread_energy,strain energy sum N^2 L/(2EA),497.4032081274069,497.40320812740714,J,4.571214494157256e-16,4.571214494157256e-16,497.4032081274069,1e-09,linear,yes,StaticResult.strain_energy_int
+F3,F3b,F3.spread_energy,work 1/2 R . us (Clapeyron),497.4032081274069,497.403208127407,J,2.285607247078628e-16,2.285607247078628e-16,497.4032081274069,1e-09,linear,yes,StaticResult.strain_energy_ext
+F3,F3b,identity,F3b: equilibrium residual,0.0,0.0,-,0.0,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F3,F3b,identity,F3b: energy identity mismatch,0.0,1.5841116175922163e-16,-,1.5841116175922163e-16,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F3,F3b,identity,"F3b: |sum F + sum R| / max(|F|, |R|)",0.0,8.59278690492573e-17,-,8.59278690492573e-17,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F4,F4 load,F4.N1_load,N bar 1,-6956.712954451934,-6956.712954451931,N,3.922088094166221e-16,3.922088094166221e-16,6956.712954451934,1e-09,linear,yes,"three_bar_truss, run_analysis 'P'"
+F4,F4 load,F4.N2_load,N bar 2,-35260.6018637673,-35260.60186376729,N,2.063480834018314e-16,2.063480834018314e-16,35260.6018637673,1e-09,linear,yes,"three_bar_truss, run_analysis 'P'"
+F4,F4 load,F4.N3_load,N bar 3,-29083.825683374445,-29083.825683374438,N,2.5017195789145006e-16,2.5017195789145006e-16,29083.825683374445,1e-09,linear,yes,"three_bar_truss, run_analysis 'P'"
+F4,F4 load,F4.ux_load,ux of joint D,0.00023405326362218535,0.00023405326362218527,m,3.474216153963732e-16,3.474216153963732e-16,0.00023405326362218535,1e-09,linear,yes,"three_bar_truss, run_analysis 'P'"
+F4,F4 load,F4.uz_load,uz of joint D,-0.0005837620405354227,-0.0005837620405354224,m,5.571802021373716e-16,5.571802021373716e-16,0.0005837620405354227,1e-09,linear,yes,"three_bar_truss, run_analysis 'P'"
+F4,F4 load,F4.RAx_load,Rx at support A,5565.3703635615475,5565.370363561544,N,6.536813490277035e-16,6.536813490277035e-16,5565.3703635615475,1e-09,linear,yes,"three_bar_truss, run_analysis 'P'"
+F4,F4 load,F4.RAz_load,Rz at support A,4174.02777267116,4174.027772671158,N,4.3578756601846905e-16,4.3578756601846905e-16,4174.02777267116,1e-09,linear,yes,"three_bar_truss, run_analysis 'P'"
+F4,F4 load,F4.RBx_load,Rx at support B,0.0,0.0,N,0.0,nan,35260.6018637673,1e-09,linear,yes,"three_bar_truss, run_analysis 'P'"
+F4,F4 load,F4.RBz_load,Rz at support B,35260.6018637673,35260.60186376729,N,2.063480834018314e-16,2.063480834018314e-16,35260.6018637673,1e-09,linear,yes,"three_bar_truss, run_analysis 'P'"
+F4,F4 load,F4.RCx_load,Rx at support C,-20565.370363561546,-20565.370363561542,N,1.7689828788775976e-16,1.7689828788775976e-16,20565.370363561546,1e-09,linear,yes,"three_bar_truss, run_analysis 'P'"
+F4,F4 load,F4.RCz_load,Rz at support C,20565.370363561546,20565.370363561542,N,1.7689828788775976e-16,1.7689828788775976e-16,20565.370363561546,1e-09,linear,yes,"three_bar_truss, run_analysis 'P'"
+F4,F4 load,identity,F4 load: equilibrium residual,0.0,1.1764526184625621e-16,-,1.1764526184625621e-16,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F4,F4 load,identity,F4 load: energy identity mismatch,0.0,1.8438164893881356e-16,-,1.8438164893881356e-16,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F4,F4 load,identity,"F4 load: |sum F + sum R| / max(|F|, |R|)",0.0,2.3712160596764775e-16,-,2.3712160596764775e-16,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F4,F4 settlement,F4.N1_settlement,N bar 1,49180.8858542653,49180.88585426528,N,4.438283789200437e-16,4.438283789200437e-16,49180.8858542653,1e-09,linear,yes,"three_bar_truss (dT = 0), run_analysis 'T'"
+F4,F4 settlement,F4.N2_settlement,N bar 2,-68853.24019597142,-68853.24019597142,N,0.0,0.0,68853.24019597142,1e-09,linear,yes,"three_bar_truss (dT = 0), run_analysis 'T'"
+F4,F4 settlement,F4.N3_settlement,N bar 3,55641.82062770007,55641.820627700086,N,2.6152838034782956e-16,2.6152838034782956e-16,55641.82062770007,1e-09,linear,yes,"three_bar_truss (dT = 0), run_analysis 'T'"
+F4,F4 settlement,F4.ux_settlement,ux of joint D,0.0022954839849993938,0.0022954839849993933,m,1.8892785653406172e-16,1.8892785653406172e-16,0.0022954839849993938,1e-09,linear,yes,"three_bar_truss (dT = 0), run_analysis 'T'"
+F4,F4 settlement,F4.uz_settlement,uz of joint D,-0.0011399098673802802,-0.0011399098673802804,m,1.9022594742112338e-16,1.9022594742112338e-16,0.0011399098673802802,1e-09,linear,yes,"three_bar_truss (dT = 0), run_analysis 'T'"
+F4,F4 settlement,F4.RAx_settlement,Rx at support A,-39344.708683412246,-39344.70868341223,N,3.698569824333697e-16,3.698569824333697e-16,39344.708683412246,1e-09,linear,yes,"three_bar_truss (dT = 0), run_analysis 'T'"
+F4,F4 settlement,F4.RAz_settlement,Rz at support A,-29508.53151255918,-29508.531512559166,N,4.93142643244493e-16,4.93142643244493e-16,29508.53151255918,1e-09,linear,yes,"three_bar_truss (dT = 0), run_analysis 'T'"
+F4,F4 settlement,F4.RBx_settlement,Rx at support B,0.0,0.0,N,0.0,nan,68853.24019597142,1e-09,linear,yes,"three_bar_truss (dT = 0), run_analysis 'T'"
+F4,F4 settlement,F4.RBz_settlement,Rz at support B,68853.24019597142,68853.24019597142,N,0.0,0.0,68853.24019597142,1e-09,linear,yes,"three_bar_truss (dT = 0), run_analysis 'T'"
+F4,F4 settlement,F4.RCx_settlement,Rx at support C,39344.708683412246,39344.70868341226,N,3.698569824333697e-16,3.698569824333697e-16,39344.708683412246,1e-09,linear,yes,"three_bar_truss (dT = 0), run_analysis 'T'"
+F4,F4 settlement,F4.RCz_settlement,Rz at support C,-39344.708683412246,-39344.70868341226,N,3.698569824333697e-16,3.698569824333697e-16,39344.708683412246,1e-09,linear,yes,"three_bar_truss (dT = 0), run_analysis 'T'"
+F4,F4 settlement,identity,F4 settlement: equilibrium residual,0.0,7.689322729837448e-17,-,7.689322729837448e-17,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F4,F4 settlement,identity,F4 settlement: energy identity mismatch,0.0,1.808376588923604e-16,-,1.808376588923604e-16,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F4,F4 settlement,identity,"F4 settlement: |sum F + sum R| / max(|F|, |R|)",0.0,2.9623430213836476e-16,-,2.9623430213836476e-16,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F4,F4 temperature,F4.N1_temperature,N bar 1,18125.615481589473,18125.61548158947,N,2.0070925650976521e-16,2.0070925650976521e-16,18125.615481589473,1e-09,linear,yes,"solver.solve_static, eps0 on bar 2 only"
+F4,F4 temperature,F4.N2_temperature,N bar 2,-25375.86167422526,-25375.861674225263,N,1.433637546498323e-16,1.433637546498323e-16,25375.86167422526,1e-09,linear,yes,"solver.solve_static, eps0 on bar 2 only"
+F4,F4 temperature,F4.N3_temperature,N bar 3,20506.79299233886,20506.79299233885,N,3.5480719081241294e-16,3.5480719081241294e-16,20506.79299233886,1e-09,linear,yes,"solver.solve_static, eps0 on bar 2 only"
+F4,F4 temperature,F4.ux_temperature,ux of joint D,5.625062267152652e-05,5.625062267152656e-05,m,7.227934472054628e-16,7.227934472054628e-16,5.625062267152652e-05,1e-09,linear,yes,"solver.solve_static, eps0 on bar 2 only"
+F4,F4 temperature,F4.uz_temperature,uz of joint D,0.0006328862183769977,0.0006328862183769975,m,3.426215142639326e-16,3.426215142639326e-16,0.0006328862183769977,1e-09,linear,yes,"solver.solve_static, eps0 on bar 2 only"
+F4,F4 temperature,F4.RAx_temperature,Rx at support A,-14500.49238527158,-14500.492385271575,N,3.7632985595580973e-16,3.7632985595580973e-16,14500.49238527158,1e-09,linear,yes,"solver.solve_static, eps0 on bar 2 only"
+F4,F4 temperature,F4.RAz_temperature,Rz at support A,-10875.369288953683,-10875.369288953681,N,1.672577137581377e-16,1.672577137581377e-16,10875.369288953683,1e-09,linear,yes,"solver.solve_static, eps0 on bar 2 only"
+F4,F4 temperature,F4.RBx_temperature,Rx at support B,0.0,0.0,N,0.0,nan,25375.86167422526,1e-09,linear,yes,"solver.solve_static, eps0 on bar 2 only"
+F4,F4 temperature,F4.RBz_temperature,Rz at support B,25375.86167422526,25375.861674225263,N,1.433637546498323e-16,1.433637546498323e-16,25375.86167422526,1e-09,linear,yes,"solver.solve_static, eps0 on bar 2 only"
+F4,F4 temperature,F4.RCx_temperature,Rx at support C,14500.49238527158,14500.492385271576,N,2.508865706372065e-16,2.508865706372065e-16,14500.49238527158,1e-09,linear,yes,"solver.solve_static, eps0 on bar 2 only"
+F4,F4 temperature,F4.RCz_temperature,Rz at support C,-14500.49238527158,-14500.492385271576,N,2.508865706372065e-16,2.508865706372065e-16,14500.49238527158,1e-09,linear,yes,"solver.solve_static, eps0 on bar 2 only"
+F4,F4 temperature,identity,F4 temperature: equilibrium residual,0.0,8.08896435649095e-17,-,8.08896435649095e-17,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F4,F4 temperature,identity,F4 temperature: energy identity mismatch,0.0,1.0609125618120529e-16,-,1.0609125618120529e-16,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F4,F4 temperature,identity,"F4 temperature: |sum F + sum R| / max(|F|, |R|)",0.0,1.5411839522165214e-16,-,1.5411839522165214e-16,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F4,F4 combined,F4.N1_combined,N bar 1,60349.78838140285,60349.78838140285,N,0.0,0.0,60349.78838140285,1e-09,linear,yes,"solver.solve_static, load + eps0 (bar 2) + settlement"
+F4,F4 combined,F4.N2_combined,N bar 2,-129489.70373396398,-129489.70373396396,N,1.123789367706308e-16,1.123789367706308e-16,129489.70373396398,1e-09,linear,yes,"solver.solve_static, load + eps0 (bar 2) + settlement"
+F4,F4 combined,F4.N3_combined,N bar 3,47064.787936664485,47064.78793666447,N,3.0918901085774565e-16,3.0918901085774565e-16,47064.787936664485,1e-09,linear,yes,"solver.solve_static, load + eps0 (bar 2) + settlement"
+F4,F4 combined,F4.ux_combined,ux of joint D,0.002585787871293106,0.002585787871293106,m,0.0,0.0,0.002585787871293106,1e-09,linear,yes,"solver.solve_static, load + eps0 (bar 2) + settlement"
+F4,F4 combined,F4.uz_combined,uz of joint D,-0.0010907856895387051,-0.0010907856895387051,m,0.0,0.0,0.0010907856895387051,1e-09,linear,yes,"solver.solve_static, load + eps0 (bar 2) + settlement"
+F4,F4 combined,F4.RAx_combined,Rx at support A,-48279.83070512228,-48279.83070512229,N,1.5070387588189034e-16,1.5070387588189034e-16,48279.83070512228,1e-09,linear,yes,"solver.solve_static, load + eps0 (bar 2) + settlement"
+F4,F4 combined,F4.RAz_combined,Rz at support A,-36209.87302884171,-36209.8730288417,N,2.009385011758538e-16,2.009385011758538e-16,36209.87302884171,1e-09,linear,yes,"solver.solve_static, load + eps0 (bar 2) + settlement"
+F4,F4 combined,F4.RBx_combined,Rx at support B,0.0,0.0,N,0.0,nan,129489.70373396398,1e-09,linear,yes,"solver.solve_static, load + eps0 (bar 2) + settlement"
+F4,F4 combined,F4.RBz_combined,Rz at support B,129489.70373396398,129489.70373396396,N,1.123789367706308e-16,1.123789367706308e-16,129489.70373396398,1e-09,linear,yes,"solver.solve_static, load + eps0 (bar 2) + settlement"
+F4,F4 combined,F4.RCx_combined,Rx at support C,33279.83070512228,33279.83070512227,N,2.1862964624587298e-16,2.1862964624587298e-16,33279.83070512228,1e-09,linear,yes,"solver.solve_static, load + eps0 (bar 2) + settlement"
+F4,F4 combined,F4.RCz_combined,Rz at support C,-33279.83070512228,-33279.83070512227,N,2.1862964624587298e-16,2.1862964624587298e-16,33279.83070512228,1e-09,linear,yes,"solver.solve_static, load + eps0 (bar 2) + settlement"
+F4,F4 combined,identity,F4 combined: equilibrium residual,0.0,5.786805084555533e-17,-,5.786805084555533e-17,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F4,F4 combined,identity,F4 combined: energy identity mismatch,0.0,0.0,-,0.0,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F4,F4 combined,identity,"F4 combined: |sum F + sum R| / max(|F|, |R|)",0.0,1.0816407286278963e-16,-,1.0816407286278963e-16,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F4,F4 flexibility,F4.f11,f11 = L2/EA2 + c2 . K13^-1 c2 (primary structure),4.149612783669734e-08,4.149612783669733e-08,m/N,1.5947138312438025e-16,1.5947138312438025e-16,4.149612783669734e-08,1e-09,linear,yes,solver.solve_static on bars 1 and 3
+F4,F4 force-method load,F4.N1_load,N bar 1,-6956.712954451934,-6956.712954451934,N,0.0,0.0,6956.712954451934,1e-09,linear,yes,benchmarks.three_bar_force_method
+F4,F4 force-method load,F4.N2_load,N bar 2,-35260.6018637673,-35260.6018637673,N,0.0,0.0,35260.6018637673,1e-09,linear,yes,benchmarks.three_bar_force_method
+F4,F4 force-method load,F4.N3_load,N bar 3,-29083.825683374445,-29083.825683374445,N,0.0,0.0,29083.825683374445,1e-09,linear,yes,benchmarks.three_bar_force_method
+F4,F4 force-method load,F4.ux_load,ux of joint D,0.00023405326362218535,0.00023405326362218535,m,0.0,0.0,0.00023405326362218535,1e-09,linear,yes,benchmarks.three_bar_force_method
+F4,F4 force-method load,F4.uz_load,uz of joint D,-0.0005837620405354227,-0.0005837620405354227,m,0.0,0.0,0.0005837620405354227,1e-09,linear,yes,benchmarks.three_bar_force_method
+F4,F4 force-method temperature,F4.N1_temperature,N bar 1,18125.615481589473,18125.615481589473,N,0.0,0.0,18125.615481589473,1e-09,linear,yes,benchmarks.three_bar_force_method
+F4,F4 force-method temperature,F4.N2_temperature,N bar 2,-25375.86167422526,-25375.86167422526,N,0.0,0.0,25375.86167422526,1e-09,linear,yes,benchmarks.three_bar_force_method
+F4,F4 force-method temperature,F4.N3_temperature,N bar 3,20506.79299233886,20506.79299233886,N,0.0,0.0,20506.79299233886,1e-09,linear,yes,benchmarks.three_bar_force_method
+F4,F4 force-method temperature,F4.ux_temperature,ux of joint D,5.625062267152652e-05,5.625062267152652e-05,m,0.0,0.0,5.625062267152652e-05,1e-09,linear,yes,benchmarks.three_bar_force_method
+F4,F4 force-method temperature,F4.uz_temperature,uz of joint D,0.0006328862183769977,0.0006328862183769977,m,0.0,0.0,0.0006328862183769977,1e-09,linear,yes,benchmarks.three_bar_force_method
+F4,F4 force-method settlement,F4.N1_settlement,N bar 1,49180.8858542653,49180.8858542653,N,0.0,0.0,49180.8858542653,1e-09,linear,yes,benchmarks.three_bar_force_method
+F4,F4 force-method settlement,F4.N2_settlement,N bar 2,-68853.24019597142,-68853.24019597142,N,0.0,0.0,68853.24019597142,1e-09,linear,yes,benchmarks.three_bar_force_method
+F4,F4 force-method settlement,F4.N3_settlement,N bar 3,55641.82062770007,55641.82062770007,N,0.0,0.0,55641.82062770007,1e-09,linear,yes,benchmarks.three_bar_force_method
+F4,F4 force-method settlement,F4.ux_settlement,ux of joint D,0.0022954839849993938,0.0022954839849993938,m,0.0,0.0,0.0022954839849993938,1e-09,linear,yes,benchmarks.three_bar_force_method
+F4,F4 force-method settlement,F4.uz_settlement,uz of joint D,-0.0011399098673802802,-0.0011399098673802802,m,0.0,0.0,0.0011399098673802802,1e-09,linear,yes,benchmarks.three_bar_force_method
+F4,F4 force-method combined,F4.N1_combined,N bar 1,60349.78838140285,60349.78838140285,N,0.0,0.0,60349.78838140285,1e-09,linear,yes,benchmarks.three_bar_force_method
+F4,F4 force-method combined,F4.N2_combined,N bar 2,-129489.70373396398,-129489.70373396398,N,0.0,0.0,129489.70373396398,1e-09,linear,yes,benchmarks.three_bar_force_method
+F4,F4 force-method combined,F4.N3_combined,N bar 3,47064.787936664485,47064.787936664485,N,0.0,0.0,47064.787936664485,1e-09,linear,yes,benchmarks.three_bar_force_method
+F4,F4 force-method combined,F4.ux_combined,ux of joint D,0.002585787871293106,0.002585787871293106,m,0.0,0.0,0.002585787871293106,1e-09,linear,yes,benchmarks.three_bar_force_method
+F4,F4 force-method combined,F4.uz_combined,uz of joint D,-0.0010907856895387051,-0.0010907856895387051,m,0.0,0.0,0.0010907856895387051,1e-09,linear,yes,benchmarks.three_bar_force_method
+F4,F4 force-method load,F4.f11,f11,4.149612783669734e-08,4.149612783669734e-08,m/N,0.0,0.0,4.149612783669734e-08,1e-09,linear,yes,benchmarks.three_bar_force_method
+F5,F5a,F5.series_u1,u1 (spring node),0.001,0.0009999999999999998,m,2.1684043449710089e-16,2.1684043449710089e-16,0.001,1e-09,linear,yes,"CUSTOM supports with a spring entry, run_analysis"
+F5,F5a,F5.series_u2,u2 (loaded node),0.001702981197402364,0.0017029811974023639,m,1.2732990524373236e-16,1.2732990524373236e-16,0.001702981197402364,1e-09,linear,yes,"CUSTOM supports with a spring entry, run_analysis"
+F5,F5a,F5.series_N,bar force,50000.0,49999.99999999999,N,1.4551915228366853e-16,1.4551915228366853e-16,50000.0,1e-09,linear,yes,"CUSTOM supports with a spring entry, run_analysis"
+F5,F5a,F5.series_spring_reaction,spring reaction,-50000.0,-49999.99999999999,N,1.4551915228366853e-16,1.4551915228366853e-16,50000.0,1e-09,linear,yes,"CUSTOM supports with a spring entry, run_analysis"
+F5,F5a,F5.series_spring_reaction,StaticResult.spring_forces,-50000.0,-49999.99999999999,N,1.4551915228366853e-16,1.4551915228366853e-16,50000.0,1e-09,linear,yes,"CUSTOM supports with a spring entry, run_analysis"
+F5,F5a,identity,F5a: equilibrium residual,0.0,1.4551915228366853e-16,-,1.4551915228366853e-16,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F5,F5a,identity,F5a: energy identity mismatch,0.0,1.668938534010649e-16,-,1.668938534010649e-16,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F5,F5a,identity,"F5a: |sum F + sum R| / max(|F|, |R|)",0.0,1.4551915228366853e-16,-,1.4551915228366853e-16,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F5,F5b,F5.parallel_u2,u2,0.00041279445625979537,0.00041279445625979537,m,0.0,0.0,0.00041279445625979537,1e-09,linear,yes,"CUSTOM supports with a spring entry, run_analysis"
+F5,F5b,F5.parallel_N,bar force,29360.277187010233,29360.277187010233,N,0.0,0.0,29360.277187010233,1e-09,linear,yes,"CUSTOM supports with a spring entry, run_analysis"
+F5,F5b,F5.parallel_spring_reaction,spring reaction,-20639.72281298977,-20639.72281298977,N,0.0,0.0,20639.72281298977,1e-09,linear,yes,"CUSTOM supports with a spring entry, run_analysis"
+F5,F5b,F5.parallel_R1x,fixed reaction at node 1,-29360.277187010233,-29360.277187010233,N,0.0,0.0,29360.277187010233,1e-09,linear,yes,"CUSTOM supports with a spring entry, run_analysis"
+F5,F5b,identity,F5b: equilibrium residual,0.0,7.275957614183426e-17,-,7.275957614183426e-17,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F5,F5b,identity,F5b: energy identity mismatch,0.0,1.7212991235350184e-16,-,1.7212991235350184e-16,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F5,F5b,identity,"F5b: |sum F + sum R| / max(|F|, |R|)",0.0,0.0,-,0.0,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F5,F5c,F5.thermal_u2,u2,0.0006183274375584355,0.0006183274375584355,m,0.0,0.0,0.0006183274375584355,1e-09,linear,yes,"CUSTOM supports with a spring entry, run_analysis"
+F5,F5c,F5.thermal_N,bar force,-30916.371877921778,-30916.371877921774,N,1.1767159553704593e-16,1.1767159553704593e-16,30916.371877921778,1e-09,linear,yes,"CUSTOM supports with a spring entry, run_analysis"
+F5,F5c,F5.thermal_spring_reaction,spring reaction,-30916.371877921774,-30916.371877921774,N,0.0,0.0,30916.371877921774,1e-09,linear,yes,"CUSTOM supports with a spring entry, run_analysis"
+F5,F5c,identity,F5c: equilibrium residual,0.0,0.0,-,0.0,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F5,F5c,identity,F5c: energy identity mismatch,0.0,0.0,-,0.0,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F5,F5c,identity,"F5c: |sum F + sum R| / max(|F|, |R|)",0.0,0.0,-,0.0,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F6,F6 linear,F6.L,bar length,2.5031230493125984,2.5031230493125984,m,0.0,0.0,2.5031230493125984,1e-09,linear,yes,custom_geometry
+F6,F6 linear,F6.EA,axial rigidity EA,213376973.0318189,213376973.0318189,N,0.0,0.0,213376973.0318189,1e-09,linear,yes,DomeModel.EA
+F6,F6 linear,F6.P_ref,reference load (downward),10000.0,10000.0,N,0.0,0.0,10000.0,1e-09,linear,yes,LoadSpec.nodal_loads -> loads.combine
+F6,F6 linear,F6.N_ref,linear bar force under P_ref,-100124.92197250394,-100124.92197250393,N,1.4533759369483515e-16,1.4533759369483515e-16,100124.92197250394,1e-09,linear,yes,run_analysis
+F6,F6 linear,F6.K0,initial stiffness P_ref / w_lin,425158.60524329945,425158.6052432995,N/m,1.3690810957514958e-16,1.3690810957514958e-16,425158.60524329945,1e-09,linear,yes,run_analysis
+F6,F6 linear,identity,F6 linear: equilibrium residual,0.0,0.0,-,0.0,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F6,F6 linear,identity,F6 linear: energy identity mismatch,0.0,0.0,-,0.0,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F6,F6 linear,identity,"F6 linear: |sum F + sum R| / max(|F|, |R|)",0.0,0.0,-,0.0,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F6,F6 linear,F6.lambda_cr,linear buckling factor,5.327768771955097,5.327768771955096,-,1.6670738872441645e-16,1.6670738872441645e-16,5.327768771955097,1e-09,linear,yes,buckling.linear_buckling
+F6,F6 linear,F6.P_cr_linear,lambda_cr P_ref,53277.68771955097,53277.68771955096,N,2.731333856860839e-16,2.731333856860839e-16,53277.68771955097,1e-09,linear,yes,buckling.linear_buckling
+F6,F6 linear,F6.lambda_cr,lowest root of det(K + lam Kg),5.327768771955097,5.327768771955096,-,1.6670738872441645e-16,1.6670738872441645e-16,5.327768771955097,1e-09,linear,yes,solver.assemble_stiffness / assemble_geometric_stiffness
+F6,F6 linear,F6.lambda_sway,sway root of det(K + lam Kg),852443.0035128155,852443.0035127164,-,1.1621825560942873e-13,1.1621825560942873e-13,852443.0035128155,1e-09,linear,yes,solver.assemble_stiffness / assemble_geometric_stiffness
+F6,F6 nonlinear,F6.P_limit,limit load lambda_limit P_ref,10240.499596845973,10240.499596845977,N,3.552540354781317e-16,3.552540354781317e-16,10240.499596845973,1e-06,nonlinear,yes,"run_nonlinear arc-length (62 steps, 0.10 s)"
+F6,F6 nonlinear,F6.w_limit,apex deflection at the limit,0.05286125123284588,0.05286125125870916,m,4.892673391887433e-10,4.892673391887433e-10,0.05286125123284588,1e-06,nonlinear,yes,"run_nonlinear arc-length (62 steps, 0.10 s)"
+F6,F6 nonlinear,F6.l_limit,bar length at the limit,2.501040583252037,2.5010405832512914,m,2.9812622327332954e-13,2.9812622327332954e-13,2.501040583252037,1e-06,nonlinear,yes,"run_nonlinear arc-length (62 steps, 0.10 s)"
+F6,F6 nonlinear,F6.N_limit,bar force at the limit,-177518.3623378106,-177518.3624014018,N,3.5822322447325777e-10,3.5822322447325777e-10,177518.3623378106,1e-06,nonlinear,yes,"run_nonlinear arc-length (62 steps, 0.10 s)"
+F6,F6 nonlinear,F6.strain_limit,strain at the limit,-0.0008319471394476056,-0.0008319471397456282,-,3.582230890835774e-10,3.582230890835774e-10,0.0008319471394476056,1e-06,nonlinear,yes,"run_nonlinear arc-length (62 steps, 0.10 s)"
+F6,F6 nonlinear,F6.ratio_linear_to_limit,lambda_cr / lambda_limit,5.202645360775197,5.202645360775193,-,6.828667788094526e-16,6.828667788094526e-16,5.202645360775197,1e-06,nonlinear,yes,"run_nonlinear arc-length (62 steps, 0.10 s)"
+F6,F6 nonlinear,F6.lambda_cr,lambda_cr reported by run_nonlinear,5.327768771955097,5.327768771955096,-,1.6670738872441645e-16,1.6670738872441645e-16,5.327768771955097,1e-09,linear,yes,run_nonlinear (linear_buckling)
+F6,F6 nonlinear,path,"max |P_program - P_exact(w)| / P* over all 63 path points (w up to 2.84 h, 25 on the unstable branch)",0.0,2.8420322838250537e-15,-,2.8420322838250537e-15,nan,1.0,1e-06,nonlinear,yes,"run_nonlinear arc-length (62 steps, 0.10 s)"
+F6,F6 nonlinear,path,path passes the snap-through target (max w / w_snap >= 1),1.0,1.0,-,0.0,0.0,1.0,0.0,count,yes,"run_nonlinear arc-length (62 steps, 0.10 s)"
+F6,F6 tangent,F6.w_limit,first limit point w*,0.05286125123284588,0.05286125123284502,m,1.6277004876302736e-14,1.6277004876302736e-14,0.05286125123284588,1e-06,nonlinear,yes,"zero of the program's tangent K_T,zz (TrussSystem.tangent)"
+F6,F6 tangent,F6.w_second_limit,second limit point h + y*,0.19713874876715412,0.19713874876715498,m,4.36455465739394e-15,4.36455465739394e-15,0.19713874876715412,1e-06,nonlinear,yes,"zero of the program's tangent K_T,zz (TrussSystem.tangent)"
+F6,F6 path,F6.P_at_w0.1h,P at w = 0.1 h,4545.4979527393525,4545.4979527393525,N,0.0,0.0,4545.4979527393525,1e-06,nonlinear,yes,TrussSystem.state (corotational element)
+F6,F6 path,F6.P_at_w0.25h,P at w = 0.25 h,8726.213980114488,8726.213980114484,N,4.169023147245792e-16,4.169023147245792e-16,8726.213980114488,1e-06,nonlinear,yes,TrussSystem.state (corotational element)
+F6,F6 path,F6.P_at_w0.5h,P at w = 0.5 h,9978.654483230148,9978.654483230146,N,1.822880436037544e-16,1.822880436037544e-16,9978.654483230148,1e-06,nonlinear,yes,TrussSystem.state (corotational element)
+F6,F6 path,F6.P_at_w1h,P at w = 1 h,0.0,-0.0,N,0.0,nan,49707.09371795061,1e-06,nonlinear,yes,TrussSystem.state (corotational element)
+F6,F6 path,F6.P_at_w1.5h,P at w = 1.5 h,-9978.654483230148,-9978.654483230146,N,1.822880436037544e-16,1.822880436037544e-16,9978.654483230148,1e-06,nonlinear,yes,TrussSystem.state (corotational element)
+F6,F6 path,F6.P_at_w2h,P at w = 2 h,-0.0,-0.0,N,0.0,nan,49707.09371795061,1e-06,nonlinear,yes,TrussSystem.state (corotational element)
+F6,F6 path,F6.P_at_w2.5h,P at w = 2.5 h,49707.09371795061,49707.09371795061,N,0.0,0.0,49707.09371795061,1e-06,nonlinear,yes,TrussSystem.state (corotational element)
+F6,F6 snap,F6.w_snap,apex deflection after snap-through,0.26936761467700243,0.2693676146770025,m,2.0607952926271785e-16,2.0607952926271785e-16,0.26936761467700243,1e-06,nonlinear,yes,Newton on the program residual at lambda* from the traced path
+F6,F6 snap,F6.N_snap,bar force after snap-through,88814.58641898642,88814.58641898663,N,2.293844079125093e-15,2.293844079125093e-15,88814.58641898642,1e-06,nonlinear,yes,Newton on the program residual at lambda* from the traced path
+F7,F7 sw,F7.m_crown_sw,lumped crown mass,110.07555870764568,110.07555870764564,kg,3.8730272774572633e-16,3.8730272774572633e-16,110.07555870764568,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=False)"
+F7,F7 sw,F7.m_crown_sw,free mass in x (= crown mass),110.07555870764568,110.07555870764564,kg,3.8730272774572633e-16,3.8730272774572633e-16,110.07555870764568,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=False)"
+F7,F7 sw,F7.f_xy_sw,f of the x mode,129.98341456082912,129.98341456082917,Hz,4.373128606665942e-16,4.373128606665942e-16,129.98341456082912,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=False)"
+F7,F7 sw,F7.omega_xy_sw,omega of the x mode,816.7098805456345,816.709880545635,rad/s,5.568040276219661e-16,5.568040276219661e-16,816.7098805456345,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=False)"
+F7,F7 sw,F7.f_xy_sw,f of the y mode,129.98341456082912,129.9834145608292,Hz,6.559692909998913e-16,6.559692909998913e-16,129.98341456082912,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=False)"
+F7,F7 sw,F7.omega_xy_sw,omega of the y mode,816.7098805456345,816.7098805456351,rad/s,6.960050345274577e-16,6.960050345274577e-16,816.7098805456345,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=False)"
+F7,F7 sw,F7.f_z_sw,f of the z mode,113.60967015131305,113.60967015131313,Hz,6.254245213578662e-16,6.254245213578662e-16,113.60967015131305,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=False)"
+F7,F7 sw,F7.omega_z_sw,omega of the z mode,713.8306102482494,713.8306102482499,rad/s,6.370521862719172e-16,6.370521862719172e-16,713.8306102482494,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=False)"
+F7,F7 sw,F7.T_z_sw,period of the z mode,0.008802067629173927,0.008802067629173922,s,5.912440857283929e-16,5.912440857283929e-16,0.008802067629173927,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=False)"
+F7,F7 sw,F7.phi_sw,max |phi| of the x mode,0.09531352923912126,0.09531352923912129,1/sqrt(kg),2.912028946698229e-16,2.912028946698229e-16,0.09531352923912126,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=False)"
+F7,F7 sw,F7.meff_x_sw,effective mass of the x mode in x,110.07555870764568,110.07555870764567,kg,1.2910090924857545e-16,1.2910090924857545e-16,110.07555870764568,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=False)"
+F7,F7 sw,F7.phi_sw,max |phi| of the y mode,0.09531352923912126,0.09531352923912129,1/sqrt(kg),2.912028946698229e-16,2.912028946698229e-16,0.09531352923912126,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=False)"
+F7,F7 sw,F7.meff_y_sw,effective mass of the y mode in y,110.07555870764568,110.07555870764567,kg,1.2910090924857545e-16,1.2910090924857545e-16,110.07555870764568,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=False)"
+F7,F7 sw,F7.phi_sw,max |phi| of the z mode,0.09531352923912126,0.09531352923912127,1/sqrt(kg),1.4560144733491145e-16,1.4560144733491145e-16,0.09531352923912126,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=False)"
+F7,F7 sw,F7.meff_z_sw,effective mass of the z mode in z,110.07555870764568,110.07555870764563,kg,5.164036369943018e-16,5.164036369943018e-16,110.07555870764568,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=False)"
+F7,F7 sw,identity,M-orthonormality error max|Phi^T M Phi - I|,0.0,2.220446049250313e-16,-,2.220446049250313e-16,nan,1.0,1e-10,identity,yes,modal.ModalResult
+F7,F7 sw,identity,eigen residual (normwise backward error),0.0,2.000302750825585e-16,-,2.000302750825585e-16,nan,1.0,1e-10,identity,yes,modal.ModalResult
+F7,F7 dead,F7.m_crown_dead,lumped crown mass,720.2827512296806,720.2827512296805,kg,1.5783640178461537e-16,1.5783640178461537e-16,720.2827512296806,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=True)"
+F7,F7 dead,F7.m_crown_dead,free mass in x (= crown mass),720.2827512296806,720.2827512296805,kg,1.5783640178461537e-16,1.5783640178461537e-16,720.2827512296806,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=True)"
+F7,F7 dead,F7.f_xy_dead,f of the x mode,50.813824490350626,50.81382449035062,Hz,1.3983256385179782e-16,1.3983256385179782e-16,50.813824490350626,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=True)"
+F7,F7 dead,F7.omega_xy_dead,omega of the x mode,319.2726754393733,319.27267543937324,rad/s,1.7804034993781362e-16,1.7804034993781362e-16,319.2726754393733,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=True)"
+F7,F7 dead,F7.f_xy_dead,f of the y mode,50.813824490350626,50.81382449035064,Hz,2.7966512770359564e-16,2.7966512770359564e-16,50.813824490350626,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=True)"
+F7,F7 dead,F7.omega_xy_dead,omega of the y mode,319.2726754393733,319.27267543937336,rad/s,1.7804034993781362e-16,1.7804034993781362e-16,319.2726754393733,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=True)"
+F7,F7 dead,F7.f_z_dead,f of the z mode,44.41291113162633,44.41291113162635,Hz,4.799568758199174e-16,4.799568758199174e-16,44.41291113162633,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=True)"
+F7,F7 dead,F7.omega_z_dead,omega of the z mode,279.05455067130725,279.05455067130737,rad/s,4.0740004937430843e-16,4.0740004937430843e-16,279.05455067130725,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=True)"
+F7,F7 dead,F7.T_z_dead,period of the z mode,0.022515975073921744,0.022515975073921734,s,4.622647174590231e-16,4.622647174590231e-16,0.022515975073921744,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=True)"
+F7,F7 dead,F7.phi_dead,max |phi| of the x mode,0.03726048406003434,0.03726048406003434,1/sqrt(kg),0.0,0.0,0.03726048406003434,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=True)"
+F7,F7 dead,F7.meff_x_dead,effective mass of the x mode in x,720.2827512296806,720.2827512296801,kg,6.313456071384615e-16,6.313456071384615e-16,720.2827512296806,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=True)"
+F7,F7 dead,F7.phi_dead,max |phi| of the y mode,0.03726048406003434,0.03726048406003435,1/sqrt(kg),1.8622661725830605e-16,1.8622661725830605e-16,0.03726048406003434,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=True)"
+F7,F7 dead,F7.meff_y_dead,effective mass of the y mode in y,720.2827512296806,720.2827512296805,kg,1.5783640178461537e-16,1.5783640178461537e-16,720.2827512296806,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=True)"
+F7,F7 dead,F7.phi_dead,max |phi| of the z mode,0.03726048406003434,0.03726048406003435,1/sqrt(kg),1.8622661725830605e-16,1.8622661725830605e-16,0.03726048406003434,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=True)"
+F7,F7 dead,F7.meff_z_dead,effective mass of the z mode in z,720.2827512296806,720.2827512296805,kg,1.5783640178461537e-16,1.5783640178461537e-16,720.2827512296806,1e-09,modal,yes,"modal.modal_analysis (lumped, include_dead=True)"
+F7,F7 dead,identity,M-orthonormality error max|Phi^T M Phi - I|,0.0,4.440892098500626e-16,-,4.440892098500626e-16,nan,1.0,1e-10,identity,yes,modal.ModalResult
+F7,F7 dead,identity,eigen residual (normwise backward error),0.0,2.582002532065277e-16,-,2.582002532065277e-16,nan,1.0,1e-10,identity,yes,modal.ModalResult
+F8,F8 sphere,F8.nodes,nodes,42.0,42.0,-,0.0,0.0,1.0,0.0,count,yes,icosahedron + subdivide_class1 + custom_geometry
+F8,F8 sphere,F8.struts,struts,120.0,120.0,-,0.0,0.0,1.0,0.0,count,yes,edges_from_faces
+F8,F8 sphere,F8.panels,panels,80.0,80.0,-,0.0,0.0,1.0,0.0,count,yes,subdivide_class1
+F8,F8 sphere,F8.CF_A,chord factor A,0.5465330578253433,0.5465330578253437,-,6.094176786173213e-16,6.094176786173213e-16,0.5465330578253433,1e-09,linear,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.L_A_R5,strut A length (R = 5 m),2.7326652891267167,2.732665289126717,m,1.6251138096461902e-16,1.6251138096461902e-16,2.7326652891267167,1e-09,linear,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.axial_A_deg,axial angle A,74.1412627942695,74.14126279426948,deg,1.9167268238517762e-16,1.9167268238517762e-16,74.1412627942695,1e-09,linear,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.bevel_A_deg,tangent (bevel) angle A,15.858737205730506,15.85873720573052,deg,8.960899301658745e-16,8.960899301658745e-16,15.858737205730506,1e-09,linear,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.dihedral_A_deg,dihedral angle across A,157.5410760847255,157.5410760847255,deg,0.0,0.0,157.5410760847255,1e-09,linear,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.bend_A_deg,bend angle across A,22.45892391527451,22.45892391527451,deg,0.0,0.0,22.45892391527451,1e-09,linear,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.CF_A,chord factor A vs Kenner (1976),0.54653,0.5465330578253437,-,3.057825343710796e-06,5.594981691235241e-06,1.0,5e-06,published,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.CF_B,chord factor B,0.6180339887498946,0.6180339887498951,-,8.981892944681078e-16,8.981892944681078e-16,0.6180339887498946,1e-09,linear,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.L_B_R5,strut B length (R = 5 m),3.0901699437494727,3.0901699437494745,m,5.74841148459589e-16,5.74841148459589e-16,3.0901699437494727,1e-09,linear,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.axial_B_deg,axial angle B,72.00000000000001,72.0,deg,1.9737298215558335e-16,1.9737298215558335e-16,72.00000000000001,1e-09,linear,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.bevel_B_deg,tangent (bevel) angle B,17.999999999999986,18.0,deg,7.894919286223342e-16,7.894919286223342e-16,17.999999999999986,1e-09,linear,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.dihedral_B_deg,dihedral angle across B,161.97089788883054,161.97089788883056,deg,1.7547417345251353e-16,1.7547417345251353e-16,161.97089788883054,1e-09,linear,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.bend_B_deg,bend angle across B,18.029102111169465,18.029102111169436,deg,1.5764351022670215e-15,1.5764351022670215e-15,18.029102111169465,1e-09,linear,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.CF_B,chord factor B vs Kenner (1976),0.61803,0.6180339887498951,-,3.988749895156296e-06,6.453974556504209e-06,1.0,5e-06,published,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.face_AAB_apex_deg,AAB apex angle (opposite B),68.86197641579264,68.86197641579268,deg,6.191016634229041e-16,6.191016634229041e-16,68.86197641579264,1e-09,linear,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.face_AAB_base_deg,AAB base angle 1,55.56901179210368,55.56901179210367,deg,1.278667215494856e-16,1.278667215494856e-16,55.56901179210368,1e-09,linear,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.face_AAB_base_deg,AAB base angle 2,55.56901179210368,55.56901179210367,deg,1.278667215494856e-16,1.278667215494856e-16,55.56901179210368,1e-09,linear,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.area_AAB_R1,AAB area / R^2,0.13930014500783797,0.13930014500783805,-,5.977504678275933e-16,5.977504678275933e-16,0.13930014500783797,1e-09,linear,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.area_BBB_R1,BBB area / R^2,0.1653961345624017,0.16539613456240188,-,1.006876334409996e-15,1.006876334409996e-15,0.1653961345624017,1e-09,linear,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.area_total_R1,total panel area / R^2,11.665931391718312,11.665931391718319,-,6.090750167316405e-16,6.090750167316405e-16,11.665931391718312,1e-09,linear,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.struts_A,A struts,60.0,60.0,-,0.0,0.0,1.0,0.0,count,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.struts_B,B struts,60.0,60.0,-,0.0,0.0,1.0,0.0,count,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.panels_AAB,AAB panels,60.0,60.0,-,0.0,0.0,1.0,0.0,count,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.panels_BBB,BBB panels,20.0,20.0,-,0.0,0.0,1.0,0.0,count,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.hubs_valence5,5-valent hubs,12.0,12.0,-,0.0,0.0,1.0,0.0,count,yes,fabrication_tables (full 2V sphere)
+F8,F8 sphere,F8.hubs_valence6,6-valent hubs,30.0,30.0,-,0.0,0.0,1.0,0.0,count,yes,fabrication_tables (full 2V sphere)
+F8,F8 dome,F8.CF_A,chord factor A,0.5465330578253433,0.5465330578253432,-,2.0313922620577377e-16,2.0313922620577377e-16,0.5465330578253433,1e-09,linear,yes,"generate_dome(2V, 0.5) -> fabrication_tables"
+F8,F8 dome,F8.L_A_R5,strut A length (R = 5 m),2.7326652891267167,2.7326652891267162,m,1.6251138096461902e-16,1.6251138096461902e-16,2.7326652891267167,1e-09,linear,yes,"generate_dome(2V, 0.5) -> fabrication_tables"
+F8,F8 dome,F8.axial_A_deg,axial angle A,74.1412627942695,74.14126279426948,deg,1.9167268238517762e-16,1.9167268238517762e-16,74.1412627942695,1e-09,linear,yes,"generate_dome(2V, 0.5) -> fabrication_tables"
+F8,F8 dome,F8.bevel_A_deg,tangent (bevel) angle A,15.858737205730506,15.85873720573052,deg,8.960899301658745e-16,8.960899301658745e-16,15.858737205730506,1e-09,linear,yes,"generate_dome(2V, 0.5) -> fabrication_tables"
+F8,F8 dome,F8.dihedral_A_deg,dihedral angle across A,157.5410760847255,157.54107608472555,deg,3.608164948056954e-16,3.608164948056954e-16,157.5410760847255,1e-09,linear,yes,"generate_dome(2V, 0.5) -> fabrication_tables"
+F8,F8 dome,F8.bend_A_deg,bend angle across A,22.45892391527451,22.458923915274454,deg,2.5309947651654096e-15,2.5309947651654096e-15,22.45892391527451,1e-09,linear,yes,"generate_dome(2V, 0.5) -> fabrication_tables"
+F8,F8 dome,F8.CF_A,chord factor A vs Kenner (1976),0.54653,0.5465330578253432,-,3.057825343266707e-06,5.59498169042268e-06,1.0,5e-06,published,yes,"generate_dome(2V, 0.5) -> fabrication_tables"
+F8,F8 dome,F8.CF_B,chord factor B,0.6180339887498946,0.6180339887498949,-,5.389135766808646e-16,5.389135766808646e-16,0.6180339887498946,1e-09,linear,yes,"generate_dome(2V, 0.5) -> fabrication_tables"
+F8,F8 dome,F8.L_B_R5,strut B length (R = 5 m),3.0901699437494727,3.0901699437494745,m,5.74841148459589e-16,5.74841148459589e-16,3.0901699437494727,1e-09,linear,yes,"generate_dome(2V, 0.5) -> fabrication_tables"
+F8,F8 dome,F8.axial_B_deg,axial angle B,72.00000000000001,72.00000000000004,deg,3.947459643111667e-16,3.947459643111667e-16,72.00000000000001,1e-09,linear,yes,"generate_dome(2V, 0.5) -> fabrication_tables"
+F8,F8 dome,F8.bevel_B_deg,tangent (bevel) angle B,17.999999999999986,17.999999999999957,deg,1.5789838572446684e-15,1.5789838572446684e-15,17.999999999999986,1e-09,linear,yes,"generate_dome(2V, 0.5) -> fabrication_tables"
+F8,F8 dome,F8.dihedral_B_deg,dihedral angle across B,161.97089788883054,161.9708978888306,deg,3.5094834690502707e-16,3.5094834690502707e-16,161.97089788883054,1e-09,linear,yes,"generate_dome(2V, 0.5) -> fabrication_tables"
+F8,F8 dome,F8.bend_B_deg,bend angle across B,18.029102111169465,18.029102111169408,deg,3.152870204534043e-15,3.152870204534043e-15,18.029102111169465,1e-09,linear,yes,"generate_dome(2V, 0.5) -> fabrication_tables"
+F8,F8 dome,F8.CF_B,chord factor B vs Kenner (1976),0.61803,0.6180339887498949,-,3.9887498949342515e-06,6.453974556144931e-06,1.0,5e-06,published,yes,"generate_dome(2V, 0.5) -> fabrication_tables"
+F8,F8 dome,F8.face_AAB_apex_deg,AAB apex angle (opposite B),68.86197641579264,68.86197641579265,deg,2.06367221140968e-16,2.06367221140968e-16,68.86197641579264,1e-09,linear,yes,"generate_dome(2V, 0.5) -> fabrication_tables"
+F8,F8 dome,F8.face_AAB_base_deg,AAB base angle 1,55.56901179210368,55.569011792103666,deg,2.557334430989712e-16,2.557334430989712e-16,55.56901179210368,1e-09,linear,yes,"generate_dome(2V, 0.5) -> fabrication_tables"
+F8,F8 dome,F8.face_AAB_base_deg,AAB base angle 2,55.56901179210368,55.569011792103666,deg,2.557334430989712e-16,2.557334430989712e-16,55.56901179210368,1e-09,linear,yes,"generate_dome(2V, 0.5) -> fabrication_tables"
+F8,F8 dome,F8.area_AAB_R1,AAB area / R^2,0.13930014500783797,0.13930014500783797,-,0.0,0.0,0.13930014500783797,1e-09,linear,yes,"generate_dome(2V, 0.5) -> fabrication_tables"
+F8,F8 dome,F8.area_BBB_R1,BBB area / R^2,0.1653961345624017,0.16539613456240188,-,1.006876334409996e-15,1.006876334409996e-15,0.1653961345624017,1e-09,linear,yes,"generate_dome(2V, 0.5) -> fabrication_tables"
+F8,F8 sphere,F8.axial_A_deg,"axial angle A, program formula column",74.1412627942695,74.14126279426948,deg,1.9167268238517762e-16,1.9167268238517762e-16,74.1412627942695,1e-09,linear,yes,fabrication_tables axial_formula_deg
+F8,F8 sphere,F8.axial_B_deg,"axial angle B, program formula column",72.00000000000001,72.0,deg,1.9737298215558335e-16,1.9737298215558335e-16,72.00000000000001,1e-09,linear,yes,fabrication_tables axial_formula_deg
+F8,F8 sphere,F8.dihedral_A_deg,"dihedral A, program formula column",157.5410760847255,157.54107608472552,deg,1.804082474028477e-16,1.804082474028477e-16,157.5410760847255,1e-09,linear,yes,fabrication_tables dihedral_formula_deg
+F8,F8 sphere,F8.dihedral_B_deg,"dihedral B, program formula column",161.97089788883054,161.97089788883056,deg,1.7547417345251353e-16,1.7547417345251353e-16,161.97089788883054,1e-09,linear,yes,fabrication_tables dihedral_formula_deg

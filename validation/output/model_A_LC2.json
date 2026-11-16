@@ -1,7 +1,8 @@
 {
   "format": "GeoDomeLab model",
-  "version": 1,
+  "version": 2,
   "geometry": {
+    "kind": "geodesic",
     "frequency": 1,
     "radius": 5.0,
     "dome_fraction": 0.276393202250021
@@ -11,6 +12,12 @@
     "CHS 88.9 x 4.0"
   ],
   "support_type": "pinned",
+  "spring_stiffness": [
+    50000000.0,
+    50000000.0,
+    50000000.0
+  ],
+  "custom_supports": {},
   "loads": {
     "include_self_weight": true,
     "dead_pressure": 300.0,
@@ -24,7 +31,10 @@
     "wind_Kd": 0.95,
     "wind_G": 0.85,
     "wind_azimuth": 0.0,
-    "crown_point_load": 0.0
+    "crown_point_load": 0.0,
+    "temperature_change": 0.0,
+    "settlements": [],
+    "nodal_loads": []
   },
   "combinations": [
     {
@@ -33,13 +43,15 @@
       "S": 1.6,
       "L": 0.0,
       "W": 0.0,
-      "serviceability": false
+      "serviceability": false,
+      "T": 0.0
     }
   ],
   "design": {
     "K_effective": 1.0,
     "deflection_limit": 240.0,
     "phi_c": 0.9,
-    "phi_t": 0.9
+    "phi_t": 0.9,
+    "design_thickness_factor": 1.0
   }
 }

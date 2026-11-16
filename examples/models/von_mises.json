@@ -1,0 +1,115 @@
+{
+  "format": "GeoDomeLab model",
+  "version": 2,
+  "geometry": {
+    "kind": "custom",
+    "title": "von Mises two-bar truss",
+    "nodes": [
+      [
+        -2.5,
+        0.0,
+        0.0
+      ],
+      [
+        2.5,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.125
+      ]
+    ],
+    "members": [
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        2
+      ]
+    ],
+    "faces": [],
+    "base_nodes": [
+      0,
+      1
+    ],
+    "groups": [
+      0,
+      0
+    ]
+  },
+  "material": "ASTM A500 Gr. C (round)",
+  "group_sections": [
+    "CHS 88.9 x 4.0"
+  ],
+  "support_type": "custom",
+  "spring_stiffness": [
+    50000000.0,
+    50000000.0,
+    50000000.0
+  ],
+  "custom_supports": {
+    "0": [
+      true,
+      true,
+      true
+    ],
+    "1": [
+      true,
+      true,
+      true
+    ],
+    "2": [
+      false,
+      true,
+      false
+    ]
+  },
+  "loads": {
+    "include_self_weight": false,
+    "dead_pressure": 0.0,
+    "snow_pressure": 0.0,
+    "snow_unbalanced": false,
+    "live_pressure": 0.0,
+    "wind_enabled": false,
+    "wind_speed": 45.0,
+    "wind_Kz": 0.9,
+    "wind_Kzt": 1.0,
+    "wind_Kd": 0.95,
+    "wind_G": 0.85,
+    "wind_azimuth": 0.0,
+    "crown_point_load": 0.0,
+    "temperature_change": 0.0,
+    "settlements": [],
+    "nodal_loads": [
+      {
+        "node": 2,
+        "Fx": 0.0,
+        "Fy": 0.0,
+        "Fz": -10000.0,
+        "case": "L"
+      }
+    ]
+  },
+  "combinations": [
+    {
+      "name": "P  1.0L  apex reference load",
+      "D": 0.0,
+      "S": 0.0,
+      "L": 1.0,
+      "W": 0.0,
+      "serviceability": false,
+      "T": 0.0
+    }
+  ],
+  "design": {
+    "K_effective": 1.0,
+    "deflection_limit": 240.0,
+    "phi_c": 0.9,
+    "phi_t": 0.9,
+    "design_thickness_factor": 1.0
+  }
+}
