@@ -18,8 +18,12 @@ GeoDomeLab is checked in five ways:
 Every number on this page comes from the output files in
 `validation/output/` and from a run of `python run_all_checks.py` on
 16 November 2026 (Windows, Python 3.13, PyQt6 6.9, OpenSees 3.8.0 through a
-separate interpreter). Two more runs on the same day, made before the
-review fixes added 31 tests and cases F9 and F10:
+separate interpreter). The six GUI test files also pass with PyQt5 5.15
+(Python 3.11) and with PySide6 6.9 (Python 3.13), run locally on the same
+day. Under PySide6 one memory check is skipped, because PySide does not
+free a closed main window until the process ends. Two earlier runs on the
+same day were made at an older state of the code (286 tests then, before
+cases F9 and F10 were added):
 
 - Windows, Python 3.10 with PyQt5 5.15: all 286 tests of that version pass,
   and the verification and hand-calculation steps pass.

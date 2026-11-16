@@ -203,7 +203,8 @@ class GeometryPanel(QtWidgets.QWidget):
         self.generate_btn.setObjectName("primary")
         self.generate_btn.setToolTip("Build a geodesic dome from the inputs "
                                      "above (F5).")
-        self.generate_btn.clicked.connect(self.generate_requested.emit)
+        self.generate_btn.clicked.connect(
+            lambda *_: self.generate_requested.emit())
         lay.addWidget(self.generate_btn)
 
         info = QtWidgets.QGroupBox("Generated geometry")
@@ -689,10 +690,11 @@ class LoadPanel(QtWidgets.QWidget):
 
         for w in (self.dead, self.snow, self.live, self.crown_load,
                   self.wind_speed, self.wind_az, self.delta_T):
-            w.valueChanged.connect(self.changed.emit)
-        self.self_weight.toggled.connect(self.changed.emit)
-        self.snow_unbalanced.toggled.connect(self.changed.emit)
-        self.wind_box.toggled.connect(self.changed.emit)
+            # the lambdas drop the value: PySide6 refuses to pass it on to
+            # a signal without arguments
+            w.valueChanged.connect(lambda *_: self.changed.emit())
+        for w in (self.self_weight, self.snow_unbalanced, self.wind_box):
+            w.toggled.connect(lambda *_: self.changed.emit())
         self.settle_table.itemChanged.connect(lambda *_: self.changed.emit())
         self.nodal_table.itemChanged.connect(lambda *_: self.changed.emit())
 
@@ -1094,15 +1096,17 @@ class DesignPanel(QtWidgets.QWidget):
 
         self.analyse_btn = QtWidgets.QPushButton("Run analysis")
         self.analyse_btn.setObjectName("primary")
-        self.analyse_btn.clicked.connect(self.analyse_requested.emit)
+        self.analyse_btn.clicked.connect(
+            lambda *_: self.analyse_requested.emit())
         lay.addWidget(self.analyse_btn)
 
         self.size_btn = QtWidgets.QPushButton("Auto-size the strut families")
-        self.size_btn.clicked.connect(self.size_requested.emit)
+        self.size_btn.clicked.connect(lambda *_: self.size_requested.emit())
         lay.addWidget(self.size_btn)
 
         self.verify_btn = QtWidgets.QPushButton("Run verification suite")
-        self.verify_btn.clicked.connect(self.verify_requested.emit)
+        self.verify_btn.clicked.connect(
+            lambda *_: self.verify_requested.emit())
         lay.addWidget(self.verify_btn)
         lay.addStretch(1)
 

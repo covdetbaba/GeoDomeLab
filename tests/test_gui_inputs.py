@@ -1087,9 +1087,12 @@ def _wheel(widget, notches=-1):
 
 def test_mouse_wheel_does_not_edit_an_unfocused_box():
     """Review P1b: one wheel notch over the dead-load box changed 0.35 to
-    0.30 kPa although the box had not been clicked (Qt's WheelFocus).
-    Spin and combo boxes now take the focus by click or Tab only, and the
-    wheel scrolls the panel unless the box has the focus."""
+    0.30 kPa although the box had not been clicked (Qt's WheelFocus), and
+    a notch over the dome-fraction slider changed 0.50 to 0.47.  Spin
+    boxes, combo boxes and sliders now take the focus by click or Tab only,
+    and a wheel event over an unfocused one leaves its value alone (Qt then
+    passes a real wheel event on to the panel, which scrolls; events sent
+    from a test are not passed on, so the scrolling is not checked here)."""
     from qtpy import QtCore, QtWidgets
     from geodome.gui import style as st
     app, win = _window()
@@ -1101,6 +1104,9 @@ def test_mouse_wheel_does_not_edit_an_unfocused_box():
         boxes = (win.findChildren(QtWidgets.QAbstractSpinBox)
                  + win.findChildren(QtWidgets.QComboBox))
         assert len(boxes) > 20
+        for b in boxes:
+            b.ensurePolished()
+        boxes += win.findChildren(QtWidgets.QSlider)
         for b in boxes:
             b.ensurePolished()
         wheel_focus = [b.objectName() or type(b).__name__ for b in boxes
@@ -1120,6 +1126,18 @@ def test_mouse_wheel_does_not_edit_an_unfocused_box():
             app.sendEvent(box, _wheel(box, notches))
             app.processEvents()
             assert box.value() == before, (notches, box.value(), before)
+        # the same for the dome-fraction slider (it drives the spin box)
+        gp = win.geometry_panel
+        fraction = gp.fraction.value()
+        gp.fraction_slider.clearFocus()
+        for notches in (-1, 2):
+            app.sendEvent(gp.fraction_slider, _wheel(gp.fraction_slider,
+                                                     notches))
+            app.processEvents()
+            assert gp.fraction.value() == fraction, (notches,
+                                                     gp.fraction.value())
+        policy = gp.fraction_slider.focusPolicy()
+        assert policy != QtCore.Qt.FocusPolicy.WheelFocus, policy
         # the same for a combo box
         combo = win.section_panel.material
         text = combo.currentText()
@@ -1136,8 +1154,19 @@ def test_mouse_wheel_does_not_edit_an_unfocused_box():
             app.processEvents()
             assert box.value() < before
             box.setValue(before)
-        # one guard only, however many windows are built
+        # one guard only, however many windows are built, and a guard
+        # left by an earlier import of the module is replaced, not doubled
         assert st.install_wheel_guard() is st.install_wheel_guard()
+        stray = st.WheelGuard(app)
+        stray.setObjectName(st.WheelGuard.NAME)
+        app.installEventFilter(stray)
+        st._wheel_guard = None                 # as after a re-import
+        st.install_wheel_guard()
+        app.processEvents()
+        live = [g for g in app.findChildren(QtCore.QObject,
+                                            st.WheelGuard.NAME)
+                if g.parent() is app]
+        assert live == [st._wheel_guard], live
     assert not errors, errors[0]
     win.close()
 

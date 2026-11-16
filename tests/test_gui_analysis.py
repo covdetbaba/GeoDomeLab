@@ -837,6 +837,13 @@ def test_view_menu_works_and_a_closed_window_is_freed():
                 name
         assert not errors, errors[-1]
     _close(app, win)
+    import qtpy
+    if qtpy.API_NAME.lower().startswith("pyside"):
+        # PySide does not collect a Python reference cycle that runs through
+        # a Qt parent (each add-on is a child of the window and keeps a
+        # reference to it), so a closed window lives until the process
+        # ends.  PyQt5 and PyQt6 free it.
+        return
     ref = weakref.ref(win)
     del win, acts
     gc.collect()

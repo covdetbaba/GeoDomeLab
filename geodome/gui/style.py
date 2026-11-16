@@ -304,19 +304,23 @@ def apply_light_theme(app=None):
 
 # ------------------------------------------------------------ wheel guard --
 class WheelGuard(QtCore.QObject):
-    """Keep the mouse wheel from editing an input box the user did not click.
+    """Keep the mouse wheel from editing an input the user did not click.
 
     By default Qt gives a spin box or a combo box the focus when the wheel
-    turns over it, and the box then changes its value.  Scrolling down a
-    panel could therefore change a load or a section without the user
-    noticing.  This application-wide filter gives those boxes
+    turns over it, and the box then changes its value.  A slider changes its
+    value under the wheel whatever its focus.  Scrolling down a panel could
+    therefore change a load, a section or the dome fraction without the user
+    noticing.  This application-wide filter gives those inputs
     ``StrongFocus`` (a click or Tab focuses them, the wheel does not) and,
-    while a box does not have the focus, passes the wheel event on to the
-    parent widget, so the panel scrolls instead.  A box that has the focus
-    still responds to the wheel as usual.
+    while an input does not have the focus, passes the wheel event on to the
+    parent widget, so the panel scrolls instead.  An input that has the focus
+    still responds to the wheel as usual.  Scroll bars are not guarded: a
+    scroll area forwards the wheel to them.
     """
 
-    _BOXES = (QtWidgets.QAbstractSpinBox, QtWidgets.QComboBox)
+    NAME = "geodome_wheel_guard"
+    _BOXES = (QtWidgets.QAbstractSpinBox, QtWidgets.QComboBox,
+              QtWidgets.QSlider)
     _POLICY = (QtCore.QEvent.Type.Polish, QtCore.QEvent.Type.Show,
                QtCore.QEvent.Type.Enter)
 
@@ -346,15 +350,25 @@ def remove_wheel_guard():
     """
     global _wheel_guard
     guard, _wheel_guard = _wheel_guard, None
-    if guard is None:
-        return
-    try:
-        app = QtWidgets.QApplication.instance()
-        if app is not None:
-            app.removeEventFilter(guard)
-        guard.setParent(None)
-    except Exception:                                # pragma: no cover
-        pass
+    app = QtWidgets.QApplication.instance()
+    guards = [guard] if guard is not None else []
+    if app is not None:
+        # also guards left by an earlier import of this module (Spyder
+        # re-imports the package on every run)
+        try:
+            guards += [g for g in app.findChildren(QtCore.QObject,
+                                                   WheelGuard.NAME)
+                       if g is not guard]
+        except Exception:                            # pragma: no cover
+            pass
+    for g in guards:
+        try:
+            if app is not None:
+                app.removeEventFilter(g)
+            g.setParent(None)
+            g.deleteLater()
+        except Exception:                            # pragma: no cover
+            pass                                     # already deleted
 
 
 def install_wheel_guard(app=None):
@@ -366,9 +380,14 @@ def install_wheel_guard(app=None):
     app = app or QtWidgets.QApplication.instance()
     if app is None:
         return None
-    if _wheel_guard is None or _wheel_guard.parent() is not app:
+    try:
+        current = _wheel_guard is not None and _wheel_guard.parent() is app
+    except RuntimeError:            # its application was deleted earlier
+        _wheel_guard, current = None, False
+    if not current:
         remove_wheel_guard()
         _wheel_guard = WheelGuard(app)
+        _wheel_guard.setObjectName(WheelGuard.NAME)
         app.installEventFilter(_wheel_guard)
         app.aboutToQuit.connect(remove_wheel_guard)
     return _wheel_guard
