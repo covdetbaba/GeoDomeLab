@@ -263,11 +263,15 @@ def linear_buckling(model, N_reference, n_modes=6, dense_limit=2400):
     k = min(n_modes, len(lam))
     lam, V = lam[:k], V[:, :k]
 
+    # Scale each mode so that its largest component is +1.  The sign of an
+    # eigenvector is arbitrary (it differs between LAPACK builds); this
+    # makes the modes the same on every platform.
     modes = np.zeros((ndof, k))
     for i in range(k):
         v = V[:, i]
-        nrm = np.max(np.abs(v))
-        modes[fd, i] = v / (nrm if nrm > 0 else 1.0)
+        j = int(np.argmax(np.abs(v)))
+        piv = v[j] if v[j] != 0.0 else 1.0
+        modes[fd, i] = v / piv
 
     if lam[0] < 1.0:
         warnings.append(f"Critical load factor {lam[0]:.3f} < 1.0: the dome is "

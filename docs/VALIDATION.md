@@ -6,7 +6,7 @@ GeoDomeLab is checked in five ways:
    energy checks that every solve reports about itself. Part of the suite
    compares with closed forms and published values; the rest are identities
    (equilibrium, energy, symmetry), which test consistency, not accuracy.
-2. **Unit and GUI tests.** 319 tests in 17 files.
+2. **Unit and GUI tests.** 320 tests in 17 files.
 3. **Hand calculations.** Two small domes solved by hand (80 comparisons), and
    ten more cases F1 to F10 (422 comparisons) from a hand-calculation file
    that does not import the program.
@@ -51,7 +51,7 @@ Result of the run on 16 November 2026:
 
 | Step | Command | Result |
 |---|---|---|
-| Unit and GUI tests | `python tests/test_*.py` (each file) | 319 of 319 pass, 1 skipped |
+| Unit and GUI tests | `python tests/test_*.py` (each file) | 320 of 320 pass, 1 skipped |
 | Built-in verification | `python run_geodome.py --verify` | 75 of 75 pass |
 | Models A and B | `python validation/run_validation.py` | 80 of 80 pass |
 | Hand file F1 to F10, internal checks | `python validation/hand_calc_ext.py` | 120 of 120 pass, 290 reference values |
@@ -100,7 +100,7 @@ it. They also catch any exception raised inside a Qt slot.
 |---|---|---|
 | `test_geodome.py` | 30 | geometry, sections, loads, solver, AISC checks, buckling |
 | `test_foundation.py` | 44 | temperature, settlement, springs, custom supports, custom geometry, JSON v2, mechanism detection, default combinations, unused-load and aluminium messages, wind direction, unbalanced snow, snow on deep domes, lowest buckling factor over the strength combinations |
-| `test_nonlinear.py` | 22 | tangent vs finite differences, von Mises closed form, star dome, 6V limit point, imperfections (including a crown snap close to zero load), the double bifurcation of a three-bar tent |
+| `test_nonlinear.py` | 23 | tangent vs finite differences, von Mises closed form, star dome, 6V limit point, imperfections (including a crown snap close to zero load, and a buckling-mode sign that is the same on every platform), the double bifurcation of a three-bar tent |
 | `test_modal.py` | 25 | closed-form frequencies, M-orthonormality, effective mass sum rule |
 | `test_fabrication.py` | 20 | chord factors 2V to 8V, valences, angles, dihedrals, panel areas, cut lists |
 | `test_study.py` | 20 | parameter studies, CSV round trip, auto-sizing with the B4.2 wall and deflection floors |
@@ -115,7 +115,7 @@ it. They also catch any exception raised inside a Qt slot.
 | `test_gui_nonlinear.py` | 7 | nonlinear view, path scrubbing, imperfection study, failed imperfection signs |
 | `test_gui_modal_fab.py` | 16 | Modes view and animation, Fabrication tab, DXF menu |
 | `test_gui_study_validation.py` | 11 | Study view, Validation menu with and without OpenSees |
-| **Total** | **319 + 1 skipped** | |
+| **Total** | **320 + 1 skipped** | |
 
 ## 3. Hand calculations
 

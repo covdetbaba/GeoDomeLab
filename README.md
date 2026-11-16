@@ -108,13 +108,13 @@ everything passes. Qt runs offscreen, so no window opens. The run on
 
 | Step | Result |
 |---|---|
-| Unit and GUI tests (17 files) | 319 of 319 pass, 1 skipped |
+| Unit and GUI tests (17 files) | 320 of 320 pass, 1 skipped |
 | Verification suite (`run_geodome.py --verify`) | 75 of 75 pass |
 | Hand calculation, Models A and B (`validation/run_validation.py`) | 80 of 80 pass |
 | Hand calculation file F1-F10, internal checks (`validation/hand_calc_ext.py`) | 120 of 120 pass |
 | Program vs hand calculation F1-F10 (`validation/run_validation_ext.py`) | 422 of 422 pass |
 | OpenSees cross-check, quick set (`validation/opensees_crosscheck.py --quick`) | 486 of 486 pass |
-| **Overall** | **PASS, 1502 of 1502 checks** |
+| **Overall** | **PASS, 1503 of 1503 checks** |
 
 The skipped test compares two ways of running OpenSees and needs both of them.
 Without OpenSees the OpenSees steps are skipped, not failed. The same command

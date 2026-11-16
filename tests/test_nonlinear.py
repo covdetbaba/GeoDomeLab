@@ -548,6 +548,33 @@ def test_imperfection_study_6v_dome():
                                           rows[1]["lambda_minus"])
 
 
+def test_buckling_mode_sign_is_platform_independent():
+    """Eigenvector signs differ between LAPACK builds (Windows CI with
+    OpenBLAS gave the opposite crown dimple to MKL).  linear_buckling scales
+    every mode to a largest component of +1, and linear_buckling_reference
+    turns each mode to do positive work with the load, so a positive
+    imperfection always points the way the load pushes."""
+    from geodome import benchmarks as bm
+    from geodome import buckling as bk
+    m = bm.make_preset("case_study_6v")
+    F = nl.reference_load(m, nl._find_combination(m, "LC2"))
+    r = slv.solve_model(m, F, name="ref", T_factor=0.0)
+    b = bk.linear_buckling(m, r.N, n_modes=4)
+    for k in range(b.modes.shape[1]):
+        v = b.modes[:, k]                  # (a symmetric mode may also
+        assert abs(np.max(v) - 1.0) < 1e-12           # reach -1 elsewhere)
+        assert abs(np.max(np.abs(v)) - 1.0) < 1e-12
+    lam, phi, b2 = nl.linear_buckling_reference(m, F)
+    for k in range(b2.modes.shape[1]):
+        assert float(b2.modes[:, k] @ F) >= -1e-9 * np.linalg.norm(F)
+    c = m.geom.crown_node
+    assert phi[3 * c + 2] == -1.0          # the crown dimple points down
+    # linear_buckling alone points the crown up (largest component +1);
+    # the reference turns it to point with the load
+    assert b.modes[3 * c + 2, 0] == 1.0
+    assert np.allclose(phi, -b.modes[:, 0], atol=1e-9)
+
+
 def test_imperfect_crown_snap_near_zero_load_is_not_jumped_over():
     """The 6V case-study trial dome, mode-1 imperfection (a crown dimple).
     At span/200 = 150 mm the crown hub is almost flat with its five

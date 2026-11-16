@@ -301,15 +301,15 @@ None.
 | F6 linear | lambda_cr P_ref | F6.P_cr_linear | 53277.68772 | 53277.68772 | N | 2.7e-16 | 1e-09 | yes | buckling.linear_buckling |
 | F6 linear | lowest root of det(K + lam Kg) | F6.lambda_cr | 5.327768772 | 5.327768772 | - | 1.7e-16 | 1e-09 | yes | solver.assemble_stiffness / assemble_geometric_stiffness |
 | F6 linear | sway root of det(K + lam Kg) | F6.lambda_sway | 852443.0035 | 852443.0035 | - | 1.2e-13 | 1e-09 | yes | solver.assemble_stiffness / assemble_geometric_stiffness |
-| F6 nonlinear | limit load lambda_limit P_ref | F6.P_limit | 10240.4996 | 10240.4996 | N | 3.6e-16 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.09 s) |
-| F6 nonlinear | apex deflection at the limit | F6.w_limit | 0.05286125123 | 0.05286125126 | m | 4.9e-10 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.09 s) |
-| F6 nonlinear | bar length at the limit | F6.l_limit | 2.501040583 | 2.501040583 | m | 3.0e-13 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.09 s) |
-| F6 nonlinear | bar force at the limit | F6.N_limit | -177518.3623 | -177518.3624 | N | 3.6e-10 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.09 s) |
-| F6 nonlinear | strain at the limit | F6.strain_limit | -0.0008319471394 | -0.0008319471397 | - | 3.6e-10 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.09 s) |
-| F6 nonlinear | lambda_cr / lambda_limit | F6.ratio_linear_to_limit | 5.202645361 | 5.202645361 | - | 6.8e-16 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.09 s) |
+| F6 nonlinear | limit load lambda_limit P_ref | F6.P_limit | 10240.4996 | 10240.4996 | N | 3.6e-16 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.10 s) |
+| F6 nonlinear | apex deflection at the limit | F6.w_limit | 0.05286125123 | 0.05286125126 | m | 4.9e-10 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.10 s) |
+| F6 nonlinear | bar length at the limit | F6.l_limit | 2.501040583 | 2.501040583 | m | 3.0e-13 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.10 s) |
+| F6 nonlinear | bar force at the limit | F6.N_limit | -177518.3623 | -177518.3624 | N | 3.6e-10 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.10 s) |
+| F6 nonlinear | strain at the limit | F6.strain_limit | -0.0008319471394 | -0.0008319471397 | - | 3.6e-10 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.10 s) |
+| F6 nonlinear | lambda_cr / lambda_limit | F6.ratio_linear_to_limit | 5.202645361 | 5.202645361 | - | 6.8e-16 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.10 s) |
 | F6 nonlinear | lambda_cr reported by run_nonlinear | F6.lambda_cr | 5.327768772 | 5.327768772 | - | 1.7e-16 | 1e-09 | yes | run_nonlinear (linear_buckling) |
-| F6 nonlinear | max \|P_program - P_exact(w)\| / P* over all 63 path points (w up to 2.84 h, 25 on the unstable branch) | path | 0 | 2.842032284e-15 | - | 2.8e-15 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.09 s) |
-| F6 nonlinear | path passes the snap-through target (max w / w_snap >= 1) | path | 1 | 1 | - | 0.0e+00 | 0e+00 | yes | run_nonlinear arc-length (62 steps, 0.09 s) |
+| F6 nonlinear | max \|P_program - P_exact(w)\| / P* over all 63 path points (w up to 2.84 h, 25 on the unstable branch) | path | 0 | 2.842032284e-15 | - | 2.8e-15 | 1e-06 | yes | run_nonlinear arc-length (62 steps, 0.10 s) |
+| F6 nonlinear | path passes the snap-through target (max w / w_snap >= 1) | path | 1 | 1 | - | 0.0e+00 | 0e+00 | yes | run_nonlinear arc-length (62 steps, 0.10 s) |
 | F6 tangent | first limit point w* | F6.w_limit | 0.05286125123 | 0.05286125123 | m | 1.6e-14 | 1e-06 | yes | zero of the program's tangent K_T,zz (TrussSystem.tangent) |
 | F6 tangent | second limit point h + y* | F6.w_second_limit | 0.1971387488 | 0.1971387488 | m | 4.4e-15 | 1e-06 | yes | zero of the program's tangent K_T,zz (TrussSystem.tangent) |
 | F6 path | P at w = 0.1 h | F6.P_at_w0.1h | 4545.497953 | 4545.497953 | N | 0.0e+00 | 1e-06 | yes | TrussSystem.state (corotational element) |
@@ -474,4 +474,4 @@ None.
 | F10 AISC | KL/r, E7 slender wall | F10.KLr_e7 | 26.52271999 | 26.52271999 | - | 0.0e+00 | 1e-09 | yes | buckling.compression_capacity (custom Section) |
 | F10 AISC | phi Pn, D/t above 0.45 E/Fy | F10.phiPn_scope | 0 | 0 | N | 0.0e+00 | 1e-09 | yes | buckling.compression_capacity (custom Section) |
 
-Run time 0.1 s.
+Run time 0.2 s.

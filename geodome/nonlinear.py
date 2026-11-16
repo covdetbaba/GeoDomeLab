@@ -1430,10 +1430,26 @@ def reference_load(model, combination):
 
 
 def linear_buckling_reference(model, F_ref):
-    """(lambda_cr, mode) of ``F_ref`` from buckling.linear_buckling."""
+    """(lambda_cr, mode) of ``F_ref`` from buckling.linear_buckling.
+
+    The sign of an eigenvector is arbitrary and differs between LAPACK
+    builds.  Each mode is turned so that it does positive work with the
+    reference load (phi . F_ref > 0): a positive imperfection amplitude is
+    then always in the direction the load pushes (for a dome under gravity,
+    the crown dimple points down), on every platform.  A mode orthogonal to
+    the load keeps the sign of buckling.linear_buckling (largest component
+    positive).
+    """
     from . import buckling as bk
     r = slv.solve_model(model, F_ref, name="ref", T_factor=0.0)
     b = bk.linear_buckling(model, r.N, n_modes=6)
+    F = np.asarray(F_ref, dtype=float)
+    nF = float(np.linalg.norm(F))
+    for k in range(b.modes.shape[1]):
+        v = b.modes[:, k]
+        w = float(v @ F)
+        if abs(w) > 1e-9 * float(np.linalg.norm(v)) * nF and w < 0.0:
+            b.modes[:, k] = -v
     if len(b.load_factors):
         return float(b.load_factors[0]), b.modes[:, 0].copy(), b
     return float("nan"), None, b

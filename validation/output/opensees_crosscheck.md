@@ -1,7 +1,7 @@
 # GeoDomeLab vs OpenSees: independent cross-check
 
 Generated 2026-11-16 by `validation/opensees_crosscheck.py`.  
-GeoDomeLab 2.0.0 (Python 3.13.9); OpenSees 3.8.0 via OpenSeesPy, run subprocess (separate OpenSees interpreter).  Total time 14.5 s.
+GeoDomeLab 2.0.0 (Python 3.13.9); OpenSees 3.8.0 via OpenSeesPy, run subprocess (separate OpenSees interpreter).  Total time 14.3 s.
 
 **Result: 1069 of 1069 comparisons pass.**
 
