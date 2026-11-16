@@ -1,0 +1,21 @@
+# GeoDomeLab requirements
+#
+# All of these ship with a standard Anaconda / Spyder installation, so in most
+# cases nothing needs to be installed at all.
+
+numpy>=1.20
+scipy>=1.7
+matplotlib>=3.5
+qtpy>=2.0
+
+# Exactly one Qt binding is required.  qtpy will use whichever it finds, so
+# install one of the following only if none is already present:
+#
+#   pip install PyQt5
+#   pip install PyQt6
+#   pip install PySide6
+#
+# Spyder already provides one.
+
+# Optional: the unit tests run standalone, but pytest gives nicer output.
+# pytest>=7.0

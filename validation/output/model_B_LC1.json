@@ -1,0 +1,45 @@
+{
+  "format": "GeoDomeLab model",
+  "version": 1,
+  "geometry": {
+    "frequency": 1,
+    "radius": 5.0,
+    "dome_fraction": 0.7236067977499789
+  },
+  "material": "ASTM A500 Gr. C (round)",
+  "group_sections": [
+    "CHS 88.9 x 4.0"
+  ],
+  "support_type": "pinned",
+  "loads": {
+    "include_self_weight": false,
+    "dead_pressure": 0.0,
+    "snow_pressure": 0.0,
+    "snow_unbalanced": false,
+    "live_pressure": 0.0,
+    "wind_enabled": false,
+    "wind_speed": 45.0,
+    "wind_Kz": 0.9,
+    "wind_Kzt": 1.0,
+    "wind_Kd": 0.95,
+    "wind_G": 0.85,
+    "wind_azimuth": 0.0,
+    "crown_point_load": 50000.0
+  },
+  "combinations": [
+    {
+      "name": "B1  1.0L",
+      "D": 0.0,
+      "S": 0.0,
+      "L": 1.0,
+      "W": 0.0,
+      "serviceability": false
+    }
+  ],
+  "design": {
+    "K_effective": 1.0,
+    "deflection_limit": 240.0,
+    "phi_c": 0.9,
+    "phi_t": 0.9
+  }
+}
