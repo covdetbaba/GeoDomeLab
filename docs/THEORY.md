@@ -382,6 +382,19 @@ no agreed rule for combining modes into the decisive shape (also Bulenda &
 Knippers 2001). The dialog starts with span/1000, span/500, span/300 and
 span/200.
 
+**Local modes and the first step.** The first buckling mode of a geodesic
+dome is often a dimple at a single five-valent hub, such as the crown. Then
+the useful measure of $a$ is the local rise of that hub above its
+neighbours, not the span. In the 6V, $R$ = 15 m case study the crown stands
+0.198 m above its five neighbours, so span/300 (100 mm) and span/200
+(150 mm) flatten most of it. The crown then snaps through at a very low
+load, like a shallow von Mises truss. Such a snap can lie within a
+millimetre of the start of the path. An imperfect run therefore starts with
+a first arc length of $2\times10^{-5}$ times the length scale (0.3 mm for
+$R$ = 15 m), and the step then grows to its usual size. A nominal first step
+(about 0.3 m here) jumps over the snap and finds the later load maximum of
+the inverted crown instead.
+
 ## 9. Modal analysis
 
 Undamped free vibration (Chopra 2023, Ch. 10 and 13):

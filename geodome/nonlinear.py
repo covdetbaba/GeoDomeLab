@@ -768,6 +768,7 @@ def _resolve_method(method):
 
 def trace_path(system, F_ref, method="arc-length", control_dof=None, *,
                first_increment=0.1, arc_length=None, max_arc_factor=5.0,
+               first_arc_length=None,
                lambda_max=np.inf, lambda_min=-np.inf, control_max=np.inf,
                stop_after_limit=5, max_steps=300, tol=1e-8, tol_disp=1e-6,
                max_iter=30, desired_iterations=5, max_cutbacks=12,
@@ -786,6 +787,12 @@ def trace_path(system, F_ref, method="arc-length", control_dof=None, *,
         length ``Dl = first_increment * |K0^-1 F_ref|`` (arc-length), the
         control increment (displacement) or the load step (load).
     arc_length : explicit initial arc length [m] (overrides first_increment).
+    first_arc_length : arc-length method only: cap [m] on the FIRST step
+        alone.  The step then grows (by the iteration-count rule) up to the
+        usual maximum, ``max_arc_factor`` times the nominal arc length.  A
+        small first step resolves a limit point that lies very close to the
+        start of the path (an imperfect node that is almost flat with its
+        neighbours), which a nominal step would jump over.
     max_arc_factor : arc length (or control/load step) is kept within
         [initial * 1e-6, initial * max_arc_factor].
     lambda_max, lambda_min, control_max : stop when lambda leaves
@@ -880,6 +887,10 @@ def trace_path(system, F_ref, method="arc-length", control_dof=None, *,
     else:
         size0 = abs(first_increment)
     size, size_min, size_max = size0, size0 * 1e-6, size0 * max_arc_factor
+    if method == "arc-length" and first_arc_length and \
+            0.0 < float(first_arc_length) < size0:
+        size = float(first_arc_length)
+        size_min = size * 1e-6
     tr.du_ref = abs(first_increment) * nv0 if method != "arc-length" \
         else size0
     dsign = 1.0
@@ -1473,6 +1484,16 @@ def run_nonlinear(model, combination_name=None, method="arc-length",
                     f"{combo.name} is not included in the nonlinear path.")
 
     work = model
+    arc = _METHODS.get(str(method).lower(), "") == "arc-length"
+    if node_offset is not None and arc and \
+            "arc_length" not in trace_options and \
+            "first_arc_length" not in trace_options:
+        # An imperfection can put a node almost flat with its neighbours;
+        # its local snap then lies within a millimetre or so of the start
+        # of the path.  Start with a step of 2e-5 times the length scale
+        # (0.3 mm for a 15 m radius); the step grows to the nominal size.
+        trace_options["first_arc_length"] = 2e-5 * float(
+            model.geom.length_scale)
     if node_offset is not None:
         work = copy.copy(model)
         g = dataclasses.replace(

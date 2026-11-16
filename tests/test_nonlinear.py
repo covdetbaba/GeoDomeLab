@@ -391,7 +391,11 @@ def test_first_arc_step_never_goes_to_a_negative_load():
             assert r.lambda_limit < r.lambda_cr, (a, sg, r.lambda_limit)
     assert row["found"]
     assert row["lambda_limit"] < perfect["lambda_limit"]
-    assert abs(row["ratio"] - 0.2884) < 2e-3, row["ratio"]
+    # 150 mm along the crown dimple leaves the crown hub almost flat with
+    # its neighbours: the first limit is close to zero load (the 0.288 found
+    # before the capped first step was the later maximum of the inverted
+    # crown, see test_imperfect_crown_snap_near_zero_load_is_not_jumped_over)
+    assert row["ratio"] < 1e-3, row["ratio"]
     assert row["sign"] == 1.0
 
 
@@ -542,6 +546,40 @@ def test_imperfection_study_6v_dome():
     assert abs(rows[1]["amplitude_over_span"] - 1e-3) < 1e-12
     assert rows[1]["lambda_limit"] == min(rows[1]["lambda_plus"],
                                           rows[1]["lambda_minus"])
+
+
+def test_imperfect_crown_snap_near_zero_load_is_not_jumped_over():
+    """The 6V case-study trial dome, mode-1 imperfection (a crown dimple).
+    At span/200 = 150 mm the crown hub is almost flat with its five
+    neighbours (local rise 0.198 m), so its first limit load is close to
+    zero.  A nominal first arc-length step (about 0.3 m) jumped over that
+    snap onto the inverted-crown branch and reported its later maximum
+    (5.85 on the sized dome).  The default capped first step must find the
+    same first limit as an explicit 1 mm step."""
+    from geodome import benchmarks as bm
+    m = bm.make_preset("case_study_6v")
+    combo = "LC2"
+    F = nl.reference_load(m, nl._find_combination(m, combo))
+    lam_cr, _, b = nl.linear_buckling_reference(m, F)
+    phi = b.modes[:, 0] / np.max(np.abs(b.modes[:, 0]))
+    off = (m.geom.base_diameter / 200.0 * phi).reshape(-1, 3)
+    kw = dict(node_offset=off, load_vector=F, lambda_cr=lam_cr,
+              compare=False, member_checks=False)
+    r_def = nl.run_nonlinear(m, combo, **kw)
+    r_small = nl.run_nonlinear(m, combo, arc_length=1e-3, max_steps=2000,
+                               **kw)
+    assert r_def.limit_found and r_small.limit_found
+    assert r_def.lambda_limit < 1e-3 * lam_cr, r_def.lambda_limit
+    assert abs(r_def.lambda_limit - r_small.lambda_limit) <= \
+        1e-6 * lam_cr
+    # the first step is the capped one, and the run still finishes quickly
+    assert np.linalg.norm(r_def.u[1] - r_def.u[0]) <= \
+        2e-5 * m.geom.length_scale * (1 + 1e-9)
+    assert len(r_def.lam) < 300
+    # a perfect run keeps the nominal first step (no change for it)
+    r0 = nl.run_nonlinear(m, combo, compare=False, member_checks=False,
+                          lambda_cr=lam_cr, load_vector=F)
+    assert np.linalg.norm(r0.u[1] - r0.u[0]) > 1e-2
 
 
 # =============================================================== driver =====
