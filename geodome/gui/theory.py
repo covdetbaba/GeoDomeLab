@@ -234,8 +234,9 @@ first one reaches zero at &lambda;_cr. Checks: &Phi;^T M &Phi; = I,
 </pre>
 <p>The axial angle is the angle between a strut and the radius to its hub
 (Clinton 1971). The program computes it from the mesh vectors at both ends
-and checks it against the closed form. Chord factors follow Kenner (1976),
-as reproduced by the Domerama chord-factor chart.
+and checks it against the closed form. The breakdown is Kenner's (1976)
+Class I, and the chord factors are checked against the Domerama
+chord-factor chart.
 For a 2V dome the closed forms give cf = 2 sin(18 deg) = 0.618034 and
 cf = 2 sin(arccos(1/sqrt5) / 4) = 0.546533, with axial angles 72.000 and
 74.141 deg. Hub types group the nodes by location (interior, edge, base) and

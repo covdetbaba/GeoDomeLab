@@ -34,9 +34,13 @@ section.
 
 Global buckling
 ---------------
-A single-layer dome fails by *system* instability -- snap-through of a node or
-of a whole cap -- long before the individual struts reach their Euler loads.
-That mode is captured by the linearised (eigenvalue) buckling problem
+A single-layer dome can fail by *system* instability -- snap-through of a
+node or of a whole cap -- or by buckling of single struts.  Which comes first
+depends on the strut slenderness and on the imperfections.  In the sized 6V
+case study under LC2 the first strut reaches its design strength at a load
+factor of 1.33 and its Euler load at 1.69, far below the global limit of
+12.5.  The member checks cover the struts.  The system mode is captured by the
+linearised (eigenvalue) buckling problem
 
     [ K + lambda Kg(N) ] {phi} = {0}
 

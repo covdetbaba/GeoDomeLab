@@ -1074,6 +1074,74 @@ def test_wind_direction_and_live_load_tooltips():
     win.close()
 
 
+def _wheel(widget, notches=-1):
+    from qtpy import QtCore, QtGui
+    pos = QtCore.QPointF(widget.width() / 2, widget.height() / 2)
+    gpos = QtCore.QPointF(widget.mapToGlobal(pos.toPoint()))
+    return QtGui.QWheelEvent(pos, gpos, QtCore.QPoint(0, 0),
+                             QtCore.QPoint(0, 120 * notches),
+                             QtCore.Qt.MouseButton.NoButton,
+                             QtCore.Qt.KeyboardModifier.NoModifier,
+                             QtCore.Qt.ScrollPhase.NoScrollPhase, False)
+
+
+def test_mouse_wheel_does_not_edit_an_unfocused_box():
+    """Review P1b: one wheel notch over the dead-load box changed 0.35 to
+    0.30 kPa although the box had not been clicked (Qt's WheelFocus).
+    Spin and combo boxes now take the focus by click or Tab only, and the
+    wheel scrolls the panel unless the box has the focus."""
+    from qtpy import QtCore, QtWidgets
+    from geodome.gui import style as st
+    app, win = _window()
+    with _SlotErrors() as errors:
+        win.show()
+        app.processEvents()
+        assert win.load_preset("case_study_6v")
+        app.processEvents()
+        boxes = (win.findChildren(QtWidgets.QAbstractSpinBox)
+                 + win.findChildren(QtWidgets.QComboBox))
+        assert len(boxes) > 20
+        for b in boxes:
+            b.ensurePolished()
+        wheel_focus = [b.objectName() or type(b).__name__ for b in boxes
+                       if b.focusPolicy() == QtCore.Qt.FocusPolicy.WheelFocus]
+        assert not wheel_focus, wheel_focus
+        lp = win.load_panel
+        win.input_tabs.setCurrentWidget(
+            win.input_tabs.widget(win.input_tabs.indexOf(lp))
+            if win.input_tabs.indexOf(lp) >= 0 else win.input_tabs.widget(2))
+        app.processEvents()
+        box = lp.dead
+        before = box.value()
+        box.clearFocus()
+        app.processEvents()
+        assert not box.hasFocus()
+        for notches in (-1, 1, -3):
+            app.sendEvent(box, _wheel(box, notches))
+            app.processEvents()
+            assert box.value() == before, (notches, box.value(), before)
+        # the same for a combo box
+        combo = win.section_panel.material
+        text = combo.currentText()
+        combo.clearFocus()
+        app.sendEvent(combo, _wheel(combo, -1))
+        app.processEvents()
+        assert combo.currentText() == text
+        # a focused box still follows the wheel
+        win.activateWindow()
+        box.setFocus(QtCore.Qt.FocusReason.MouseFocusReason)
+        app.processEvents()
+        if box.hasFocus():              # needs an active window off screen
+            app.sendEvent(box, _wheel(box, -1))
+            app.processEvents()
+            assert box.value() < before
+            box.setValue(before)
+        # one guard only, however many windows are built
+        assert st.install_wheel_guard() is st.install_wheel_guard()
+    assert not errors, errors[0]
+    win.close()
+
+
 # ================================================================ driver ==
 def _run_standalone():
     fns = [(n, f) for n, f in sorted(globals().items())

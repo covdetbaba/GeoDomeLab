@@ -200,6 +200,8 @@ class MainWindow(QtWidgets.QMainWindow):
         # Light palette first, so every widget (and the matplotlib toolbar
         # icons) is built light even when Windows runs in dark mode.
         st.apply_light_theme()
+        # the mouse wheel scrolls panels; it never edits an unfocused box
+        st.install_wheel_guard()
         self.setWindowTitle(f"{APP_NAME} {__version__}  --  {APP_SUBTITLE}")
         self.resize(1480, 920)
         self.setStyleSheet(st.STYLESHEET)

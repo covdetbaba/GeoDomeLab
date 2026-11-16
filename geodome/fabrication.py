@@ -127,8 +127,8 @@ patterns.
 
 Published values reproduced (tests/test_fabrication.py)
 -------------------------------------------------------
-2V chord factors 0.54653 / 0.61803 (Kenner 1976; Domerama chord-factor
-chart), 2V tangent angles 15.86 / 18 deg (Domerama), the 3V to 8V dome
+2V chord factors 0.54653 / 0.61803 (Domerama chord-factor chart; closed
+forms 2 sin(15.8587 deg) and 2 sin 18 deg), 2V tangent angles 15.86 / 18 deg (Domerama), the 3V to 8V dome
 chord factors and strut counts of the Domerama chart ("method 1",
 icosahedral; 5 printed decimals to within one unit, 8 printed decimals to
 within 1e-8), the full-sphere counts, the regular icosahedron and

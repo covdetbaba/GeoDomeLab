@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "All rights reserved by Jovdat Babazade. If you use GeoDomeLab or its results, credit the author and cite it as below."
 title: "GeoDomeLab: analysis, stability and fabrication of single-layer geodesic domes by matrix structural analysis"
 version: 2.0.0
-date-released: 2026-12-01
+date-released: 2026-11-16
 authors:
   - family-names: Babazade
     given-names: Jovdat

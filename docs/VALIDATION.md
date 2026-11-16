@@ -6,7 +6,7 @@ GeoDomeLab is checked in five ways:
    energy checks that every solve reports about itself. Part of the suite
    compares with closed forms and published values; the rest are identities
    (equilibrium, energy, symmetry), which test consistency, not accuracy.
-2. **Unit and GUI tests.** 321 tests in 17 files.
+2. **Unit and GUI tests.** 322 tests in 17 files.
 3. **Hand calculations.** Two small domes solved by hand (80 comparisons), and
    ten more cases F1 to F10 (422 comparisons) from a hand-calculation file
    that does not import the program.
@@ -51,7 +51,7 @@ Result of the run on 16 November 2026:
 
 | Step | Command | Result |
 |---|---|---|
-| Unit and GUI tests | `python tests/test_*.py` (each file) | 321 of 321 pass, 1 skipped |
+| Unit and GUI tests | `python tests/test_*.py` (each file) | 322 of 322 pass, 1 skipped |
 | Built-in verification | `python run_geodome.py --verify` | 75 of 75 pass |
 | Models A and B | `python validation/run_validation.py` | 80 of 80 pass |
 | Hand file F1 to F10, internal checks | `python validation/hand_calc_ext.py` | 120 of 120 pass, 290 reference values |
@@ -110,12 +110,12 @@ it. They also catch any exception raised inside a Qt slot.
 | `test_cad.py` | 11 | DXF export read back: entity counts and coordinates |
 | `test_report_extras.py` | 14 | HTML report sections for nonlinear, modal, fabrication and study results; no NaN text for a custom truss |
 | `test_gui_generate.py` | 2 | Generate dome from 1V to 10V, up and down |
-| `test_gui_inputs.py` | 26 | examples, custom models, supports, loads, CSV import, save and open, mechanism and file-check messages, busy file actions, small-screen size |
+| `test_gui_inputs.py` | 27 | examples, custom models, supports, loads, CSV import, save and open, mechanism and file-check messages, busy file actions, small-screen size, the mouse wheel never edits an unfocused box |
 | `test_gui_analysis.py` | 15 | the integrated window: menus and tabs, examples, 6V analysis, nonlinear, modal, fabrication, study, validation without OpenSees, the script export menu entry, results cleared after input changes, HTML and DXF export, save and open |
 | `test_gui_nonlinear.py` | 7 | nonlinear view, path scrubbing, imperfection study, failed imperfection signs |
 | `test_gui_modal_fab.py` | 16 | Modes view and animation, Fabrication tab, DXF menu |
 | `test_gui_study_validation.py` | 11 | Study view, Validation menu with and without OpenSees |
-| **Total** | **321 + 1 skipped** | |
+| **Total** | **322 + 1 skipped** | |
 
 ## 3. Hand calculations
 
@@ -235,7 +235,7 @@ independent Newton solver written inside `tests/test_benchmarks.py`.
 `tests/test_nonlinear.py` checks the limit point with both arc-length and
 displacement control, and the second maximum (8.8654e-3 EA near 10.54 cm).
 OpenSees follows the same path (case N-star-dome, refined limit λ differs by
-8.75e-14).
+2.8e-14).
 
 The linear buckling factor is 4.8 times the true first limit load. This is
 why GeoDomeLab has a nonlinear analysis.
@@ -281,8 +281,9 @@ along the unstable branch and onto the inverted stable branch. Every traced
 point is compared with P(w) (case F6, 32 rows, worst 4.9e-10 on the path).
 The limit load is P* = 10.24 kN at w* = 52.86 mm, and λ_cr = 5.33, so the
 linear buckling factor overestimates the snap-through load 5.2 times.
-OpenSees `corotTruss` gives the same path (vs the closed form 2.6e-13) and the
-same limit load (1.4e-15).
+OpenSees `corotTruss` gives the same path (vs the closed form 9.6e-14) and the
+same limit load (1.3e-14). For the deep variant (h = 1 m, strains up to 33 %)
+the two figures are 2.3e-13 and 5.0e-12.
 
 ### 4.3 Geodesic chord factors
 

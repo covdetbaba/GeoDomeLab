@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from qtpy import QtWidgets
+import atexit
+
+from qtpy import QtCore, QtWidgets
 from qtpy.QtCore import Qt
 from qtpy.QtGui import QColor
 
@@ -300,6 +302,81 @@ def apply_light_theme(app=None):
     return True
 
 
+# ------------------------------------------------------------ wheel guard --
+class WheelGuard(QtCore.QObject):
+    """Keep the mouse wheel from editing an input box the user did not click.
+
+    By default Qt gives a spin box or a combo box the focus when the wheel
+    turns over it, and the box then changes its value.  Scrolling down a
+    panel could therefore change a load or a section without the user
+    noticing.  This application-wide filter gives those boxes
+    ``StrongFocus`` (a click or Tab focuses them, the wheel does not) and,
+    while a box does not have the focus, passes the wheel event on to the
+    parent widget, so the panel scrolls instead.  A box that has the focus
+    still responds to the wheel as usual.
+    """
+
+    _BOXES = (QtWidgets.QAbstractSpinBox, QtWidgets.QComboBox)
+    _POLICY = (QtCore.QEvent.Type.Polish, QtCore.QEvent.Type.Show,
+               QtCore.QEvent.Type.Enter)
+
+    def eventFilter(self, obj, event):               # noqa: N802 (Qt name)
+        try:
+            t = event.type()
+            if t == QtCore.QEvent.Type.Wheel:
+                if isinstance(obj, self._BOXES) and not obj.hasFocus():
+                    event.ignore()                   # the parent scrolls
+                    return True
+            elif t in self._POLICY and isinstance(obj, self._BOXES):
+                if obj.focusPolicy() == Qt.FocusPolicy.WheelFocus:
+                    obj.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        except Exception:                            # pragma: no cover
+            pass
+        return False
+
+
+_wheel_guard = None
+
+
+def remove_wheel_guard():
+    """Take the guard off the application.
+
+    Called when the application quits and when Python exits, so that Qt
+    never calls the Python filter while the interpreter shuts down.
+    """
+    global _wheel_guard
+    guard, _wheel_guard = _wheel_guard, None
+    if guard is None:
+        return
+    try:
+        app = QtWidgets.QApplication.instance()
+        if app is not None:
+            app.removeEventFilter(guard)
+        guard.setParent(None)
+    except Exception:                                # pragma: no cover
+        pass
+
+
+def install_wheel_guard(app=None):
+    """Install :class:`WheelGuard` on the application (once).
+
+    Returns the guard, or None when there is no QApplication.
+    """
+    global _wheel_guard
+    app = app or QtWidgets.QApplication.instance()
+    if app is None:
+        return None
+    if _wheel_guard is None or _wheel_guard.parent() is not app:
+        remove_wheel_guard()
+        _wheel_guard = WheelGuard(app)
+        app.installEventFilter(_wheel_guard)
+        app.aboutToQuit.connect(remove_wheel_guard)
+    return _wheel_guard
+
+
+atexit.register(remove_wheel_guard)
+
+
 # ----------------------------------------------------------------- helpers --
 def heading(text):
     lab = QtWidgets.QLabel(text)
@@ -357,6 +434,7 @@ def hline():
 
 def spin(minimum, maximum, value, step=1, suffix=""):
     w = QtWidgets.QSpinBox()
+    w.setFocusPolicy(Qt.FocusPolicy.StrongFocus)     # see WheelGuard
     w.setRange(int(minimum), int(maximum))
     w.setSingleStep(int(step))
     w.setValue(int(value))
@@ -367,6 +445,7 @@ def spin(minimum, maximum, value, step=1, suffix=""):
 
 def dspin(minimum, maximum, value, step=0.1, decimals=3, suffix=""):
     w = QtWidgets.QDoubleSpinBox()
+    w.setFocusPolicy(Qt.FocusPolicy.StrongFocus)     # see WheelGuard
     w.setDecimals(decimals)
     w.setRange(float(minimum), float(maximum))
     w.setSingleStep(float(step))

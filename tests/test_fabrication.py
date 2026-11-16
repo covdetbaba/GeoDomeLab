@@ -107,7 +107,7 @@ def row_by(rows, **kw):
 
 
 # ======================================================== chord factors ===
-def test_2v_chord_factors_kenner_and_closed_form():
+def test_2v_chord_factors_chart_and_closed_form():
     R = 5.0
     t = fb.fabrication_tables(geo.generate_dome(2, R, 0.5))
     st = sorted(t["struts"], key=lambda r: r["chord_factor"])
