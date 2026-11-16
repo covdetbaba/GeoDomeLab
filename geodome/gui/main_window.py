@@ -61,6 +61,7 @@ from .panels import (GeometryPanel, SectionPanel, LoadPanel, DesignPanel,
                      InputError)
 from .worker import Worker, plain_message
 from . import style as st
+from . import view3d as v3
 
 APP_NAME = "GeoDomeLab"
 APP_SUBTITLE = "Geodesic Dome Space-Truss Analyzer"
@@ -376,20 +377,26 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.view_tabs = QtWidgets.QTabWidget()
         right.addWidget(self.view_tabs)
+        # members and nodes picked in the 3D views (shared by the six views
+        # and the Members and Nodes result tables)
+        self.selection = v3.Selection(self)
+        self.selection.changed.connect(self._sync_tables)
+        self._table_sync = False
 
         # model view
         self.canvas_model = Canvas3D()
         self.chk_panels = QtWidgets.QCheckBox("Cladding panels")
         self.chk_nodes = QtWidgets.QCheckBox("Nodes")
         self.chk_nodes.setChecked(True)
-        self.chk_labels = QtWidgets.QCheckBox("Node numbers")
         self.chk_family = QtWidgets.QCheckBox("Colour by strut family")
         self.chk_family.setChecked(True)
-        for w in (self.chk_family, self.chk_nodes, self.chk_panels,
-                  self.chk_labels):
+        for w in (self.chk_family, self.chk_nodes, self.chk_panels):
             self.canvas_model.add_control(w)
             w.toggled.connect(self.redraw_model)
         self.canvas_model.add_control_stretch()
+        self._install_viewer(self.canvas_model, "model")
+        # node numbers are drawn by the viewer (the view bar's Node # button)
+        self.chk_labels = self.canvas_model.view3d.bar.node_act
         self.view_tabs.addTab(self.canvas_model, "Model")
 
         # load view
@@ -400,6 +407,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas_loads.add_control(QtWidgets.QLabel("Load case:"))
         self.canvas_loads.add_control(self.loadcase_combo)
         self.canvas_loads.add_control_stretch()
+        self._install_viewer(self.canvas_loads, "loads")
         self.view_tabs.addTab(self.canvas_loads, "Loads")
 
         # deflected view
@@ -420,6 +428,7 @@ class MainWindow(QtWidgets.QMainWindow):
                   auto_btn, self.chk_undeformed):
             self.canvas_defl.add_control(w)
         self.canvas_defl.add_control_stretch()
+        self._install_viewer(self.canvas_defl, "deflected")
         self.view_tabs.addTab(self.canvas_defl, "Deflected shape")
 
         # axial force view
@@ -433,10 +442,12 @@ class MainWindow(QtWidgets.QMainWindow):
         for w in (QtWidgets.QLabel("Case:"), self.axial_combo, self.chk_width):
             self.canvas_axial.add_control(w)
         self.canvas_axial.add_control_stretch()
+        self._install_viewer(self.canvas_axial, "axial")
         self.view_tabs.addTab(self.canvas_axial, "Axial force")
 
         # utilisation view
         self.canvas_util = Canvas3D()
+        self._install_viewer(self.canvas_util, "utilisation")
         self.view_tabs.addTab(self.canvas_util, "Utilisation")
 
         # buckling view
@@ -452,6 +463,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for w in (self.mode_spin, self.buck_scale, self.buck_label):
             self.canvas_buck.add_control(w)
         self.canvas_buck.add_control_stretch()
+        self._install_viewer(self.canvas_buck, "buckling")
         self.view_tabs.addTab(self.canvas_buck, "Buckling mode")
 
         # charts
@@ -468,9 +480,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.result_tabs.addTab(self.summary_view, "Summary")
 
         self.member_table = st.table(["member"])
+        self.member_table.setToolTip("Select rows to show the members in "
+                                     "the 3D views.")
+        self.member_table.itemSelectionChanged.connect(self._on_member_rows)
         self.result_tabs.addTab(self.member_table, "Members")
 
         self.node_table = st.table(["node"])
+        self.node_table.setToolTip("Select rows to show the nodes in the 3D "
+                                   "views.")
+        self.node_table.itemSelectionChanged.connect(self._on_node_rows)
         self.result_tabs.addTab(self.node_table, "Nodes")
 
         self.reaction_table = st.table(["node"])
@@ -494,6 +512,100 @@ class MainWindow(QtWidgets.QMainWindow):
         sb = self.statusBar()
         sb.addWidget(self.status_label, 1)
         sb.addPermanentWidget(self.progress)
+
+    def _install_viewer(self, canvas, name):
+        """Give a 3D view the interactive viewer (view bar, picking,
+        selection details), sharing the window's selection."""
+        ctl = v3.install(canvas, selection=self.selection, name=name)
+        ctl.message.connect(self.status)
+        return ctl
+
+    # ------------------------------------------------------ 3D selection --
+    def _scene(self, view, **kw):
+        """What a 3D view has drawn, for the viewer (picking, details)."""
+        return v3.Scene(self.model, view=view, results=self.results, **kw)
+
+    def _table_ids(self, table, ids):
+        """Select the rows of ``table`` whose first cell is in ``ids``."""
+        from qtpy.QtCore import QItemSelection, QItemSelectionModel
+        flags = getattr(QItemSelectionModel, "SelectionFlag",
+                        QItemSelectionModel)
+        n = table.rowCount()
+        sm = table.selectionModel()
+        if n == 0 or sm is None:
+            return
+        table.blockSignals(True)
+        try:
+            table.clearSelection()
+            rows = []
+            for k in sorted(ids):
+                item = table.item(k, 0) if 0 <= k < n else None
+                r = k
+                if item is None or item.text().strip() != str(k):
+                    r = next((i for i in range(n)
+                              if table.item(i, 0) is not None
+                              and table.item(i, 0).text().strip() == str(k)),
+                             -1)
+                if r >= 0:
+                    rows.append(r)
+            if rows:
+                sel = QItemSelection()
+                last = table.columnCount() - 1
+                for r in rows:
+                    sel.select(table.model().index(r, 0),
+                               table.model().index(r, last))
+                sm.select(sel, flags.Select | flags.Rows)
+                table.scrollToItem(table.item(rows[-1], 0))
+        finally:
+            table.blockSignals(False)
+
+    def _sync_tables(self):
+        """The 3D selection changed: select the same rows in the Members
+        and Nodes tables (the result tab stays where it is)."""
+        if self._table_sync:
+            return
+        self._table_sync = True
+        try:
+            self._table_ids(self.member_table, self.selection.members)
+            self._table_ids(self.node_table, self.selection.nodes)
+        except Exception as exc:                     # pragma: no cover
+            self.log(f"Table selection: {exc}")
+        finally:
+            self._table_sync = False
+
+    def _rows_ids(self, table):
+        sm = table.selectionModel()
+        ids = []
+        for idx in (sm.selectedRows() if sm is not None else []):
+            item = table.item(idx.row(), 0)
+            try:
+                ids.append(int(item.text()))
+            except (AttributeError, ValueError):
+                pass
+        return ids
+
+    def _on_member_rows(self):
+        """Rows picked in the Members table: show them in the 3D views."""
+        if self._table_sync:
+            return
+        self._table_sync = True
+        try:
+            self.selection.set(self._rows_ids(self.member_table),
+                               self.selection.nodes, source="table")
+        finally:
+            self._table_sync = False
+
+    def _on_node_rows(self):
+        """Rows picked in the Nodes table: show them in the 3D views."""
+        if self._table_sync:
+            return
+        self._table_sync = True
+        try:
+            self.selection.set(self.selection.members,
+                               self._rows_ids(self.node_table),
+                               source="table")
+        finally:
+            self._table_sync = False
 
     # ------------------------------------------------------------- actions --
     def _act(self, text, slot, shortcut=None, tip=None):
@@ -743,6 +855,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.results = None
         self.sizing = None
         self._clear_results()
+        # the Model and Loads views stay drawn: their details lose the
+        # results of the old inputs
+        for c in (self.canvas_model, self.canvas_loads):
+            c.view3d.update_scene(results=None)
         self.model_changed()
         if had:
             self.status("Inputs changed. Press F9 to analyse again.")
@@ -800,6 +916,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.model_title = title or _model_title(model)
         self.results = None
         self.sizing = None
+        self.selection.clear(source="model")        # old numbers
         self.geometry_panel.sync_from_model(model, set_inputs=sync_inputs)
         self.section_panel.rebuild(model)
         if sync_inputs:
@@ -866,13 +983,22 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _clear_results(self):
         self.summary_view.clear()
-        for t in (self.member_table, self.node_table, self.reaction_table,
-                  self.sizing_table):
-            t.clearContents()
-            t.setRowCount(0)
+        # emptying the Members and Nodes tables must not clear the 3D
+        # selection (an input edit keeps the numbering)
+        self._table_sync = True
+        try:
+            for t in (self.member_table, self.node_table,
+                      self.reaction_table, self.sizing_table):
+                t.clearContents()
+                t.setRowCount(0)
+        finally:
+            self._table_sync = False
         for c in (self.canvas_defl, self.canvas_axial, self.canvas_util,
                   self.canvas_buck):
             c.clear()
+            # nothing to pick or describe in the emptied view, and the new
+            # axes gets the viewer's mouse (not matplotlib's own)
+            c.view3d.set_scene(None)
             c.refresh()
         self.canvas_charts.ax_top.clear()
         self.canvas_charts.ax_bottom.clear()
@@ -1018,6 +1144,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.mode_spin.setEnabled(nmodes > 0)
 
         self._auto_scale()
+        # the Model view stays drawn; its details now show the results
+        self.canvas_model.view3d.update_scene(results=res)
         self.redraw_loads()
         self.redraw_axial()
         self.redraw_utilisation()
@@ -1025,6 +1153,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.redraw_charts()
         self.view_tabs.setCurrentWidget(self.canvas_util)
         self.result_tabs.setCurrentIndex(0)
+        self._sync_tables()
 
         for msg in res.messages:
             self.log(msg)
@@ -1132,8 +1261,8 @@ class MainWindow(QtWidgets.QMainWindow):
         plot.draw_model(ax, self.model,
                         color_by_family=self.chk_family.isChecked(),
                         show_nodes=self.chk_nodes.isChecked(),
-                        show_panels=self.chk_panels.isChecked(),
-                        show_labels=self.chk_labels.isChecked())
+                        show_panels=self.chk_panels.isChecked())
+        c.view3d.set_scene(self._scene("model"))
         c.refresh()
 
     def redraw_loads(self):
@@ -1155,11 +1284,14 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.model.loads.has_self_straining:
                 title += "\n(+ temperature / settlement, not drawn)"
             plot.draw_loads(ax, self.model, F, title=title)
+            c.view3d.set_scene(self._scene("loads", case=combo.name,
+                                           loads=F))
         except Exception as exc:
             ax = c.clear()
             ax.text2D(0.5, 0.5, f"Loads cannot be drawn:\n{exc}",
                       transform=ax.transAxes, ha="center", va="center",
                       fontsize=9, color="#9d0208")
+            c.view3d.set_scene(None)
             self.log(f"Loads view: {exc}")
         c.refresh()
 
@@ -1185,10 +1317,13 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         c = self.canvas_defl
         ax = c.clear()
-        art = plot.draw_deflected(ax, self.model, r,
-                                  scale=self.defl_scale.value(),
+        scale = self.defl_scale.value()
+        art = plot.draw_deflected(ax, self.model, r, scale=scale,
                                   show_undeformed=self.chk_undeformed.isChecked())
         c.add_colorbar(art, "nodal displacement [mm]")
+        defo, _ = plot.deflected_nodes(self.model.geom, r, scale)
+        c.view3d.set_scene(self._scene("deflected", nodes=defo, case=name,
+                                       case_result=r, scale=scale))
         c.refresh()
 
     def redraw_axial(self):
@@ -1204,6 +1339,7 @@ class MainWindow(QtWidgets.QMainWindow):
                               title=f"Member axial force -- {name}",
                               width_scale=self.chk_width.isChecked())
         c.add_colorbar(art, "axial force [kN]   (+ tension)")
+        c.view3d.set_scene(self._scene("axial", case=name, case_result=r))
         c.refresh()
 
     def redraw_utilisation(self):
@@ -1212,6 +1348,7 @@ class MainWindow(QtWidgets.QMainWindow):
         c = self.canvas_util
         ax = c.clear()
         plot.draw_utilisation(ax, self.model, self.results.util_env)
+        c.view3d.set_scene(self._scene("utilisation"))
         c.refresh()
 
     def redraw_buckling(self):
@@ -1228,8 +1365,15 @@ class MainWindow(QtWidgets.QMainWindow):
             self.buck_label.setText(
                 "lambda_cr = " + ", ".join(f"{x:.2f}"
                                            for x in b.load_factors[:6]))
+            k = int(np.clip(self.mode_spin.value() - 1, 0,
+                            len(b.load_factors) - 1))
+            defo, scale, phi = plot.buckling_nodes(
+                self.model.geom, b, k, self.buck_scale.value())
+            c.view3d.set_scene(self._scene("buckling", nodes=defo, phi=phi,
+                                           mode=k + 1, scale=scale))
         else:
             self.buck_label.setText("")
+            c.view3d.set_scene(None)
         c.refresh()
 
     def redraw_charts(self):

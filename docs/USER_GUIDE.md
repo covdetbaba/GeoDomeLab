@@ -106,9 +106,12 @@ Menus: File, Examples, Analysis, View, Validation, Help.
 Toolbar: Generate dome, Run analysis, Auto-size, Verify, Export report,
 Nonlinear, Modes.
 
-Drag the splitters to give the plots or the tables more room. Every plot has
-the matplotlib toolbar: drag to rotate a 3D view, zoom, pan and save the
-figure.
+Drag the splitters to give the plots or the tables more room. The 3D views
+are interactive: drag to rotate, turn the mouse wheel to zoom at the cursor,
+right-drag to pan, and click a member or a node to see its details. A view
+bar over each 3D view has the preset views, zoom, fit and the display
+switches. Section 6.1 lists every mouse and keyboard control. Every plot
+keeps the matplotlib toolbar under it, which saves the figure.
 
 Long runs (analysis, auto-sizing, nonlinear, modal, study, validation) run in
 the background. The window stays responsive, and the inputs and the File
@@ -121,9 +124,10 @@ tab is used at the next run, and the status bar says so. When the supports
 cannot hold the structure (a mechanism), the analysis stops with a message
 that says what is free to move.
 
-The window can shrink to about 1090 x 610 pixels, so it fits a 1366 x 768
-screen; the input tabs and the Nonlinear view scroll when they need more
-room.
+The window can shrink to about 1090 x 640 pixels, so it fits a 1366 x 768
+screen. The input tabs and the Nonlinear view scroll when they need more
+room. On a narrow window the buttons of the 3D view bar that do not fit go
+into its >> menu.
 
 ## 4. Your first analysis, step by step
 
@@ -224,7 +228,8 @@ A model without panels (for example a CSV import without faces.csv) has no
 area, so dead, snow, live and wind pressures give no load. A note says so.
 Use self weight and nodal loads for such a model.
 
-Tick "Node numbers" in the Model view to see the node numbers. When you run,
+Press Node # in the view bar of the Model view (or the N key) to see the
+node numbers. Find in the same bar picks a node by its number. When you run,
 the program checks every node number, every settlement direction and every
 combination name. A bad entry gives a message that names the table and the
 row, and nothing is run.
@@ -242,7 +247,7 @@ row, and nothing is run.
 
 | View | What it shows |
 |---|---|
-| Model | The struts coloured by strut family, nodes, supports (black triangles). Tick Cladding panels, Nodes or Node numbers. |
+| Model | The struts coloured by strut family, nodes, supports (black triangles). The strut-family legend sits in a column on the left, outside the drawing. Tick Cladding panels or Nodes. The view bar shows the member and node numbers. |
 | Loads | The nodal load arrows of the chosen combination. On a wind case the arrows near the crown point outward. That is suction, and it is correct. |
 | Deflected shape | The magnified displaced shape over the undeformed one, coloured by displacement. Choose the case, the magnification or press Auto scale. |
 | Axial force | Blue is compression, red is tension. Line width can follow the force. Choose the case. |
@@ -254,6 +259,93 @@ row, and nothing is run.
 | Study | Four charts of a parameter study (Section 12). |
 
 View > Save current view as PNG saves the figure of the current view tab.
+
+### 6.1 3D view controls
+
+The six 3D views of the analysis (Model, Loads, Deflected shape, Axial force,
+Utilisation, Buckling mode) are interactive. Click the drawing first, so
+that it takes the keys. The Modes view and the 3D shape of the Nonlinear view
+have the same mouse and keys, except the selection.
+
+| Mouse | Action |
+|---|---|
+| Left drag | Rotate (orbit) the view. |
+| Mouse wheel | Zoom in or out. The point under the cursor stays where it is, and the 1:1:1 scale is kept. |
+| Right drag, middle drag, Shift + left drag | Pan. |
+| Click | Select the member under the cursor, or the node when you click on or next to a node. |
+| Ctrl + click | Add to or remove from the selection. |
+| Click on empty space | Clear the selection. |
+| Double-click | Zoom to the member or node. |
+| Hover | Highlight the member or node and show a short tip (number, family, one value). Hover is off for a model of more than 50,000 members, and the view bar says so. |
+
+| Key | Action |
+|---|---|
+| Arrow keys | Orbit the camera by 5 degrees (Shift: 15 degrees). |
+| Ctrl + arrow keys | Pan. |
+| Q and E | Roll the view by 5 degrees (Shift: 15 degrees). |
+| + or =, Page Up | Zoom in. |
+| -, Page Down | Zoom out. |
+| Home or R | Reset the view. |
+| F | Fit the selection, or everything when nothing is selected. |
+| 1 to 6 | Iso, top, front, back, left and right views. |
+| Esc | Clear the selection. |
+| L | Show or hide the legend. |
+| M | Show or hide the member numbers. |
+| N | Show or hide the node numbers. |
+| A | Show or hide the axes and the grid. |
+| O or P | Switch between orthographic and perspective projection. |
+| H | Hide the selected members. |
+| Shift + H | Show every member again. |
+| I | Isolate the selection (hide the other members). |
+| Ctrl + C | Copy the details of the selection. |
+
+The window shortcuts (F5, F9, F10, F11, Ctrl+O, Ctrl+S and the menus) work
+as before while a 3D view has the keys.
+
+The view bar over each 3D view:
+
+| Control | Action |
+|---|---|
+| Iso, Top, Front, Side | Preset views. Front looks along +y, Side looks along -x. |
+| + and - | Zoom in and out at the centre of the view. |
+| Fit | Fit the selection, or everything. |
+| Reset | Back to the view the drawing started with. |
+| Ortho | Orthographic projection when pressed, perspective when not. |
+| Axes, Legend | Show or hide the axes and grid, and the legend. Legend is greyed out in a view without one. |
+| Mem #, Node # | Member and node numbers. At most 200 are drawn at once, the nearest to the centre first and never on top of each other. Zoom in to see the others. The Modes view has no numbers, since its struts move. |
+| Info | Open or close the details panel. |
+| m / n and Find | Type m 12 or n 5 (or a plain number, read as m or n from the box on the left) and press Enter. The member or node is selected and framed. |
+| ? | The list of mouse and keyboard controls. |
+
+The **details panel** on the right of the view shows the member or node
+picked last. A member shows its number, end nodes, family, length, chord
+factor, section, material, area and mass. After an analysis it also shows
+KL/r, the utilisation with its governing combination, the design strengths
+and the axial force in every combination. A node shows its coordinates,
+ring, the members that meet there and its support. After an analysis it also
+shows the displacement and, at a support, the reaction. Each view puts its
+own value first: the displacement in Deflected shape, N of the shown case in
+Axial force, the utilisation in Utilisation and the mode amplitude in
+Buckling mode. Copy puts the details on the clipboard. The x closes the
+panel and Info opens it again.
+
+The selection is shared by the six views and the result tables. A member
+picked in 3D is selected in the Members table (the result tab stays where it
+is). Rows selected in the Members or Nodes table are highlighted in the 3D
+views. A new model clears the selection. An edit of the sections, material
+or supports clears the results but keeps the selection, and the details
+panels then show no results until the next analysis.
+
+The camera (angles, zoom, projection) is kept when a view is drawn again for
+the same model, for example after a change of case, magnification or check
+box. A zoom or pan made with the matplotlib toolbar is kept too. A new model
+starts from the first view again. The matplotlib toolbar's own pan and zoom
+modes still work. While one of them is on, the viewer leaves the mouse to it.
+Its Home button goes back to the first view of the drawing.
+
+When a custom truss has more strut families than the legend column can
+hold, the legend shows the families that fit and ends with a "+ N more" row.
+The Geometry tab and the CSV export list every family.
 
 ## 7. Result tabs
 
@@ -724,4 +816,5 @@ options and the equations.
 | Run OpenSees cross-check is greyed out | No openseespy was found. Run `pip install openseespy`, or set `GEODOME_OPENSEES_PYTHON` to a Python that has it. |
 | The Validation entries are greyed out | The `validation/` folder is missing. Run the program from a clone of the repository. |
 | `--demo` says the worked example was not found | `python -m geodome --demo` needs the `examples/` folder of the clone. Use an editable install (`pip install -e .`). |
-| Plots look cramped | Drag the splitters between the inputs, the views and the tables. |
+| Plots look cramped | Drag the splitters between the inputs, the views and the tables. Close the details panel (its x) or hide the legend (L) to give the 3D drawing more width. |
+| The 3D view does not react to the keys | Click the drawing first, so that it takes the keys. |

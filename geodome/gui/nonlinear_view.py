@@ -68,6 +68,7 @@ from .. import loads as ld
 from .. import nonlinear as nl
 from .. import plotting as plot
 from . import style as st
+from . import view3d as v3
 from .canvas import MplCanvas
 from .worker import Worker, plain_message
 
@@ -958,6 +959,9 @@ class _PathCanvas(MplCanvas):
         super().__init__(parent, projection=None)
         self.reset_axes()
         self.canvas.mpl_connect("resize_event", self._on_resize)
+        # wheel zoom, pan, rotation and the view keys on the 3D shape
+        v3.install(self, picking=False, bar=False, info=False,
+                   name="nonlinear")
 
     def reset_axes(self):
         fig = self.figure
@@ -1883,8 +1887,7 @@ class NonlinearExtension(QtCore.QObject):
             art = plot.draw_axial(ax, model, res.N[k], title=title,
                                   width_scale=True, deformed=defo)
             if v.undeformed.isChecked():
-                from mpl_toolkits.mplot3d.art3d import Line3DCollection
-                ax.add_collection3d(Line3DCollection(
+                ax.add_collection3d(plot.Line3DCollection(
                     _segments(nodes, model.geom.members), colors="#c8cfd6",
                     linewidths=0.7, zorder=0))
             ax.text2D(0.02, 0.80, f"magnification x{scale:,.1f}",
@@ -1916,6 +1919,10 @@ class NonlinearExtension(QtCore.QObject):
             cb.ax.tick_params(labelsize=7)
         else:
             c.cax.set_visible(False)
+        # the viewer keeps the user's zoom and angles along this path
+        c.view3d.scene_drawn(ax=ax, key=("nonlinear", id(res)),
+                             nodes=nodes + scale * u.reshape(-1, 3),
+                             members=model.geom.members)
         c.canvas.draw_idle()
 
     def _show_imperfection(self):

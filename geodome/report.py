@@ -112,7 +112,12 @@ def _fig3d(draw, *args, size=(7.4, 5.8), dpi=130, colorbar_label=None, **kw):
         cb = fig.colorbar(art, ax=ax, shrink=0.60, pad=0.10)
         cb.set_label(colorbar_label, fontsize=9)
         cb.ax.tick_params(labelsize=8)
-    fig.tight_layout()
+    lay = plot.axes_layout(ax, create=False)
+    if lay is not None and lay.has_legend:
+        # the legend column layout sets the margins itself at draw time
+        fig.subplots_adjust(left=0.01, right=0.99, bottom=0.02, top=0.98)
+    else:
+        fig.tight_layout()
     return fig
 
 

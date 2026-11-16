@@ -38,12 +38,14 @@ from qtpy import QtCore, QtWidgets
 from qtpy.QtCore import QEvent, Qt, QTimer
 
 from matplotlib.colors import Normalize
-from mpl_toolkits.mplot3d.art3d import Line3DCollection
+# plotting's Line3DCollection projects in one numpy step (matplotlib < 3.11)
+from ..plotting import Line3DCollection
 
 from .. import modal as md
 from .. import plotting as plot
 from . import ext_util as eu
 from . import style as st
+from . import view3d as v3
 from .canvas import Canvas3D
 from .worker import Worker
 
@@ -291,6 +293,9 @@ class ModalExtension(QtCore.QObject):
         for w in (self.amplitude, self.animate_btn, self.run_btn):
             c.add_control(w)
         c.hidden.connect(self.stop_animation)
+        # wheel zoom, pan, rotation, view keys and the view bar (no picking:
+        # the struts move while the mode is animated)
+        v3.install(c, picking=False, name="modes")
 
     def _build_result_tab(self):
         w = self.result_widget = QtWidgets.QWidget()
@@ -539,6 +544,7 @@ class ModalExtension(QtCore.QObject):
                   fontsize=10, color="#43566a")
         self._lc = None
         self.segments = None
+        self.view.view3d.set_scene(None, ax=ax)
         self.view.refresh()
 
     def _update_label(self, k):
@@ -577,6 +583,10 @@ class ModalExtension(QtCore.QObject):
         if view is not None:
             ax.view_init(elev=view[0], azim=view[1])
         self.view.add_colorbar(self._lc, "normalised mode amplitude")
+        # the viewer keeps the user's zoom and angles for this result
+        geom = self.modal_model.geom
+        self.view.view3d.scene_drawn(ax=ax, key=("modes", id(res)),
+                                     nodes=geom.nodes, members=geom.members)
         self._update_label(k)
         self.view.refresh()
 
