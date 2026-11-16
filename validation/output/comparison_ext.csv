@@ -355,3 +355,69 @@ F8,F8 sphere,F8.axial_A_deg,"axial angle A, program formula column",74.141262794
 F8,F8 sphere,F8.axial_B_deg,"axial angle B, program formula column",72.00000000000001,72.0,deg,1.9737298215558335e-16,1.9737298215558335e-16,72.00000000000001,1e-09,linear,yes,fabrication_tables axial_formula_deg
 F8,F8 sphere,F8.dihedral_A_deg,"dihedral A, program formula column",157.5410760847255,157.54107608472552,deg,1.804082474028477e-16,1.804082474028477e-16,157.5410760847255,1e-09,linear,yes,fabrication_tables dihedral_formula_deg
 F8,F8 sphere,F8.dihedral_B_deg,"dihedral B, program formula column",161.97089788883054,161.97089788883056,deg,1.7547417345251353e-16,1.7547417345251353e-16,161.97089788883054,1e-09,linear,yes,fabrication_tables dihedral_formula_deg
+F9,F9 wind Model B,F9.qz,velocity pressure qz,1061.332875,1061.332875,Pa,0.0,0.0,1061.332875,1e-09,linear,yes,loads.velocity_pressure (LoadSpec defaults)
+F9,F9 wind Model B,F9.qG,qz G,902.13294375,902.13294375,Pa,0.0,0.0,902.13294375,1e-09,linear,yes,loads.velocity_pressure x LoadSpec.wind_G
+F9,F9 wind Model B,F9.Cp_1,Cp at hand node 1,-1.0,-1.0,-,0.0,0.0,1.0,1e-09,linear,yes,loads.wind_pressure_coefficients
+F9,F9 wind Model B,F9.Fx_1,Fx at hand node 1,0.0,0.0,N,0.0,nan,26498.061054201324,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Fy_1,Fy at hand node 1,0.0,0.0,N,0.0,nan,26498.061054201324,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Fz_1,Fz at hand node 1,17994.810839893988,17994.810839893988,N,0.0,0.0,17994.810839893988,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Cp_2,Cp at hand node 2,-0.4885501705902599,-0.4885501705902599,-,0.0,0.0,0.4885501705902599,1e-09,linear,yes,loads.wind_pressure_coefficients
+F9,F9 wind Model B,F9.Fx_2,Fx at hand node 2,7863.238500825491,7863.238500825491,N,0.0,0.0,7863.238500825491,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Fy_2,Fy at hand node 2,0.0,0.0,N,0.0,nan,26498.061054201324,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Fz_2,Fz at hand node 2,3931.6192504127457,3931.6192504127457,N,0.0,0.0,3931.6192504127457,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Cp_3,Cp at hand node 3,-0.8930329524310949,-0.8930329524310949,-,0.0,0.0,0.8930329524310949,1e-09,linear,yes,loads.wind_pressure_coefficients
+F9,F9 wind Model B,F9.Fx_3,Fx at hand node 3,4441.627442627233,4441.627442627233,N,0.0,0.0,4441.627442627233,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Fy_3,Fy at hand node 3,13669.923658439657,13669.923658439653,N,2.6613014805285075e-16,2.6613014805285075e-16,13669.923658439657,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Fz_3,Fz at hand node 3,7186.704167535136,7186.704167535136,N,0.0,0.0,7186.704167535136,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Cp_4,Cp at hand node 4,-0.16391805623456834,-0.1639180562345685,-,1.0159555177707969e-15,1.0159555177707969e-15,0.16391805623456834,1e-09,linear,yes,loads.wind_pressure_coefficients
+F9,F9 wind Model B,F9.Fx_4,Fx at hand node 4,-2134.4044579764536,-2134.404457976456,N,1.0652792379322346e-15,1.0652792379322346e-15,2134.4044579764536,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Fy_4,Fy at hand node 4,1550.735610684125,1550.7356106841269,N,1.1729848666745895e-15,1.1729848666745895e-15,1550.735610684125,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Fz_4,Fz at hand node 4,1319.1345007687453,1319.1345007687466,N,1.0341948086903647e-15,1.0341948086903647e-15,1319.1345007687453,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Cp_5,Cp at hand node 5,-0.16391805623456795,-0.16391805623456834,-,2.3705628747985315e-15,2.3705628747985315e-15,0.16391805623456795,1e-09,linear,yes,loads.wind_pressure_coefficients
+F9,F9 wind Model B,F9.Fx_5,Fx at hand node 5,-2134.404457976449,-2134.404457976454,N,2.3436143234509208e-15,2.3436143234509208e-15,2134.404457976449,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Fy_5,Fy at hand node 5,-1550.7356106841212,-1550.7356106841248,N,2.345969733349185e-15,2.345969733349185e-15,1550.7356106841212,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Fz_5,Fz at hand node 5,1319.134500768742,1319.1345007687455,N,2.5854870217259183e-15,2.5854870217259183e-15,1319.134500768742,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Cp_6,Cp at hand node 6,-0.893032952431095,-0.893032952431095,-,0.0,0.0,0.893032952431095,1e-09,linear,yes,loads.wind_pressure_coefficients
+F9,F9 wind Model B,F9.Fx_6,Fx at hand node 6,4441.62744262723,4441.62744262723,N,0.0,0.0,4441.62744262723,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Fy_6,Fy at hand node 6,-13669.923658439657,-13669.923658439659,N,1.3306507402642538e-16,1.3306507402642538e-16,13669.923658439657,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Fz_6,Fz at hand node 6,7186.704167535136,7186.7041675351375,N,2.531048114882577e-16,2.531048114882577e-16,7186.704167535136,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Cp_7,Cp at hand node 7,-0.6364692710879633,-0.6364692710879631,-,1.7443466245076868e-16,1.7443466245076868e-16,0.6364692710879633,1e-09,linear,yes,loads.wind_pressure_coefficients
+F9,F9 wind Model B,F9.Fx_7,Fx at hand node 7,4972.543772595146,4972.543772595147,N,1.8290330731433007e-16,1.8290330731433007e-16,4972.543772595146,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Fy_7,Fy at hand node 7,3612.7645231585925,3612.7645231585925,N,0.0,0.0,3612.7645231585925,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Fz_7,Fz at hand node 7,-3073.2010620104284,-3073.2010620104293,N,2.959437678893533e-16,2.959437678893533e-16,3073.2010620104284,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Cp_8,Cp at hand node 8,-0.7860659048621897,-0.7860659048621897,-,0.0,0.0,0.7860659048621897,1e-09,linear,yes,loads.wind_pressure_coefficients
+F9,F9 wind Model B,F9.Fx_8,Fx at hand node 8,-2345.7668959996636,-2345.766895999664,N,1.9385871275699397e-16,1.9385871275699397e-16,2345.7668959996636,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Fy_8,Fy at hand node 8,7219.528157868861,7219.528157868863,N,2.5195405624441885e-16,2.5195405624441885e-16,7219.528157868861,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Fz_8,Fz at hand node 8,-3795.5305674117967,-3795.530567411797,N,1.1981127349912506e-16,1.1981127349912506e-16,3795.5305674117967,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Cp_9,Cp at hand node 9,0.2686989764584403,0.2686989764584403,-,0.0,0.0,0.2686989764584403,1e-09,linear,yes,loads.wind_pressure_coefficients
+F9,F9 wind Model B,F9.Fx_9,Fx at hand node 9,2594.8337722625697,2594.83377226257,N,1.7525105297590851e-16,1.7525105297590851e-16,2594.8337722625697,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Fy_9,Fy at hand node 9,0.0,-3.177754873520808e-13,N,1.1992405282110134e-17,nan,26498.061054201324,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Fz_9,Fz at hand node 9,1297.4168861312849,1297.416886131285,N,1.7525105297590851e-16,1.7525105297590851e-16,1297.4168861312849,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Cp_10,Cp at hand node 10,-0.7860659048621895,-0.7860659048621897,-,2.8247581220808633e-16,2.8247581220808633e-16,0.7860659048621895,1e-09,linear,yes,loads.wind_pressure_coefficients
+F9,F9 wind Model B,F9.Fx_10,Fx at hand node 10,-2345.766895999665,-2345.7668959996654,N,1.9385871275699384e-16,1.9385871275699384e-16,2345.766895999665,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Fy_10,Fy at hand node 10,-7219.52815786886,-7219.528157868861,N,1.2597702812220942e-16,1.2597702812220942e-16,7219.52815786886,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Fz_10,Fz at hand node 10,-3795.530567411796,-3795.530567411797,N,3.594338204973753e-16,3.594338204973753e-16,3795.530567411796,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Cp_11,Cp at hand node 11,-0.6364692710879633,-0.6364692710879631,-,1.7443466245076868e-16,1.7443466245076868e-16,0.6364692710879633,1e-09,linear,yes,loads.wind_pressure_coefficients
+F9,F9 wind Model B,F9.Fx_11,Fx at hand node 11,4972.543772595146,4972.543772595146,N,0.0,0.0,4972.543772595146,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Fy_11,Fy at hand node 11,-3612.764523158593,-3612.764523158594,N,2.5174480538182677e-16,2.5174480538182677e-16,3612.764523158593,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Fz_11,Fz at hand node 11,-3073.2010620104284,-3073.2010620104293,N,2.959437678893533e-16,2.959437678893533e-16,3073.2010620104284,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Rx,wind resultant x,20326.071995580587,20326.071995580576,N,5.369427218228938e-16,5.369427218228938e-16,20326.071995580587,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Ry,wind resultant y,0.0,-3.637978807091713e-12,N,1.3729226450381748e-16,nan,26498.061054201324,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,F9.Rz,wind resultant z,26498.061054201324,26498.061054201327,N,1.3729226450381748e-16,1.3729226450381748e-16,26498.061054201324,1e-09,linear,yes,loads.wind_load (LoadSpec defaults)
+F9,F9 wind Model B,identity,1.0W solve: equilibrium residual,0.0,2.832544991338539e-16,-,2.832544991338539e-16,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F9,F9 wind Model B,identity,1.0W solve: energy identity mismatch,0.0,1.9628622672441766e-16,-,1.9628622672441766e-16,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F9,F9 wind Model B,identity,"1.0W solve: |sum F + sum R| / max(|F|, |R|)",0.0,2.777773582547392e-16,-,2.777773582547392e-16,nan,1.0,1e-10,identity,yes,solver.StaticResult
+F10,F10 AISC,F10.phiPn_inel,"phi Pn, inelastic",239578.09613141898,239578.09613141898,N,0.0,0.0,239578.09613141898,1e-09,linear,yes,buckling.compression_capacity
+F10,F10 AISC,F10.Fcr_inel,"Fcr, inelastic",249509476.8738424,249509476.8738424,Pa,0.0,0.0,249509476.8738424,1e-09,linear,yes,buckling.compression_capacity
+F10,F10 AISC,F10.Q_inel,"Ae/Ag, inelastic",1.0,1.0,-,0.0,0.0,1.0,1e-09,linear,yes,buckling.compression_capacity
+F10,F10 AISC,F10.KLr_inel,"KL/r, inelastic",66.5557864982444,66.5557864982444,-,0.0,0.0,66.5557864982444,1e-09,linear,yes,buckling.compression_capacity
+F10,F10 AISC,F10.phiPn_b42,"phi Pn, B4.2 wall",223995.91273851227,223995.91273851227,N,0.0,0.0,223995.91273851227,1e-09,linear,yes,"buckling.member_capacities, design_thickness_factor 0.93"
+F10,F10 AISC,F10.Fcr_b42,"Fcr, B4.2 wall",250015616.27113822,250015616.27113822,Pa,0.0,0.0,250015616.27113822,1e-09,linear,yes,"buckling.member_capacities, design_thickness_factor 0.93"
+F10,F10 AISC,F10.Q_b42,"Ae/Ag, B4.2 wall",1.0,1.0,-,0.0,0.0,1.0,1e-09,linear,yes,"buckling.member_capacities, design_thickness_factor 0.93"
+F10,F10 AISC,F10.KLr_b42,"KL/r, B4.2 wall",66.34735148117488,66.34735148117488,-,0.0,0.0,66.34735148117488,1e-09,linear,yes,"buckling.member_capacities, design_thickness_factor 0.93"
+F10,F10 AISC,F10.phiPn_t_b42,"phi_t Pn, B4.2 wall",309095.0519305932,309095.0519305932,N,0.0,0.0,309095.0519305932,1e-09,linear,yes,"buckling.member_capacities, design_thickness_factor 0.93"
+F10,F10 AISC,F10.phiPn_e7,"phi Pn, E7 slender wall",1112934.9073171117,1112934.9073171117,N,0.0,0.0,1112934.9073171117,1e-09,linear,yes,buckling.compression_capacity (custom Section)
+F10,F10 AISC,F10.Fcr_e7,"Fcr, E7 slender wall",327695234.779364,327695234.779364,Pa,0.0,0.0,327695234.779364,1e-09,linear,yes,buckling.compression_capacity (custom Section)
+F10,F10 AISC,F10.Q_e7,"Ae/Ag, E7 (Eq. E7-7)",0.9387134157527596,0.9387134157527596,-,0.0,0.0,0.9387134157527596,1e-09,linear,yes,buckling.compression_capacity (custom Section)
+F10,F10 AISC,F10.KLr_e7,"KL/r, E7 slender wall",26.52271999027402,26.52271999027402,-,0.0,0.0,26.52271999027402,1e-09,linear,yes,buckling.compression_capacity (custom Section)
+F10,F10 AISC,F10.phiPn_scope,"phi Pn, D/t above 0.45 E/Fy",0.0,0.0,N,0.0,nan,1112934.9073171117,1e-09,linear,yes,buckling.compression_capacity (custom Section)

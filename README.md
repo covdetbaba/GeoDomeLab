@@ -1,185 +1,248 @@
-# GeoDomeLab — Geodesic Dome Space-Truss Analyzer
+# GeoDomeLab
 
-A matrix-structural-analysis tool for single-layer Class I (icosahedral) geodesic
-domes, written in Python with a Qt graphical interface.
+[![CI](https://github.com/covdetbaba/GeoDomeLab/actions/workflows/ci.yml/badge.svg)](https://github.com/covdetbaba/GeoDomeLab/actions/workflows/ci.yml)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
+[![License: all rights reserved](https://img.shields.io/badge/license-all%20rights%20reserved-lightgrey.svg)](LICENSE)
 
-The user defines the dome (frequency, radius, truncation, supports), the members
-(material and a circular hollow section per strut family) and the loading (dead,
-snow, live, wind, point loads and LRFD combinations). The program generates the
-geometry, solves it by the **direct stiffness method** for three-dimensional
-space trusses, checks every strut against **AISC 360 LRFD**, runs a **linear
-buckling eigenanalysis**, optionally **auto-sizes** the strut families to minimum
-weight, and exports a complete calculation report.
+**Analysis, stability and fabrication of single-layer geodesic domes by matrix structural analysis.**
 
----
+GeoDomeLab is a Python program with a Qt window for single-layer geodesic domes
+and other pin-jointed space trusses. You set the dome (frequency, radius, cut
+height, supports), the tubes and the loads. The program builds the geometry,
+solves it by the direct stiffness method and checks every strut to AISC 360-16.
+It also finds the buckling load, traces the large-displacement path through the
+limit point, computes the natural frequencies and writes the cut list for
+fabrication. The program is checked against hand calculations, published
+benchmarks and OpenSees. Version 2.0.0.
 
-## 1. Quick start
+![GeoDomeLab: axial forces in a 6V dome of 30 m span](docs/img/gui_axial_force.png)
 
-### In Spyder
+| Nonlinear load path of the star dome | Natural modes | Fabrication cut list |
+|---|---|---|
+| ![Load path](docs/img/gui_nonlinear_star_dome.png) | ![Modes](docs/img/gui_modes.png) | ![Cut list](docs/img/gui_fabrication.png) |
 
-1. Open `run_geodome.py`.
-2. Press **F5**.
+## Features
 
-If the window freezes, set the console's graphics backend to Qt:
-`Tools → Preferences → IPython console → Graphics → Backend: Qt5` (or
-`Automatic`), then restart the kernel. With the *Inline* backend the program
-still runs correctly, but Spyder blocks until the window is closed.
+- **Geometry.** Class I icosahedral domes from 1V to 10V, cut at any ring of
+  nodes. Any other space truss can be opened from a model file or imported
+  from CSV files.
+- **Linear statics.** 3D truss by the direct stiffness method. Pinned, roller,
+  elastic (spring) and per-node supports.
+- **Loads.** Self weight, cladding dead load, snow (balanced or unbalanced),
+  live load, wind normal to the surface, point and nodal loads. A uniform
+  temperature change and support settlements form the self-straining load T.
+  ASCE 7-16 strength combinations, all editable.
+- **Member design.** AISC 360-16 tension (D2) and compression (E3, with E7 for
+  slender round HSS) for every strut, enveloped over the strength
+  combinations.
+- **Linear buckling.** The eigenproblem [K + λ K_g] φ = 0 gives λ_cr and the
+  mode shapes.
+- **Geometric nonlinear analysis.** Corotational bars traced by load control,
+  displacement control or Crisfield's arc-length method. Limit points,
+  snap-through, P-Delta and linear paths for comparison.
+- **Imperfection study.** Limit load of domes shaped like a buckling mode, for
+  a list of amplitudes.
+- **Modal analysis.** Natural frequencies, animated mode shapes and effective
+  modal mass, with lumped or consistent mass.
+- **Fabrication.** Strut cut list with chord factors and axial angles, hub
+  types, panel types and dihedral angles. CSV export.
+- **Parameter study.** Steel mass, utilisation, λ_cr and deflection over a
+  range of frequencies, radii and dome fractions.
+- **Auto-sizing.** Fully stressed design of the strut families.
+- **Output.** A self-contained HTML report, CSV tables, PNG figures, JSON
+  model files, DXF geometry for CAD and standalone OpenSeesPy scripts.
+- **Checks built in.** Verification suite, hand-calculation validation and the
+  OpenSees cross-check run from the Validation menu.
 
-### From a terminal
+## Quick start
+
+You need Python 3.10 or newer.
 
 ```bash
-python run_geodome.py                      # start the GUI
-python run_geodome.py --verify             # run the 75-check verification suite
-python run_geodome.py --demo               # run the worked case study, headless
-python run_geodome.py --batch 6 15 0.5 out # analyse and export without a GUI
-python tests/test_geodome.py               # run the unit tests (no pytest needed)
-pytest -q                                  # ... or with pytest
-```
-
-## 2. Requirements
-
-| Package    | Minimum | Notes                                        |
-|------------|---------|----------------------------------------------|
-| Python     | 3.9     | developed on 3.13                            |
-| numpy      | 1.20    |                                              |
-| scipy      | 1.7     | sparse solver and eigensolver                |
-| matplotlib | 3.5     | `backend_qtagg`, `mpl_toolkits.mplot3d`      |
-| qtpy       | 2.0     | binding-independent Qt layer                 |
-| PyQt5 **or** PyQt6 **or** PySide6 | — | any one of them |
-
-Everything above ships with a standard Anaconda/Spyder installation. `qtpy`
-selects whichever binding is present, so the same source runs unmodified on
-PyQt5, PyQt6 and PySide6.
-
-```bash
+git clone https://github.com/covdetbaba/GeoDomeLab.git
+cd GeoDomeLab
 pip install -r requirements.txt
+python run_geodome.py
 ```
 
-## 3. What the program does
+Or install it as a command:
 
-| Stage | Method |
-|-------|--------|
-| Geometry | Class I icosahedral breakdown: each of the 20 faces split into ν² triangles by barycentric interpolation, projected onto the sphere, duplicate vertices merged with a KD-tree |
-| Truncation | Cut along an existing ring of struts; supports placed on the **topological free edge** of the retained cap |
-| Analysis | 3D space truss, 3 DOF/node, sparse assembly, partitioned solve, reactions by back-substitution |
-| Loads | Dead on the faceted surface, snow/live on the projected area, wind normal to the surface with a meridional *C*ₚ distribution; ASCE 7 LRFD combinations enveloped |
-| Member design | AISC 360 Chapter D (tension) and E3/E7 (compression, round HSS) |
-| Stability | Linear buckling, `[K + λ Kg]{φ} = 0`, recast as a symmetric generalised eigenproblem |
-| Optimisation | Fully stressed design on the strut families, subject to utilisation, *KL/r* ≤ 200 and a deflection limit |
-| Output | Interactive 3D views, sortable tables, CSV, PNG, JSON model, self-contained HTML report |
+```bash
+pip install -e .
+geodomelab                 # the same as: python -m geodome
+```
 
-## 4. Repository layout
+With conda: `conda env create -f environment.yml`, then
+`conda activate geodomelab`.
+
+In Spyder, open `run_geodome.py` and press F5. If the window freezes, set
+Tools > Preferences > IPython console > Graphics > Backend to Qt (or
+Automatic) and restart the kernel.
+
+Other options (they also work with `geodomelab` and `python -m geodome`):
+
+```bash
+python run_geodome.py --verify               # the 75-check verification suite
+python run_geodome.py --demo                 # the worked case study, no window
+python run_geodome.py --batch 6 15 0.5 out   # analyse a dome, write all results to out/
+python run_geodome.py --help
+```
+
+The optional OpenSees cross-check needs `pip install openseespy`
+(or `pip install -e ".[opensees]"`).
+
+The user guide is in [docs/USER_GUIDE.md](docs/USER_GUIDE.md).
+
+## Check it yourself
+
+One command runs every test, the verification suite, both hand-calculation
+validations and, when OpenSees is installed, the quick OpenSees cross-check:
+
+```bash
+python run_all_checks.py
+```
+
+It prints one line per step and a table, and exits with code 0 only when
+everything passes. Qt runs offscreen, so no window opens. The run on
+16 November 2026 (Windows, Python 3.13) gave:
+
+| Step | Result |
+|---|---|
+| Unit and GUI tests (17 files) | 317 of 317 pass, 1 skipped |
+| Verification suite (`run_geodome.py --verify`) | 75 of 75 pass |
+| Hand calculation, Models A and B (`validation/run_validation.py`) | 80 of 80 pass |
+| Hand calculation file F1-F10, internal checks (`validation/hand_calc_ext.py`) | 120 of 120 pass |
+| Program vs hand calculation F1-F10 (`validation/run_validation_ext.py`) | 422 of 422 pass |
+| OpenSees cross-check, quick set (`validation/opensees_crosscheck.py --quick`) | 486 of 486 pass |
+| **Overall** | **PASS, 1500 of 1500 checks** |
+
+The skipped test compares two ways of running OpenSees and needs both of them.
+Without OpenSees the OpenSees steps are skipped, not failed. The same command
+runs on GitHub Actions for every push, on Ubuntu and Windows with Python 3.11
+and 3.12.
+
+## Validation summary
+
+How each check works is in [docs/VALIDATION.md](docs/VALIDATION.md). The
+numbers below come from the files in `validation/output/` and from the run
+above.
+
+| What is checked | Reference | Comparisons | Worst difference |
+|---|---|---|---|
+| Built-in verification suite | closed-form bars and tripod, published chord factors, Euler and Maxwell counts, method of sections, membrane theory, identities | 75 | closed forms 2.4e-16 (relative); membrane theory 2.6 % (an approximation, 5 % allowed) |
+| Linear statics of two small domes, Models A and B | hand calculation (`validation/hand_calc.py`) | 80 | 1.2e-13 % |
+| Temperature, settlement, springs, force method, von Mises path, frequencies, 2V angles, wind field, AISC E3/E7/B4.2 strength (F1-F10) | hand calculation (`validation/hand_calc_ext.py`), which does not import the program | 422 | linear 1.2e-13, modal 7.0e-16, nonlinear path 4.9e-10 (relative) |
+| 24-member star dome snap-through | Greco & Venturini (2006), Iu & Bradford (2012) | first limit point and first zero-load state | limit at 0.768 cm (published: near 0.75 cm); zero load at 1.88 cm, node 2 up 0.116 cm (published: about 19 mm and 1.16 mm) |
+| von Mises two-bar truss | exact closed form, derived here (the problem of Pecknold et al. 1985) | part of F6 | 4.9e-10 along the path |
+| Chord factors 2V to 8V | Kenner (1976) and the closed forms for 2V; the Domerama chord-factor chart for 3V to 8V | 2V and 4V in the suite, 2V to 8V in the tests | 2V to 6V within the printed decimals; 7V and 8V within 1e-5 |
+| Statics, modes and nonlinear paths of 1V to 8V domes and benchmarks | OpenSees 3.8.0 (`corotTruss`, `eigen`) | 1069 | statics 2.19e-13, frequencies 2.72e-13, nonlinear λ 4.14e-11 (relative) |
+
+OpenSees shares only the input data with GeoDomeLab: nodes, members, E and A,
+supports, the factored load vector, thermal strains, settlements and masses.
+It does not check the load generation, the AISC checks or λ_cr. The hand
+calculations cover the dead, snow and wind load generation (Models A and B,
+F9), the AISC checks (Model A, F10) and λ_cr (Model A). The unbalanced snow
+pattern and the default combination factors are checked by unit tests only,
+and the wind Cp table is an illustrative simplification.
+
+## Examples
+
+The **Examples** menu loads ready models with known answers. Hover over an
+entry to read what it checks.
+
+| Example | What it shows |
+|---|---|
+| Validation Model A, 1V pentagonal cap | 3 free DOF, solved by hand with every matrix written out |
+| Validation Model B, 1V dome on its lower ring | 18 free DOF, solved by hand with five-fold symmetry |
+| von Mises two-bar truss | snap-through; λ_cr overestimates the true limit load 5.2 times |
+| 24-member shallow star dome | the classic snap-through benchmark; λ_cr is 4.8 times too high |
+| Planar three-bar truss | temperature and settlement in an indeterminate truss, checked by the force method |
+| Case study, 6V dome, 30 m span | the worked example of the report |
+
+The same models are saved in `examples/models/*.json` (open them with File >
+Open). The Examples menu builds the models in code, so it works without these
+files. The `examples/` and `validation/` folders are not part of the installed
+package. They are used in place from the clone, which `pip install -e .` keeps.
+`examples/csv_truss/` is a small pyramid roof in the CSV import format.
+`examples/worked_example.py` analyses, auto-sizes and reports the 6V case
+study without the window (`python run_geodome.py --demo`).
+
+## Project layout
 
 ```
 GeoDomeLab/
-├── run_geodome.py            launcher (GUI / --verify / --demo / --batch)
-├── requirements.txt
-├── README.md
-├── geodome/
-│   ├── geometry.py           Class I generation, truncation, chord factors
-│   ├── sections.py           CHS catalogue and section properties
+├── run_geodome.py            launcher: GUI, --verify, --demo, --batch
+├── run_all_checks.py         runs every test and validation, prints PASS/FAIL
+├── pyproject.toml            package metadata (pip install -e .)
+├── requirements.txt          pip requirements
+├── environment.yml           conda environment
+├── geodome/                  the program
+│   ├── geometry.py           Class I geodesic geometry, custom trusses
+│   ├── model.py              DomeModel, load cases, JSON files
 │   ├── materials.py          steel and aluminium grades
-│   ├── model.py              DomeModel container, JSON save/load
-│   ├── loads.py              dead / snow / live / wind, LRFD combination
+│   ├── sections.py           circular hollow section catalogue
+│   ├── loads.py              dead, snow, live, wind and nodal loads
 │   ├── solver.py             direct stiffness solver, geometric stiffness
-│   ├── buckling.py           AISC member checks, eigenvalue buckling
+│   ├── buckling.py           AISC 360-16 checks, linear buckling
+│   ├── nonlinear.py          corotational path tracing, imperfections
+│   ├── modal.py              natural frequencies and modal mass
+│   ├── fabrication.py        cut list, hubs, panels, angles
+│   ├── study.py              parameter studies
 │   ├── optimize.py           fully stressed auto-sizing
-│   ├── postprocess.py        multi-case envelope, summary, result tables
-│   ├── plotting.py           matplotlib 3D renderers
-│   ├── report.py             CSV / PNG / HTML export
-│   ├── verification.py       75-check benchmark suite
-│   └── gui/                  Qt front end (canvas, panels, worker, window)
-├── examples/worked_example.py   the case study used in the report and demo
-├── tests/test_geodome.py        30 unit tests
-├── docs/                        proposal, final report, presentation, user guide
-└── output/                      generated results (safe to delete)
+│   ├── benchmarks.py         the example models and their reference answers
+│   ├── csv_import.py         CSV truss import
+│   ├── cad.py                DXF export
+│   ├── opensees_bridge.py    OpenSees cross-check and script export
+│   ├── postprocess.py, plotting.py, report.py, verification.py, units.py
+│   ├── __main__.py           python -m geodome
+│   └── gui/                  Qt window and its add-on views
+├── examples/                 worked example, model files, CSV example
+├── validation/               hand calculations, comparisons, OpenSees cross-check
+│   └── output/               the comparison tables (Markdown and CSV)
+├── tests/                    unit and GUI tests (run alone or with pytest)
+├── docs/                     user guide, validation, theory, images
+├── .github/workflows/ci.yml  GitHub Actions
+├── CITATION.cff
+└── LICENSE
 ```
 
-## 5. Units
+## Documentation
 
-Everything inside the program is **SI**: metres, newtons, pascals, kilograms.
-The interface converts at its boundary only — pressures are entered in kPa,
-point loads in kN, and results are displayed in mm, kN and MPa.
+- [User guide](docs/USER_GUIDE.md): every menu, panel and tab, the input
+  formats, a first analysis step by step, and troubleshooting.
+- [Validation](docs/VALIDATION.md): how the program is verified and
+  validated, with the numbers.
+- [Theory](docs/THEORY.md): the methods and equations, with references.
 
-## 6. Verification
+## How to cite
 
-`python run_geodome.py --verify` runs 75 independent checks:
+If you use GeoDomeLab or its results, please cite it. GitHub shows a "Cite
+this repository" button built from [CITATION.cff](CITATION.cff). In text:
 
-* closed-form bar, tripod and two-bar solutions
-* published Class I chord-factor tables (2V and 4V)
-* Euler's polyhedron formula and the vertex/strut counts at five frequencies
-* Maxwell's count — the closed geodesic sphere is exactly isostatic
-* positive definiteness of the supported stiffness matrix (no mechanisms)
-* method-of-sections free bodies at three cut heights
-* membrane shell theory, *n*φ = *pR*/2, at three heights
-* five-fold rotational symmetry of the displacement field
-* equilibrium, load/reaction balance and strain-energy identities for every case
-* linearity of the buckling eigenproblem
+> Babazade, J. (2026). *GeoDomeLab: analysis, stability and fabrication of
+> single-layer geodesic domes by matrix structural analysis* (Version 2.0.0)
+> [Computer software]. https://github.com/covdetbaba/GeoDomeLab
 
-All 75 pass. The full table is reproduced in `docs/final_report.md` and can be
-exported from the GUI.
+## License
 
-### Hand-calculation validation
+All rights reserved by Jovdat Babazade. GeoDomeLab is free to use for your
+own calculations, study, teaching and research, with credit to the author.
+Credit it as "GeoDomeLab, developed by Jovdat Babazade" with the repository
+address. Do not republish, sell or claim it as your own. See
+[LICENSE](LICENSE) for the full terms.
 
-`validation/` holds a check against hand calculations of two small geodesic
-models, built by the program's own generator at 1V:
+## Engineering disclaimer
 
-* **Model A**, 1V pentagonal cap: 6 nodes, 10 struts, 3 free DOF, solved by
-  the direct stiffness method with every matrix written out.
-* **Model B**, 1V dome on its lower ring: 11 nodes, 25 struts, 18 free DOF,
-  solved by virtual work with five-fold symmetry (3 unknowns).
+GeoDomeLab is a tool for structural analysis and preliminary design. It is
+provided as is, with no warranty. Check every result. A qualified engineer
+must review and approve any design and is responsible for the final structure
+under the codes that apply to it.
 
-```bash
-python validation/hand_calc.py               # the hand calculation (no geodome import)
-python validation/run_validation.py          # program vs hand, 80 quantities
-python validation/open_validation_in_gui.py B1   # open a validation model in the GUI
-```
+## Author
 
-All 80 compared quantities agree; the largest difference is 1.2e-13 %.
-The comparison table, sketches, plots and GUI-ready model files are written to
-`validation/output/`. Nothing in `geodome/` was changed for this check.
+Jovdat Babazade, Louisiana State University.
 
-**GUI fix, 27 October 2026.** *Generate dome* failed silently when the new
-dome had more strut families than the one on screen (for example 1V or 4V
-followed by 6V): the section rows of the old dome were read back before they
-were rebuilt. `on_generate` in `geodome/gui/main_window.py` now rebuilds them
-first. Only the order of two lines changed, and only in the GUI; the solver,
-geometry and design code are untouched, and the 30 tests, 75 checks and 80
-hand-calc comparisons give the same results. The original file is kept in
-`_revert/main_window_2026-10-01.py`. `tests/test_gui_generate.py` clicks
-Generate dome through the real window for every frequency from 1V to 10V,
-up and down; it fails on the original file and passes on the fixed one:
-
-```bash
-python tests/test_gui_generate.py
-```
-
-### Proposal documents
-
-The proposal deliverables sit in this folder and are rebuilt by scripts in
-`docs/build/` (Word and PowerPoint must be installed; the PDFs are exported
-by Word and PowerPoint themselves):
-
-| File | Rebuild with |
-|---|---|
-| `GeoDomeLab_Proposal.docx` / `.pdf` (CE 7405 written-proposal template) | `python docs/build/proposal_figures.py` then `python docs/build/build_proposal.py` |
-| `GeoDomeLab_Validation_Report.docx` / `.pdf` | `python docs/build/build_report.py` |
-| `GeoDomeLab_Proposal_Presentation.pptx` (speech in the speaker notes) | `python docs/build/build_presentation.py` |
-| `GeoDomeLab_Presentation_Speech.docx` / `.pdf` | `python docs/build/build_speech.py` |
-
-The written proposal replaces the older `docs/proposal.md`. One reference list,
-`docs/build/references.py`, feeds the proposal, the report and the slides;
-every entry was checked against library or publisher records. The speech text
-lives in `docs/build/speech.py`; edit it there and rebuild both the
-presentation and the speech so they stay identical. The student name, LSU ID
-and dates are set at the top of `build_proposal.py` (`STUDENT`, `LSU_ID`,
-`PRES_DAY`, `SUBMITTED`), `build_report.py` (`AUTHOR`) and `speech.py`
-(`PRESENTER`). The proposal copies the template's look exactly (Times New
-Roman 11 pt, LSU purple tables, the template footer); the 10-26 version is
-kept in `_revert/`.
-
-## 7. AI assistance
-
-This project was developed with the assistance of Anthropic's Claude, in line
-with the course AI policy. See `docs/ai_acknowledgment.md` for the full
-disclosure of what was AI-assisted and what was independently verified.
+GeoDomeLab began as the final project of CE 7405, Statically Indeterminate
+Structures, at LSU (2026). It was developed with the help of an AI coding
+assistant, as the course policy allows. The disclosure is in
+[docs/ai_acknowledgment.md](docs/ai_acknowledgment.md).

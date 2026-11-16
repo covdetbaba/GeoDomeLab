@@ -241,7 +241,8 @@ def linear_buckling(model, N_reference, n_modes=6, dense_limit=2400):
             mu, V = np.linalg.eigh(np.linalg.solve(B, A))
         info = f"Dense symmetric generalised eigensolve, {nf} free DOF."
     else:
-        # Shift-invert on the sparse pair; ask for the algebraically largest mu.
+        # Lanczos on the pair (-Kg, K) in regular generalised mode (no
+        # shift); the algebraically largest mu = 1/lambda come first.
         mu, V = spla.eigsh(-Kgff.tocsc(), k=min(n_modes + 4, nf - 2),
                            M=Kff.tocsc(), which="LA",
                            maxiter=5000, tol=1e-8)

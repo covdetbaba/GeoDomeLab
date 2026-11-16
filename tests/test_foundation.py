@@ -84,6 +84,18 @@ def test_material_alpha_values():
     # AISC: 6.5e-6 per deg F == 11.7e-6 per deg C
     from geodome.units import ALPHA_PER_F_TO_PER_C
     assert abs(6.5e-6 * ALPHA_PER_F_TO_PER_C - 11.7e-6) < 1e-18
+    # review V04: the database values against the specified values
+    # (ASTM A500 Gr. B / C round 317 / 345 MPa, A53 Gr. B 240 MPa, E 200 GPa;
+    # EN 10025-2 S235 / S355 and EN 1993-1-1 E = 210 GPa; 6061-T6 E 69 GPa)
+    spec = {"ASTM A500 Gr. B (round)": (200e9, 317e6),
+            "ASTM A500 Gr. C (round)": (200e9, 345e6),
+            "ASTM A53 Gr. B pipe": (200e9, 240e6),
+            "EN S235": (210e9, 235e6), "EN S355": (210e9, 355e6),
+            "Aluminium 6061-T6": (69e9, 240e6)}
+    assert set(spec) == set(MATERIALS)
+    for name, (E_, Fy_) in spec.items():
+        assert MATERIALS[name].E == E_ and MATERIALS[name].Fy == Fy_, name
+        assert MATERIALS[name].rho in (7850.0, 2700.0)
     # the old five-argument constructor still works
     m = Material("X", 200e9, 300e6, 400e6, 7850.0)
     assert m.alpha == 11.7e-6
@@ -416,6 +428,263 @@ def test_custom_supports_match_pinned_and_mix_springs():
         raise AssertionError("empty CUSTOM table accepted")
 
 
+def _expect_mechanism(fn, text):
+    try:
+        fn()
+    except np.linalg.LinAlgError as exc:
+        assert text in str(exc), str(exc)
+        assert "Unstable structure" in str(exc), str(exc)
+    else:
+        raise AssertionError("a mechanism was solved without an error")
+
+
+def test_mechanisms_are_refused():
+    """Review F1 / GUI-02: supports that let the structure move as a rigid
+    body (non-zero diagonal, singular K) must raise, not return garbage."""
+    # Elastic supports with kx = ky = 0: slides in x, y and turns about z.
+    m = default_model(4, 12.0, 0.5)
+    m.support_type = geo.ELASTIC
+    m.spring_stiffness = (0.0, 0.0, 5e7)
+    fixed, springs = m.support_conditions()
+    assert slv.unrestrained_rigid_modes(
+        m.geom.nodes, list(fixed) + list(springs)) == 3
+    _expect_mechanism(lambda: run_analysis(m, do_buckling=False),
+                      "3 rigid-body motion")
+    # every spring zero: nothing is supported at all
+    m.spring_stiffness = (0.0, 0.0, 0.0)
+    _expect_mechanism(lambda: run_analysis(m, do_buckling=False),
+                      "6 rigid-body motion")
+    # the star dome on vertical rollers (only uz held)
+    from geodome import benchmarks as bm
+    s = bm.star_dome()
+    s.support_type = geo.CUSTOM
+    s.custom_supports = {n: [False, False, True] for n in s.geom.base_nodes}
+    _expect_mechanism(lambda: run_analysis(s, do_buckling=False),
+                      "rigid-body")
+    # the stable supports still solve exactly
+    for st_ in (geo.PINNED, geo.ROLLER3):
+        m = default_model(3, 8.0, 0.5)
+        m.support_type = st_
+        fixed, springs = m.support_conditions()
+        assert slv.unrestrained_rigid_modes(m.geom.nodes, fixed) == 0
+        res = run_analysis(m, do_buckling=False)
+        assert max(r.equilibrium_residual for r in res.cases.values()) < 1e-10
+    # a collinear bar fixed at all DOFs but its axis is legal (rank R = 5)
+    nodes = np.array([[0.0, 0, 0], [2.0, 0, 0]])
+    r = solve_static(nodes, np.array([[0, 1]]), np.array([EA]),
+                     np.array([0, 0, 0, 1e3, 0, 0.0]), [0, 1, 2, 4, 5])
+    assert abs(r.N[0] - 1e3) < 1e-9
+
+
+def test_internal_mechanism_is_refused():
+    """A planar four-bar parallelogram (no diagonal) is held against rigid
+    motion but sways under a lateral load.  The singular solve must raise,
+    with the frame on the axes (exactly singular) and turned by 17 deg
+    (singular up to round-off: caught by the residual check)."""
+    base = np.array([[0.0, 0.0, 0.0], [3.0, 0.0, 0.0],
+                     [3.0, 2.0, 0.0], [0.0, 2.0, 0.0]])
+    mem = np.array([[0, 3], [1, 2], [2, 3]])
+    for ang in (0.0, 17.0):
+        c, s = math.cos(math.radians(ang)), math.sin(math.radians(ang))
+        rot = np.array([[c, -s, 0.0], [s, c, 0.0], [0.0, 0.0, 1.0]])
+        nodes = base @ rot.T
+        fixed = [0, 1, 2, 3, 4, 5, 8, 11]          # 0, 1 pinned; plane z
+        assert slv.unrestrained_rigid_modes(nodes, fixed) == 0
+        F = np.zeros(12)
+        F[6:8] = 1e4 * rot[:2, 0]                   # push node 2 sideways
+        _expect_mechanism(
+            lambda: solve_static(nodes, mem, np.full(3, EA), F, fixed),
+            "mechanism")
+        # a diagonal makes it a stable truss again
+        r = solve_static(nodes, np.vstack([mem, [0, 2]]), np.full(4, EA), F,
+                         fixed)
+        _check_identities(r)
+
+
+def test_default_combinations_follow_asce7_2_3_1():
+    """Review F5 / V01: the default strength set has ASCE 7-16 Sec. 2.3.1
+    combination 3 with 0.5W and combination 2 with the live load L."""
+    want = [("LC1  1.4D", dict(D=1.4)),
+            ("LC2  1.2D + 1.6S", dict(D=1.2, S=1.6)),
+            ("LC3  1.2D + 1.0W + 0.5S", dict(D=1.2, W=1.0, S=0.5)),
+            ("LC4  0.9D + 1.0W", dict(D=0.9, W=1.0)),
+            ("LC5  1.2D + 1.6S + 0.5W", dict(D=1.2, S=1.6, W=0.5)),
+            ("LC6  1.2D + 1.6L + 0.5S", dict(D=1.2, L=1.6, S=0.5)),
+            ("SLS  1.0D + 1.0S", dict(D=1.0, S=1.0))]
+    got = default_combinations()
+    assert [c.name for c in got] == [n for n, _ in want]
+    for c, (_, f) in zip(got, want):
+        full = {k: f.get(k, 0.0) for k in ("D", "S", "L", "W", "T")}
+        assert c.factors() == full, (c.name, c.factors())
+        assert c.serviceability == c.name.startswith("SLS")
+    from geodome import csv_import
+    names = [c.name for c in csv_import.import_combinations()]
+    assert any("0.5W" in n for n in names), names
+
+
+def test_unused_basic_load_is_reported():
+    """Review F2: a non-zero load case that no strength combination uses
+    must be named in the run messages, not dropped silently."""
+    m = default_model(3, 8.0, 0.5)
+    m.loads.live_pressure = 2000.0
+    m.loads.crown_point_load = 50e3
+    res = run_analysis(m, do_buckling=False)
+    assert not any("no strength combination has" in t for t in res.messages)
+    # the live load acts in LC6: 1.2D + 1.6L + 0.5S
+    F = ld.combine(ld.basic_load_vectors(m), m.combinations[5])
+    assert abs(ld.load_totals(F)[2] - ld.load_totals(
+        1.2 * ld.dead_load(m) + 1.6 * ld.live_load(m)
+        + 0.5 * ld.snow_load(m))[2]) < 1e-6
+    # combinations without L: the live load is reported as unused
+    m.combinations = [c for c in m.combinations if c.L == 0.0]
+    res = run_analysis(m, do_buckling=False)
+    assert any("live load" in t and "no strength combination has an L"
+               in t for t in res.messages), res.messages
+    # an L nodal load alone is reported too
+    m.loads.live_pressure = 0.0
+    m.loads.crown_point_load = 0.0
+    m.loads.nodal_loads = [{"node": 0, "Fz": -300e3}]       # case L
+    res = run_analysis(m, do_buckling=False)
+    assert any("live load" in t for t in res.messages)
+    # wind used only in a service row is reported as well
+    m.loads.nodal_loads = []
+    m.combinations = [LoadCombination("U", D=1.2, S=1.6),
+                      LoadCombination("SV", D=1.0, W=1.0,
+                                      serviceability=True)]
+    res = run_analysis(m, do_buckling=False)
+    assert any("wind load" in t for t in res.messages)
+    assert not any("snow load" in t for t in res.messages)
+
+
+def test_aluminium_member_checks_are_flagged():
+    """Review V07: AISC 360 is a steel code; aluminium runs must say so."""
+    m = default_model(3, 8.0, 0.5)
+    res = run_analysis(m, do_buckling=False)
+    assert not any("not valid for" in t for t in res.messages)
+    assert MATERIALS[m.material_name].aisc_checks_apply
+    m.material_name = "Aluminium 6061-T6"
+    assert not m.material.aisc_checks_apply
+    res = run_analysis(m, do_buckling=False)
+    assert any("Member checks use AISC 360" in t and "Aluminium" in t
+               for t in res.messages), res.messages
+    assert "not valid for Aluminium 6061-T6" in summary_text(res)
+
+
+def test_wind_azimuth_is_the_direction_the_wind_blows_towards():
+    """Review F7 / V13: azimuth 0 = wind from -x, so the windward base node
+    (theta = 0, the largest Cp) is at x = -R; azimuth 90 puts it at y = -R."""
+    R = 10.0
+    m = default_model(4, R, 0.5)
+    base = m.geom.base_nodes
+    for az, where in ((0.0, (-R, 0.0)), (90.0, (0.0, -R))):
+        m.loads.wind_azimuth = az
+        Cp, theta = ld.wind_pressure_coefficients(m)
+        k = base[int(np.argmax(Cp[base]))]
+        assert np.allclose(m.geom.nodes[k, :2], where, atol=1e-9), \
+            (az, m.geom.nodes[k])
+        assert abs(theta[k]) < 1e-6 and abs(Cp[k] - 0.80) < 1e-12
+        fx, fy, _ = ld.load_totals(ld.wind_load(m))
+        drag = fx * math.cos(math.radians(az)) + fy * math.sin(math.radians(az))
+        assert drag > 0.0                    # drag along the wind direction
+
+
+def test_unbalanced_snow_pattern_on_model_B():
+    """Review V08: unbalanced snow is 1.5 p on x >= 0 and 0.5 p on x < 0,
+    on projected tributary areas computed here from the panels."""
+    from geodome import benchmarks as bm
+    m = bm.make_preset("validation_b")
+    p = 1000.0
+    m.loads.snow_pressure = p
+    m.loads.snow_unbalanced = True
+    g = m.geom
+    # one third of the plan area of each adjacent upward-facing panel
+    # (outward = away from the sphere centre; Model B is a super-hemisphere
+    # and 5 of its band panels face down)
+    centre = np.array([0.0, 0.0, g.nodes[:, 2].max() - g.radius])
+    Ap = np.zeros(g.n_nodes)
+    n_down = 0
+    for a, b, c in g.faces:
+        cr = np.cross(g.nodes[b] - g.nodes[a], g.nodes[c] - g.nodes[a])
+        cen = (g.nodes[a] + g.nodes[b] + g.nodes[c]) / 3.0
+        if cr @ (cen - centre) < 0.0:
+            cr = -cr
+        n_down += cr[2] < 0.0
+        for k in (a, b, c):
+            Ap[k] += max(cr[2], 0.0) / 6.0
+    assert n_down == 5
+    fac = np.where(g.nodes[:, 0] >= 0.0, 1.5, 0.5)
+    F = ld.snow_load(m)
+    assert np.allclose(F[2::3], -p * Ap * fac, rtol=1e-12, atol=1e-9)
+    assert np.all(F[0::3] == 0.0) and np.all(F[1::3] == 0.0)
+    assert fac[g.crown_node] == 1.5                 # crown (x = 0) is heavy
+    tot = -p * (1.5 * Ap[g.nodes[:, 0] >= 0].sum()
+                + 0.5 * Ap[g.nodes[:, 0] < 0].sum())
+    assert abs(ld.load_totals(F)[2] - tot) < 1e-9 * abs(tot)
+
+
+def test_wind_vertex_lumping_error_is_as_documented():
+    """Review V09: with Cp = 1 everywhere the vertex-normal lumping gives
+    sum(A_i n_i) = plan area x (0.949, 0.986, 0.994, 0.996) at 2V-8V,
+    while the faceted surface gives exactly the plan area (documented in
+    loads.py and the theory text)."""
+    doc = {2: 0.94876, 4: 0.98616, 6: 0.99376, 8: 0.99647}
+    for nu, ratio in doc.items():
+        g = geo.generate_dome(nu, 10.0, 0.5)
+        lump = (g.trib_area[:, None] * g.normals).sum(axis=0)
+        exact = np.zeros(3)
+        c0 = np.array([0.0, 0.0, 0.0])
+        for a, b, c in g.faces:
+            cr = np.cross(g.nodes[b] - g.nodes[a], g.nodes[c] - g.nodes[a])
+            cen = (g.nodes[a] + g.nodes[b] + g.nodes[c]) / 3.0
+            if cr @ (cen - c0) < 0:
+                cr = -cr
+            exact += 0.5 * cr
+        assert abs(exact[2] - g.plan_area) < 1e-9 * g.plan_area
+        assert abs(lump[0]) < 1e-9 and abs(lump[1]) < 1e-9
+        assert abs(lump[2] / g.plan_area - ratio) < 2e-5, (nu, lump[2] /
+                                                           g.plan_area)
+
+
+def test_super_hemisphere_snow_only_on_upward_panels():
+    """Review F6: panels below the equator face down and carry no snow; the
+    plan area is the upward-facing projection (hemispheres unchanged)."""
+    R, p = 10.0, 1000.0
+    half = geo.generate_dome(4, R, 0.5)
+    _, old = geo._tributary_areas(half.nodes, half.faces)
+    assert np.array_equal(old, half.trib_area_proj)  # |n_z| = n_z up there
+    for frac in (0.626, 0.724, 0.925):
+        g = geo.generate_dome(4, R, frac)
+        assert g.dome_fraction > 0.55
+        # the 4V mesh has an equator ring, so the upward panels are exactly
+        # the hemisphere's panels
+        assert abs(g.plan_area - half.plan_area) < 1e-9 * half.plan_area
+        assert g.plan_area <= math.pi * R ** 2
+        m = DomeModel(geom=g)
+        m.loads.snow_pressure = p
+        assert abs(ld.load_totals(ld.snow_load(m))[2]
+                   + p * g.plan_area) < 1e-9 * p * g.plan_area
+        zc = g.nodes[:, 2].max() - R                # sphere centre height
+        low = g.nodes[:, 2] < zc - 1e-6
+        assert np.any(low)
+        assert np.all(g.trib_area_proj[low] == 0.0)  # below the equator
+
+
+def test_custom_truss_text_has_no_nan():
+    """Review GUI-11: a truss without panels prints 'no plan area', and
+    its summary is headed SPACE TRUSS."""
+    from geodome import benchmarks as bm
+    m = bm.make_preset("three_bar")
+    lines = "\n".join(m.summary_lines())
+    assert "nan" not in lines.lower(), lines
+    assert "no panels, so no plan area" in lines
+    res = run_analysis(m, do_buckling=False)
+    txt = summary_text(res)
+    assert "SPACE TRUSS -- ANALYSIS SUMMARY" in txt
+    assert "GEODESIC DOME" not in txt
+    assert "kg/m2 of plan" in "\n".join(default_model(3, 8.0, 0.5)
+                                        .summary_lines())
+
+
 def test_support_types_listed():
     assert set(geo.SUPPORT_TYPES) == {geo.PINNED, geo.ROLLER3, geo.ELASTIC,
                                       geo.CUSTOM}
@@ -597,7 +866,8 @@ def test_custom_planar_truss_nan_radius_and_consumers():
                       LoadCombination("SLS", D=1.0, L=1.0,
                                       serviceability=True)]
     text = "\n".join(m.summary_lines())
-    assert "n/a" in text and "nan" in text            # plan mass is NaN
+    assert "n/a" in text and "nan" not in text        # plan mass is NaN
+    assert "no panels, so no plan area" in text
     res = run_analysis(m, n_buckling_modes=2)
     r = res.cases["1.2D+1.6L"]
     _check_identities(r)
@@ -816,6 +1086,38 @@ def test_gui_opens_generates_and_shows_custom_model():
         win.close()
     finally:
         sys.excepthook = old
+
+
+# ============================================ critical buckling combination ==
+def test_lambda_cr_is_the_minimum_over_strength_combinations():
+    """run_analysis buckles every strength combination and reports the
+    lowest load factor, which need not be under the combination that
+    governs the member checks (default 4V dome: LC5 governs the members,
+    LC2 has the lowest load factor)."""
+    from geodome.buckling import linear_buckling
+    from geodome.model import default_model
+    from geodome.postprocess import run_analysis, summary_text
+
+    m = default_model(4, 15.0, 0.5)
+    res = run_analysis(m, n_buckling_modes=3)
+    strength = [c.name for c in m.combinations if not c.serviceability]
+    by_case = res.lambda_cr_by_case
+    assert list(by_case) == strength
+    finite = {k: v for k, v in by_case.items() if np.isfinite(v)}
+    low = min(finite, key=finite.get)
+    assert res.lambda_cr_case == low
+    assert res.lambda_cr == finite[low]
+    assert len(res.buckling.load_factors) == 3
+    # each entry equals a direct eigenanalysis of that combination
+    for name in strength:
+        b = linear_buckling(m, res.cases[name].N, 1)
+        ref = float(b.load_factors[0]) if len(b.load_factors) else np.nan
+        assert (np.isnan(ref) and np.isnan(by_case[name])) or \
+            abs(by_case[name] - ref) <= 1e-12 * abs(ref)
+    assert res.lambda_cr_case != res.governing_case
+    assert any(msg.startswith("The lowest critical load factor")
+               for msg in res.messages)
+    assert f"critical combination: {low}" in summary_text(res)
 
 
 # =============================================================== driver =====

@@ -268,7 +268,7 @@ def test_2v_axial_and_tangent_angles_published():
     # Clinton relation alpha = arccos(cf/2).  Closed forms: the A strut
     # subtends half the icosahedron edge angle acos(1/sqrt5), so
     # alpha_A = 90 - acos(1/sqrt5)/4 = 74.1413 deg; the B strut subtends
-    # 36 deg, so alpha_B = 72 deg exactly.  (The research notes print
+    # 36 deg, so alpha_B = 72 deg exactly.  (A rounded table prints
     # 74.142, a rounding slip of 74.14126.)
     alpha_A = 90.0 - math.degrees(math.acos(1.0 / SQ5)) / 4.0
     assert abs(st[0]["axial_angle_deg"] - alpha_A) < 1e-11
@@ -407,7 +407,7 @@ def test_flat_grid_custom_truss():
 
 
 def test_custom_truss_without_panels():
-    """A bare space truss (star dome of the research notes, no faces)."""
+    """A bare space truss (star dome of docs/VALIDATION.md, no faces)."""
     cm = 0.01
     P = [[0, 0, 8.216]]
     for k in range(6):
@@ -427,7 +427,7 @@ def test_custom_truss_without_panels():
     assert len(t["members"]) == 24 and len(t["nodes"]) == 13
     assert sum(r["count"] for r in t["struts"]) == 24
     # families by length: A = ring 25.000 cm, B = crown spokes 25.080 cm,
-    # C = outer struts 31.600 cm (research notes, Sec. 5c)
+    # C = outer struts 31.600 cm (docs/VALIDATION.md)
     lens = [round(r["length_mm"], 3) for r in t["struts"]]
     assert lens == [250.0, round(250.79872, 3), round(316.00240, 3)], lens
     assert [r["count"] for r in t["struts"]] == [6, 6, 12]

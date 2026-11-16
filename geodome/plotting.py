@@ -127,7 +127,9 @@ def draw_model(ax, model, color_by_family=True, show_nodes=True,
         handles = [Line2D([0], [0], color=FAMILY_COLORS[s["id"] % len(FAMILY_COLORS)],
                           lw=2.4,
                           label=f"{s['label']}  {s['length']:.3f} m  "
-                                f"(CF {s['chord_factor']:.4f})  x{s['count']}")
+                                + (f"(CF {s['chord_factor']:.4f})  "
+                                   if np.isfinite(s['chord_factor']) else "")
+                                + f"x{s['count']}")
                    for s in geom.strut_schedule()]
         ax.legend(handles=handles, loc="upper left", fontsize=7,
                   frameon=True, framealpha=0.9, title="Strut families",
@@ -297,7 +299,7 @@ def draw_buckling_mode(ax, model, bres, k=0, scale_frac=0.10, title=None):
     _draw_ground(ax, geom)
     set_equal_aspect(ax, np.vstack([geom.nodes, defo]))
     ax.text2D(0.02, 0.96,
-              f"reference case: {bres.reference_case}\n"
+              f"critical combination: {bres.reference_case}\n"
               f"mode shape normalised, shown x{scale:,.1f}",
               transform=ax.transAxes, fontsize=8, va="top",
               bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="0.7",

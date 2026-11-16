@@ -1,0 +1,5 @@
+# forces in kN, case D, S, L or W
+node, Fx, Fy, Fz, case
+5, 0, 0, -20, D
+5, 0, 0, -30, S
+5, 5, 0, 0, W

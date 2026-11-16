@@ -8,9 +8,32 @@ keyword and emits its return value when it finishes.
 
 from __future__ import annotations
 
+import re
 import traceback
 
 from qtpy.QtCore import QThread, Signal
+
+_CLASS_PREFIX = re.compile(r"^[A-Za-z_][A-Za-z0-9_.]*(?:Error|Exception): ")
+
+
+def plain_message(message):
+    """The text of a ``failed`` signal for a message box.
+
+    The worker sends ``"ClassName: text"``.  This drops the class name and
+    says in plain words what a singular stiffness matrix means.  The full
+    message and the traceback still go to the Log.
+    """
+    text = _CLASS_PREFIX.sub("", str(message), count=1).strip()
+    low = text.lower()
+    if "unstable structure" in low:
+        return text                      # the solver's own plain sentence
+    if "singular" in low:
+        return ("The stiffness matrix is singular, so the structure is a "
+                "mechanism with these supports: part of it can move "
+                "without resistance. Check the supports.")
+    if text.startswith("'") and text.endswith("'") and len(text) < 60:
+        return f"A required item is missing: {text}."     # a bare KeyError
+    return text
 
 
 class Worker(QThread):

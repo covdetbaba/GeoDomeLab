@@ -28,6 +28,13 @@ and supported (s) degrees of freedom, and the free partition solved:
     Kff uf = Ff            ->  uf
     R = Ksf uf - Fs            ->  support reactions
 
+Mechanisms are refused with ``numpy.linalg.LinAlgError`` in three ways:
+a free DOF with zero stiffness (zero diagonal of Kff); supports that do not
+stop all rigid-body motions, i.e. rank(R[held]) < rank(R) for the six
+rigid-body vectors R of the node set (``unrestrained_rigid_modes``); and a
+relative equilibrium residual above ``MECHANISM_RESIDUAL`` after the solve
+(an internal mechanism pushed by the loads).
+
 Member axial force follows from the element compatibility relation
 
     N = (EA/L) * {c}^T ({u2} - {u1})
@@ -88,6 +95,7 @@ measured relative to the largest single energy term (``energy_scale``).
 
 from __future__ import annotations
 
+import warnings
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -280,6 +288,61 @@ def _dof_name(d):
     return f"DOF {d} (node {d // 3}, {_AXIS[d % 3]})"
 
 
+# Relative equilibrium residual above which a solve is rejected as a
+# mechanism.  Stable models give about 1e-12 or less.
+MECHANISM_RESIDUAL = 1e-6
+
+
+def rigid_body_modes(nodes):
+    """(3n, 6) infinitesimal rigid-body motions of a node set.
+
+    Columns 0-2 are the unit translations; columns 3-5 the small rotations
+    ``u_i = theta x (x_i - x_c)`` about the x, y and z axes through the node
+    centroid ``x_c``.  Each non-zero column is scaled to unit length.  A
+    rotation about the line of a collinear node set is a zero column.
+    """
+    P = np.asarray(nodes, dtype=float)
+    n = len(P)
+    Q = P - P.mean(axis=0)
+    x, y, z = Q[:, 0], Q[:, 1], Q[:, 2]
+    R = np.zeros((3 * n, 6))
+    for a in range(3):
+        R[a::3, a] = 1.0
+    R[1::3, 3], R[2::3, 3] = -z, y            # about x: (0, -z, y)
+    R[0::3, 4], R[2::3, 4] = z, -x            # about y: (z, 0, -x)
+    R[0::3, 5], R[1::3, 5] = -y, x            # about z: (-y, x, 0)
+    nrm = np.linalg.norm(R, axis=0)
+    ok = nrm > 1e-12 * max(float(nrm.max()), 1e-300)
+    R[:, ok] /= nrm[ok]
+    R[:, ~ok] = 0.0
+    return R
+
+
+def unrestrained_rigid_modes(nodes, held, rtol=1e-10):
+    """Number of rigid-body motions that the supported DOFs ``held`` do not
+    stop.
+
+    With ``R`` from :func:`rigid_body_modes`, a motion ``R c`` that is zero
+    at every held DOF meets no support and strains no member, so it is a
+    mechanism.  Such motions exist exactly when
+
+        rank(R[held]) < rank(R)
+
+    (comparing with rank(R), not with 6, keeps a collinear truss legal).
+    The ranks count singular values above ``rtol`` times the largest
+    singular value of ``R``.
+    """
+    R = rigid_body_modes(nodes)
+    s_all = np.linalg.svd(R, compute_uv=False)
+    thr = rtol * max(float(s_all[0]), 1e-300)
+    rank_all = int(np.sum(s_all > thr))
+    held = np.asarray(sorted(set(int(d) for d in held)), dtype=int)
+    if len(held) == 0:
+        return rank_all
+    s_held = np.linalg.svd(R[held], compute_uv=False)
+    return rank_all - int(np.sum(s_held > thr))
+
+
 def initial_strain_load(nodes, members, EA, eps0, L=None, C=None):
     """Equivalent nodal load of member initial strains.
 
@@ -403,6 +466,15 @@ def solve_static(nodes, members, EA, F, fixed, name="LC", prescribed=None,
     if len(fd) == 0:
         info.insert(0, "Every degree of freedom is restrained.")
     else:
+        # Guard against a mechanism of the whole structure: the supports
+        # (restraints and springs) must stop every rigid-body motion.
+        n_free = unrestrained_rigid_modes(
+            nodes, np.concatenate([sd, spr_dofs]))
+        if n_free > 0:
+            raise np.linalg.LinAlgError(
+                f"Unstable structure: the supports do not stop "
+                f"{n_free} rigid-body motion(s), so the structure is a "
+                f"mechanism.  Check the supports.")
         rhs = F[fd]
         if F0 is not None:
             rhs = rhs + F0[fd]
@@ -429,16 +501,27 @@ def solve_static(nodes, members, EA, F, fixed, name="LC", prescribed=None,
             if np.any(np.abs(diag) < 1e-12 * max(np.abs(diag).max(), 1.0)):
                 bad = fd[np.where(np.abs(diag) < 1e-12 * np.abs(diag).max())[0]]
                 raise np.linalg.LinAlgError(
-                    f"Unstable structure: zero stiffness at DOF(s) "
-                    f"{bad[:8].tolist()} (node {bad[0] // 3}).")
+                    f"Unstable structure: node {bad[0] // 3} can move freely "
+                    f"in {_AXIS[bad[0] % 3]} (zero stiffness at DOF(s) "
+                    f"{bad[:8].tolist()}).  Check the supports and the "
+                    f"members at that node.")
             try:
-                uf = spla.spsolve(Kff, rhs)
+                with warnings.catch_warnings():
+                    # a singular Kff is reported below as a mechanism
+                    warnings.simplefilter("ignore")
+                    uf = spla.spsolve(Kff, rhs)
                 if not np.all(np.isfinite(uf)):
                     raise RuntimeError("non-finite solution")
                 info.insert(0, "Sparse LU (SuperLU).")
-            except Exception as exc:                 # pragma: no cover
+            except Exception as exc:
                 info.insert(0, f"Sparse solve fell back to dense ({exc}).")
-                uf = np.linalg.solve(Kff.toarray(), rhs)
+                try:
+                    uf = np.linalg.solve(Kff.toarray(), rhs)
+                except np.linalg.LinAlgError:
+                    raise np.linalg.LinAlgError(
+                        "Unstable structure (mechanism): the stiffness "
+                        "matrix is singular.  Check the supports and the "
+                        "members.") from None
         else:                                        # pragma: no cover
             Kff = K[np.ix_(fd, fd)].copy()
             for d, k in zip(spr_dofs, spr_k):
@@ -473,6 +556,14 @@ def solve_static(nodes, members, EA, F, fixed, name="LC", prescribed=None,
         residual = residual - F0
     rnorm = float(np.linalg.norm(residual)
                   / max(np.linalg.norm(F), *extra_load_norms, 1e-12))
+    if len(fd) and not rnorm <= MECHANISM_RESIDUAL:
+        # The supports stop every rigid-body motion, but a part of the
+        # truss can still move (an internal mechanism) and the loads push
+        # it: the solve then returns numbers that do not satisfy K u = F.
+        raise np.linalg.LinAlgError(
+            f"Unstable structure (mechanism): the loads cannot be carried "
+            f"(equilibrium residual {rnorm:.1e}).  Check the supports and "
+            f"the members.")
 
     applied = F.reshape(-1, 3).sum(axis=0)
     reac = reactions.reshape(-1, 3).sum(axis=0)

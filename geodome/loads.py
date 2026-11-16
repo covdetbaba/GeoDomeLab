@@ -11,6 +11,17 @@ Area loads are lumped at the nodes using the tributary areas computed in
     * snow and live  -> applied on the **horizontally projected** area
     * wind           -> pressure normal to the surface, on surface area
 
+Wind is lumped as ``-p_i A_i n_i`` with ``A_i`` the surface tributary area
+and ``n_i`` the radial (vertex) normal of node i.  On the faceted surface the
+exact resultant of a uniform pressure is p times the plan area; the vertex
+lumping gives a little less (5.1 % at 2V, 1.4 % at 4V, 0.6 % at 6V and
+0.35 % at 8V for a hemisphere), a discretisation error that falls with the
+frequency.
+
+The wind direction ``LoadSpec.wind_azimuth`` is the direction the wind blows
+*towards*, in degrees counter-clockwise from +x: 0 means wind from -x, so the
+windward springing (Cp = +0.80) is at x = -R.
+
 Explicit nodal loads (``LoadSpec.nodal_loads``: node, Fx, Fy, Fz, case) are
 added to the vector of their case (D, S, L or W).
 
@@ -68,8 +79,9 @@ def _projected_pressure_load(model, pressure, unbalanced=False):
         return F
     factor = np.ones(g.n_nodes)
     if unbalanced:
-        # ASCE-style unbalanced roof load: 1.5 p on the leeward half, 0.5 p on
-        # the windward half, split by the plane x = 0.
+        # Illustrative antisymmetric pattern, NOT the ASCE 7-16 Fig. 7.6-2
+        # curved-roof rule: 1.5 p on x >= 0 (the crown included), 0.5 p on
+        # x < 0.  The split plane is fixed and does not follow the wind.
         factor = np.where(g.nodes[:, 0] >= 0.0, 1.5, 0.5)
     F[2::3] -= pressure * g.trib_area_proj * factor
     return F

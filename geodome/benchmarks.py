@@ -48,7 +48,8 @@ Each preset carries both validation load cases in one model:
 Model A therefore reproduces every row of ``validation/output/comparison.csv``
 including the AISC utilisation 0.27257 and lambda_cr = 5506.10 of A2.
 
-von Mises two-bar truss (Pecknold, Ghaboussi & Healey 1985)
+von Mises two-bar truss (closed form derived here; the problem studied by
+Pecknold, Ghaboussi & Healey 1985)
 -----------------------------------------------------------
 Two bars from the supports (-a, 0, 0), (+a, 0, 0) to the apex (0, 0, h),
 same section as validation case F6 of ``validation/hand_calc_ext.py``
@@ -76,8 +77,8 @@ state, N = 0).  The linearised lambda_cr overestimates the true limit load
 Geometry from Greco & Venturini (2006), *Lat. Am. J. Solids Struct.* 3(3),
 Sec. 5.3 / Fig. 7, and Iu & Bradford (2012), *Adv. Steel Constr.* 8(2),
 Sec. 5.5 / Fig. 8; the plan is also confirmed by Hrinda (2006, NASA NTRS
-20060020675), Fig. 6 (all compiled in ``Final Project/dev/research_notes.md``,
-Sec. 5c).  In cm: crown (0, 0, 8.216); inner ring of six nodes at radius 25
+20060020675), Fig. 6 (the table is in ``docs/VALIDATION.md``, star dome
+reference values).  In cm: crown (0, 0, 8.216); inner ring of six nodes at radius 25
 and z = 6.216 (one on the +x axis); six pinned supports at radius 50 and
 z = 0, at 30 deg + k 60 deg.  The outer plan coordinate is the exact
 50 cos 30 deg = 25 sqrt(3) = 43.30127 cm (the papers print 43.3, which moves
@@ -88,7 +89,13 @@ independent of the length unit).  The reference load is P_ref = 1e-4 EA
 down at the crown, so a load factor lambda reads directly as 10^4 P/EA,
 the ordinate of Iu & Bradford's plots.
 
-Published and reference values (research notes, Sec. 5d):
+Published values, and reference values computed in this work
+(engineering-strain corotational truss, crown displacement control; listed
+in ``docs/VALIDATION.md`` and reproduced by the independent solver in
+``tests/test_benchmarks.py``), consistent with Greco & Venturini (2006)
+Sec. 5.3 / Fig. 8 and Iu & Bradford (2012) Sec. 5.5.  The papers give only
+figure-read values ("near 0.75 cm", "approximately 19 mm"); the 5- and
+6-digit numbers below are computed, not published:
 
 * first limit point "near 0.75 cm" of crown deflection (Greco & Venturini);
   P/EA = 3.15655e-4 at w = 0.768 cm (corotational engineering strain;
@@ -152,8 +159,8 @@ from the bar lengths and the true / projected panel areas (not from the
 nodal tributary areas the load generator uses), plus the equilibrium and
 energy identities.
 
-References (verified, see ``Final Project/dev/research_notes.md``)
--------------------------------------------------------------------
+References
+----------
 * D. A. Pecknold, J. Ghaboussi, T. J. Healey (1985). Snap-through and
   bifurcation in a simple structure. J. Eng. Mech. 111(7), 909-922.
 * Y. Hangai, S. Kawamata (1972). Nonlinear analysis of space frames and
@@ -230,11 +237,13 @@ HAND_B = {
            "N_ring": 15388.417685876268, "N_zig": -5877.8525229247325,
            "Rz_node": 10000.000000000002, "Rr_node": -1909.830056250526,
            "tot_P": -50000.0},
-    "B2": {"w0": -0.0018589407480980834, "ur": 0.00033597801610817655,
-           "w1": -0.0006216021820204292, "N_spoke": -14802.274636332933,
-           "N_ring": 16030.365088130498, "N_zig": -19245.547632195747,
-           "Rz_node": 42397.98707733561, "Rr_node": -6253.257490488971,
-           "tot_P": -211989.93538667803},
+    # B2: snow on the upward-facing panels only (the 5 band panels below
+    # the upper ring that face down carry none; see hand_calc.model_b)
+    "B2": {"w0": -0.0018256271695099822, "ur": 0.00033108544811846205,
+           "w1": -0.0005962049447319561, "N_spoke": -14802.274636332928,
+           "N_ring": 15796.928234129991, "N_zig": -18400.96516019507,
+           "Rz_node": 38087.31850217159, "Rr_node": -5978.836010242874,
+           "tot_P": -190436.5925108579},
 }
 
 # F-case data shared with validation/hand_calc_ext.py
@@ -246,11 +255,12 @@ VM_HALF_SPAN = 2.5                        # von Mises a                [m]
 VM_RISE = 0.125                           # von Mises h                [m]
 VM_P_REF = 10e3                           # apex reference load        [N]
 
-# Star dome reference numbers (research_notes.md Sec. 5d)
+# Star dome reference numbers, computed in this work (docs/VALIDATION.md,
+# star dome reference values; consistent with Greco & Venturini 2006, Fig. 8)
 STAR_P_OVER_EA_LIMIT = 3.15655e-4         # first limit point, P/EA
-# Crown deflection at that limit point [cm].  The research notes print
-# 0.7685 (a rounded grid value); refining the flat maximum by golden-section
-# search on the corotational path gives 0.76844 (tests/test_benchmarks.py).
+# Crown deflection at that limit point [cm].  A grid sample gives 0.7685;
+# refining the flat maximum by golden-section search on the corotational
+# path gives 0.76844 (tests/test_benchmarks.py).
 STAR_W_LIMIT_CM = 0.76844
 STAR_W_ZERO1_CM = 1.8838                  # first zero-load state       [cm]
 STAR_NODE2_ZERO1_CM = 0.1162              # node 2 moves UP by this     [cm]
@@ -355,8 +365,9 @@ def star_dome_geometry(exact_hexagon=True):
 
     Returns ``(nodes_cm (13, 3), members (24, 2), faces (12, 3), supports)``
     with 0-based indices: 0 = crown, 1-6 = inner ring (node 1 on +x), 7-12 =
-    supports.  Member order = research notes Sec. 5c (spokes 1-6, ring
-    7-12, diagonals 13-24).  ``exact_hexagon=False`` uses the printed 43.3.
+    supports.  Member order: spokes 1-6, ring
+    7-12, diagonals 13-24 (1-based).  ``exact_hexagon=False`` uses the
+    printed 43.3.
     """
     xo = 25.0 * SQ3 if exact_hexagon else 43.3          # 50 cos 30 deg
     yr = 12.5 * SQ3                                     # 25 sin 60 deg
@@ -802,9 +813,11 @@ def _check_validation_a(model, res, rows):
          r2.reaction_vectors()[hn2, 2], "kN", 1e-3, source=src)
     _row(rows, key, "envelope", "AISC utilisation of a spoke",
          HAND_A["A2_util"], res.util_env[spoke1], "-", source=src)
-    lam = res.buckling.load_factors[0] if res.buckling is not None else np.nan
-    _row(rows, key, res.buckling.reference_case if res.buckling else "-",
-         "lambda_cr", HAND_A["A2_lambda_cr"], lam, "-", source=src)
+    # The hand value is the crown buckling factor of A2, so compare with
+    # the A2 eigenanalysis, whichever combination is critical overall.
+    lam = res.lambda_cr_by_case.get(COMBO_A2, np.nan)
+    _row(rows, key, COMBO_A2, "lambda_cr", HAND_A["A2_lambda_cr"], lam, "-",
+         source=src)
 
 
 def _check_validation_b(model, res, rows):
@@ -908,11 +921,13 @@ def _check_star_dome(model, res, rows):
          "kN", 1e-3, source="six-fold symmetry")
     _row(rows, key, name, "initial crown stiffness P/(w EA) [1/m]",
          STAR_K0_PER_EA, P / abs(U[0, 2]) / EA, "-", tol=1e-4,
-         source="research_notes.md Sec. 5d (0.090430, 5 digits)")
+         source="computed in this work, docs/VALIDATION.md (0.090430, "
+                "5 digits)")
     lam = res.buckling.load_factors[0] if res.buckling is not None else np.nan
     _row(rows, key, name, "lambda_cr P/EA", STAR_LAMBDA_CR_P_OVER_EA,
          lam * P / EA, "-", tol=1e-5,
-         source="research_notes.md Sec. 5d (1.52097e-3, 6 digits)")
+         source="computed in this work, docs/VALIDATION.md (1.52097e-3, "
+                "6 digits)")
 
 
 def _three_bar_case_inputs(model, combo):

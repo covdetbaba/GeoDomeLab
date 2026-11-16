@@ -16,6 +16,14 @@ Sources for alpha
   EN 1993-1-1 value 12e-6 differs by less than 3 %.
 * EN S235 / S355: EN 1993-1-1:2005, Section 3.2.6, alpha = 12e-6 per K.
 * Aluminium 6061-T6: EN 1999-1-1:2007, Section 3.2.5, alpha = 23e-6 per K.
+
+Design code
+-----------
+The member checks (``buckling.member_capacities``) follow AISC 360-16, a
+steel specification.  ``Material.design_code`` says which code a material
+needs; for aluminium (Aluminum Design Manual) the analysis still gives the
+displacements and member forces, and ``postprocess.run_analysis`` adds a
+message that the AISC member checks are not valid for it.
 """
 
 from __future__ import annotations
@@ -34,6 +42,16 @@ class Material:
     # AISC value for carbon steel so that a user-defined steel built with the
     # old five-argument call keeps a physically sensible value.
     alpha: float = 11.7e-6
+    # Design code of the member strength checks.  The checks in
+    # ``buckling`` follow AISC 360 (steel); a material with another value
+    # (aluminium) is analysed for stiffness and forces, and every run says
+    # that the member checks do not apply to it.
+    design_code: str = "AISC 360"
+
+    @property
+    def aisc_checks_apply(self):
+        """True when the AISC 360 member checks are valid for this material."""
+        return self.design_code == "AISC 360"
 
     @property
     def unit_weight(self):
@@ -64,9 +82,12 @@ MATERIALS = {
                         ALPHA_STEEL_EN),
     "EN S355": Material("EN S355", 210e9, 355e6, 490e6, 7850.0,
                         ALPHA_STEEL_EN),
+    # Aluminium needs the Aluminum Design Manual (other column curves and
+    # weld reductions); the program only uses it for stiffness and forces.
     "Aluminium 6061-T6": Material("Aluminium 6061-T6",
                                   69e9, 240e6, 260e6, 2700.0,
-                                  ALPHA_ALUMINIUM_EN),
+                                  ALPHA_ALUMINIUM_EN,
+                                  design_code="Aluminum Design Manual"),
 }
 
 DEFAULT_MATERIAL = "ASTM A500 Gr. C (round)"

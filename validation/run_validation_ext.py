@@ -1,5 +1,5 @@
 """
-Extended validation: the F1 to F8 hand calculations against GeoDomeLab.
+Extended validation: the F1 to F10 hand calculations against GeoDomeLab.
 
 The hand side is ``validation/hand_calc_ext.py``.  It never imports the
 geodome package, and this script asks it for every reference value BEFORE
@@ -30,6 +30,12 @@ same calls the GUI makes:
                                       custom_geometry (full sphere) and
                                       generate_dome (hemisphere) ->
                                       fabrication.fabrication_tables
+    F9  wind on Model B               benchmarks.validation_model_b with the
+                                      default LoadSpec: loads.velocity_pressure,
+                                      wind_pressure_coefficients, wind_load,
+                                      and a run_analysis of 1.0W
+    F10 AISC compression and B4.2     buckling.compression_capacity and
+                                      member_capacities (design wall factor)
 
 Comparison rule
 ---------------
@@ -47,7 +53,8 @@ difference is not defined for an exact zero.  A row passes when d <= tol:
     natural frequencies, modal quantities       tol = 1e-9
     nonlinear path (limit point, snap target)   tol = 1e-6
     counts (nodes, struts, hubs, panels)        exact
-    Kenner (1976) published chord factors       |p - h| <= 5e-6 (5 decimals)
+    Kenner (1976) chord factors (as reproduced  |p - h| <= 5e-6 (5 decimals)
+      by the Domerama chart)
     program identities (equilibrium residual,   value <= 1e-10
       energy mismatch, sum of loads + reactions)
 
@@ -63,10 +70,14 @@ References (the same as the hand calculations)
       geometric stiffness, nonlinear solution procedures.
     Crisfield, Non-linear FE Analysis of Solids and Structures, Vol. 1 (1991):
       corotational truss, arc-length method.
-    Pecknold, Ghaboussi & Healey (1985), J. Eng. Mech. 111(7): von Mises
-      truss closed form.
+    von Mises truss: closed form derived here for engineering strain (the
+      problem studied by Pecknold, Ghaboussi & Healey 1985, J. Eng. Mech.
+      111(7)).
     Chopra, Dynamics of Structures: lumped mass, effective modal mass.
-    Kenner, Geodesic Math and How to Use It (1976): 2V chord factors.
+    Kenner, Geodesic Math and How to Use It (1976): 2V chord factors, the
+      values as reproduced by the Domerama chord-factor chart; closed forms
+      2 sin(15.8587 deg) and 2 sin 18 deg.
+    ASCE/SEI 7-16 Eq. 26.10-1 (velocity pressure); AISC 360-16 B4.2, E3, E7.
     Clinton (1971), NASA CR-1734: axial angle = arccos(L/2R).
 
 Run:  python validation/run_validation_ext.py
@@ -77,6 +88,7 @@ from __future__ import annotations
 import csv
 import math
 import os
+import re
 import sys
 import time
 
@@ -108,8 +120,10 @@ from geodome import loads as ld                                 # noqa: E402
 from geodome import modal as md                                 # noqa: E402
 from geodome import nonlinear as nl                             # noqa: E402
 from geodome import solver as slv                               # noqa: E402
+from geodome.materials import MATERIALS                         # noqa: E402
 from geodome.model import DomeModel, LoadCombination, LoadSpec  # noqa: E402
 from geodome.postprocess import run_analysis                    # noqa: E402
+from geodome.sections import SECTIONS, Section                  # noqa: E402
 
 OUT = os.path.join(HERE, "output")
 CSV_PATH = os.path.join(OUT, "comparison_ext.csv")
@@ -141,12 +155,20 @@ CASE_TITLES = {
     "F6": "von Mises truss snap-through",
     "F7": "Model A natural frequencies",
     "F8": "2V geodesic geometry and fabrication angles",
+    "F9": "Wind on Model B",
+    "F10": "AISC 360-16 compression, B4.2 and E7",
 }
 
 
 # =============================================================================
 # rows
 # =============================================================================
+def _case_of(sub):
+    """Case label of a sub-case name: 'F2a one spoke' -> 'F2',
+    'F10 AISC' -> 'F10'."""
+    m = re.match(r"F\d+", sub)
+    return m.group(0) if m else sub.split()[0]
+
 class Comparison:
     """Collects comparison rows and evaluates them (see module docstring)."""
 
@@ -167,7 +189,7 @@ class Comparison:
             ref, unit = h["value"], h["unit"] if unit is None else unit
             self.used.add(key)
         self.rows.append({
-            "case": sub.split()[0][:2], "sub": sub, "key": key,
+            "case": _case_of(sub), "sub": sub, "key": key,
             "quantity": quantity, "hand": float(ref),
             "program": float(program), "unit": unit or "-", "kind": kind,
             "source": source, "scale": scale})
@@ -181,7 +203,8 @@ class Comparison:
         for q, v in ((f"{label}: equilibrium residual", res.equilibrium_residual),
                      (f"{label}: energy identity mismatch", res.energy_error),
                      (f"{label}: |sum F + sum R| / max(|F|, |R|)", bal)):
-            self.rows.append({"case": sub[:2], "sub": sub, "key": "identity",
+            self.rows.append({"case": _case_of(sub), "sub": sub,
+                              "key": "identity",
                               "quantity": q, "hand": 0.0, "program": float(v),
                               "unit": "-", "kind": "identity",
                               "source": "solver.StaticResult"})
@@ -835,8 +858,83 @@ def case_f8(C):
 # =============================================================================
 # driver
 # =============================================================================
+# =============================================================================
+# F9  wind on Model B
+# =============================================================================
+def case_f9(C):
+    m = bm.validation_model_b()
+    m.loads = LoadSpec()                 # the program's default loads (wind on)
+    nodes, _ = hc.model_b_geometry()
+    nmap = node_map(nodes, m.geom.nodes)
+    sub = "F9 wind Model B"
+    qz = ld.velocity_pressure(m)
+    C.add(sub, "F9.qz", "velocity pressure qz", qz,
+          "loads.velocity_pressure (LoadSpec defaults)")
+    C.add(sub, "F9.qG", "qz G", qz * m.loads.wind_G,
+          "loads.velocity_pressure x LoadSpec.wind_G")
+    Cp, _ = ld.wind_pressure_coefficients(m)
+    W = ld.wind_load(m)
+    src = "loads.wind_load (LoadSpec defaults)"
+    for n in sorted(nodes):
+        k = nmap[n]
+        C.add(sub, f"F9.Cp_{n}", f"Cp at hand node {n}", Cp[k],
+              "loads.wind_pressure_coefficients")
+        for ax, key in enumerate("xyz"):
+            C.add(sub, f"F9.F{key}_{n}", f"F{key} at hand node {n}",
+                  W[3 * k + ax], src)
+    for ax, key in enumerate("xyz"):
+        C.add(sub, f"F9.R{key}", f"wind resultant {key}",
+              ld.load_totals(W)[ax], src)
+    m.combinations = [LoadCombination("W  1.0W", W=1.0)]
+    C.identity(sub, "1.0W solve", analyse(m))
+
+
+# =============================================================================
+# F10  AISC 360-16 compression, B4.2 design wall, E7
+# =============================================================================
+def case_f10(C):
+    mat = MATERIALS[MATERIAL]
+    sub = "F10 AISC"
+    K, phi = hx.F10_K, hx.F10_PHI
+    src = "buckling.compression_capacity"
+    cap = bk.compression_capacity(SECTIONS[SEC_MAIN], mat, hx.F10_L_INEL, K,
+                                  phi)
+    for key, q, v in (("phiPn_inel", "phi Pn, inelastic", cap[0]),
+                      ("Fcr_inel", "Fcr, inelastic", cap[3]),
+                      ("Q_inel", "Ae/Ag, inelastic", cap[4]),
+                      ("KLr_inel", "KL/r, inelastic", cap[1])):
+        C.add(sub, f"F10.{key}", q, v, src)
+    # B4.2 through a model: one 2 m bar, design wall factor 0.93
+    m = custom_model([[0.0, 0.0, 0.0], [hx.F10_L_INEL, 0.0, 0.0]], [[0, 1]],
+                     [SEC_MAIN], {0: PIN, 1: [False, True, True]})
+    m.design_thickness_factor = hx.F10_TDES
+    m.K_effective, m.phi_c, m.phi_t = K, phi, phi
+    caps = bk.member_capacities(m)
+    src = "buckling.member_capacities, design_thickness_factor 0.93"
+    for key, q, v in (("phiPn_b42", "phi Pn, B4.2 wall", caps["phiPn_c"][0]),
+                      ("Fcr_b42", "Fcr, B4.2 wall", caps["Fcr"][0]),
+                      ("Q_b42", "Ae/Ag, B4.2 wall", caps["Q"][0]),
+                      ("KLr_b42", "KL/r, B4.2 wall", caps["slenderness"][0]),
+                      ("phiPn_t_b42", "phi_t Pn, B4.2 wall",
+                       caps["phiPn_t"][0])):
+        C.add(sub, f"F10.{key}", q, v, src)
+    # E7: a slender round HSS (not in the catalogue)
+    se = Section(*hx.F10_SLENDER)
+    cap = bk.compression_capacity(se, mat, hx.F10_L_SLENDER, K, phi)
+    src = "buckling.compression_capacity (custom Section)"
+    for key, q, v in (("phiPn_e7", "phi Pn, E7 slender wall", cap[0]),
+                      ("Fcr_e7", "Fcr, E7 slender wall", cap[3]),
+                      ("Q_e7", "Ae/Ag, E7 (Eq. E7-7)", cap[4]),
+                      ("KLr_e7", "KL/r, E7 slender wall", cap[1])):
+        C.add(sub, f"F10.{key}", q, v, src)
+    so = Section(*hx.F10_OUT_OF_SCOPE)
+    cap = bk.compression_capacity(so, mat, hx.F10_L_SLENDER, K, phi)
+    C.add(sub, "F10.phiPn_scope", "phi Pn, D/t above 0.45 E/Fy", cap[0],
+          src)
+
+
 CASES = (case_f1, case_f2, case_f3, case_f4, case_f5, case_f6, case_f7,
-         case_f8)
+         case_f8, case_f9, case_f10)
 
 
 def run_comparison():
@@ -880,6 +978,11 @@ def write_csv(rows, path=CSV_PATH):
     return path
 
 
+def _case_order(case):
+    """Sort key: F1, F2, ..., F10 (not F1, F10, F2)."""
+    return int(case[1:]) if case[1:].isdigit() else 99
+
+
 def summary_by_case(rows):
     out = {}
     for r in rows:
@@ -895,7 +998,7 @@ def write_markdown(rows, info, path=MD_PATH):
     npass = sum(r["pass"] for r in rows)
     summ = summary_by_case(rows)
     nh_ok = sum(1 for _, _, res, tol in info["hand_checks"] if res <= tol)
-    L = ["# GeoDomeLab extended validation: hand calculations F1-F8 vs the "
+    L = ["# GeoDomeLab extended validation: hand calculations F1-F10 vs the "
          "program", "",
          f"{npass} of {len(rows)} comparisons pass. "
          f"{info['n_used']} of {info['n_hand']} hand reference values are "
@@ -923,7 +1026,7 @@ def write_markdown(rows, info, path=MD_PATH):
           "| Case | Structure | Rows | Pass | Worst d (linear) | Worst d "
           "(modal) | Worst d (nonlinear) | Worst identity |",
           "|---|---|---|---|---|---|---|---|"]
-    for case in sorted(summ):
+    for case in sorted(summ, key=_case_order):
         s = summ[case]
         w = s["worst"]
 
@@ -970,7 +1073,18 @@ def write_markdown(rows, info, path=MD_PATH):
           "`icosahedron`, `subdivide_class1` and `custom_geometry`, and the "
           "2V hemisphere from `generate_dome`, both through "
           "`fabrication.fabrication_tables`; chord factors also against "
-          "Kenner (1976)."]
+          "Kenner (1976), the values as reproduced by the Domerama chart.",
+          "- **F9** `benchmarks.validation_model_b()` with the default "
+          "`LoadSpec` (wind on): `loads.velocity_pressure`, "
+          "`wind_pressure_coefficients` and `wind_load` at every node, the "
+          "resultant, and a `run_analysis` of 1.0W for the identities. This "
+          "checks the implementation of the wind field; the 7-point Cp table "
+          "itself is an illustrative simplification, not ASCE 7-16 Fig. "
+          "27.3-2.",
+          "- **F10** `buckling.compression_capacity` (inelastic E3 branch, "
+          "E7 slender wall with a custom `Section`, the 0.45 E/Fy scope "
+          "limit) and `buckling.member_capacities` of a one-bar model with "
+          "`design_thickness_factor = 0.93` (AISC 360-16 B4.2)."]
     fails = [r for r in rows if not r["pass"]]
     L += ["", "## Failures", ""]
     if fails:
@@ -1014,7 +1128,7 @@ def main():
               f"{r['difference']:>10.1e}  {'ok' if r['pass'] else 'FAIL'}")
     print("-" * 112)
     summ = summary_by_case(rows)
-    for case in sorted(summ):
+    for case in sorted(summ, key=_case_order):
         s = summ[case]
         worst = ", ".join(f"{k} {v:.1e}" for k, v in sorted(s["worst"].items()))
         print(f"{case}  {CASE_TITLES[case]:<46} {s['pass']:>3}/{s['n']:<3} "

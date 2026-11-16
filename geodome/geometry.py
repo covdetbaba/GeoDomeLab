@@ -316,17 +316,35 @@ def _cluster_1d(values, tol):
     return ids, np.asarray(reps, dtype=float)
 
 
-def _tributary_areas(nodes, faces):
-    """One third of each adjacent panel area, surface and horizontal-projected."""
+def _tributary_areas(nodes, faces, centre=None):
+    """One third of each adjacent panel area, surface and horizontal-projected.
+
+    The projected (plan) area of a panel is ``A max(n_z, 0)`` with ``n`` its
+    outward unit normal, so a panel below the equator of a super-hemisphere,
+    which faces down, takes no snow or live load and adds nothing to the plan
+    area.  The outward side is the side away from ``centre`` (the sphere
+    centre); without a centre the plan area is ``A |n_z|`` (custom trusses
+    whose faces have no defined outward side).
+    """
     n = len(nodes)
     surf = np.zeros(n)
     proj = np.zeros(n)
+    if centre is not None:
+        centre = np.asarray(centre, dtype=float)
+        if not np.all(np.isfinite(centre)):
+            centre = None
     for a, b, c in faces:
         u = nodes[b] - nodes[a]
         v = nodes[c] - nodes[a]
         cross = np.cross(u, v)
         area = 0.5 * np.linalg.norm(cross)
-        area_p = 0.5 * abs(cross[2])
+        if centre is None:
+            area_p = 0.5 * abs(cross[2])
+        else:
+            cen = (nodes[a] + nodes[b] + nodes[c]) / 3.0
+            if float(np.dot(cross, cen - centre)) < 0.0:
+                cross = -cross                  # orient outward
+            area_p = 0.5 * max(float(cross[2]), 0.0)
         for k in (a, b, c):
             surf[k] += area / 3.0
             proj[k] += area_p / 3.0
@@ -387,8 +405,21 @@ def generate_dome(frequency=4, radius=10.0, dome_fraction=0.5,
     -------
     DomeGeometry
     """
-    frequency = int(frequency)
-    radius = float(radius)
+    try:
+        frequency = int(frequency)
+        radius = float(radius)
+        fraction = float(dome_fraction)
+    except (TypeError, ValueError):
+        raise ValueError("The frequency, radius and dome fraction must be "
+                         "numbers.") from None
+    if frequency < 1:
+        raise ValueError(f"The frequency must be 1 or more (got {frequency}).")
+    if not (math.isfinite(radius) and radius > 0.0):
+        raise ValueError(f"The sphere radius must be above 0 m (got "
+                         f"{radius:g} m).")
+    if not (math.isfinite(fraction) and 0.0 < fraction <= 1.0):
+        raise ValueError(f"The dome fraction must be above 0 and at most 1 "
+                         f"(got {fraction:g}).")
     notes = []
 
     verts, faces0 = icosahedron()
@@ -504,7 +535,9 @@ def generate_dome(frequency=4, radius=10.0, dome_fraction=0.5,
     nodes[:, 2] -= z_base
     ring_rep = ring_rep - z_base
 
-    trib, trib_p = _tributary_areas(nodes, faces)
+    # sphere centre after the translation: (0, 0, -z_base)
+    trib, trib_p = _tributary_areas(nodes, faces,
+                                    centre=(0.0, 0.0, -float(z_base)))
 
     notes.append(f"{len(nodes)} nodes, {len(members)} struts, {len(faces)} panels.")
     notes.append(f"{int(strut_group.max()) + 1} distinct strut length(s).")
@@ -694,7 +727,7 @@ def custom_geometry(nodes, members, faces=None, base_nodes=None, groups=None,
     ref = centre if np.all(np.isfinite(centre)) else P.mean(axis=0)
     normals = _face_normals_at_nodes(P, Fc, ref)
     if len(Fc):
-        trib, trib_p = _tributary_areas(P, Fc)
+        trib, trib_p = _tributary_areas(P, Fc, centre=centre)
     else:
         trib, trib_p = np.zeros(n), np.zeros(n)
         notes.append("No faces given: area loads (cladding, snow, live, "

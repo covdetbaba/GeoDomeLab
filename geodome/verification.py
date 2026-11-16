@@ -122,7 +122,8 @@ def check_chord_factors():
     out.append(_check("2V chord factor A", s2[0]["chord_factor"], 0.546533,
                       2e-5, "-", "published 2V Class I table"))
     out.append(_check("2V chord factor B", s2[1]["chord_factor"], 0.618034,
-                      2e-5, "-", "= 1/phi, the icosahedron edge"))
+                      2e-5, "-", "= 2 sin 18 deg = 1/phi (edge of the "
+                      "icosidodecahedron of edge midpoints)"))
     g4 = geo.generate_dome(4, 1.0, 0.5)
     s4 = g4.strut_schedule()
     refs = [0.253185, 0.294531, 0.295242, 0.298588, 0.312869, 0.324920]
@@ -221,25 +222,39 @@ def check_section_properties():
 
 
 def check_aisc_compression():
-    """AISC E3 at the elastic/inelastic transition and in the elastic range."""
+    """AISC E3 in the elastic and the inelastic range, and the Euler load.
+
+    The references are computed here from the specified values of ASTM
+    A500 Gr. C (E = 200 GPa, Fy = 345 MPa) and the nominal CHS 114.3 x 6.3
+    dimensions, not from the program's material, section or Fe.
+    """
     mat = MATERIALS["ASTM A500 Gr. C (round)"]
     s = sx.get_section("CHS 114.3 x 6.3")
+    E, Fy = 200e9, 345e6
+    D, t = 0.1143, 0.0063
+    d = D - 2.0 * t
+    A = math.pi / 4.0 * (D ** 2 - d ** 2)
+    I = math.pi / 64.0 * (D ** 4 - d ** 4)
+    r = math.sqrt(I / A)
     out = []
     # Elastic branch: a deliberately slender strut, Fcr = 0.877 Fe.
     L = 12.0
     cap, slend, Fe, Fcr, Q = bk.compression_capacity(s, mat, L, 1.0, 0.9)
-    out.append(_check("AISC E3 elastic branch Fcr", Fcr, 0.877 * Fe, 1e-12,
-                      "Pa", f"KL/r = {slend:.0f} > 4.71 sqrt(E/Fy)"))
+    Fe_ref = math.pi ** 2 * E / (L / r) ** 2
+    out.append(_check("AISC E3 elastic branch Fcr", Fcr, 0.877 * Fe_ref,
+                      1e-12, "Pa", f"KL/r = {L / r:.0f} > 4.71 sqrt(E/Fy); "
+                      f"E, Fy, D, t typed in"))
     # Inelastic branch.
     L = 2.0
     cap, slend, Fe, Fcr, Q = bk.compression_capacity(s, mat, L, 1.0, 0.9)
+    Fe_ref = math.pi ** 2 * E / (L / r) ** 2
     out.append(_check("AISC E3 inelastic branch Fcr", Fcr,
-                      (0.658 ** (mat.Fy / Fe)) * mat.Fy, 1e-12, "Pa",
-                      f"KL/r = {slend:.0f}"))
-    # Euler load identity.
+                      (0.658 ** (Fy / Fe_ref)) * Fy, 1e-12, "Pa",
+                      f"KL/r = {L / r:.0f}; E, Fy, D, t typed in"))
+    # Euler load.
     out.append(_check("Euler load Pe = pi^2 EI/(KL)^2",
-                      bk.euler_load(s, mat, L), math.pi ** 2 * mat.E * s.I / L ** 2,
-                      1e-12, "N", "closed form"))
+                      bk.euler_load(s, mat, L), math.pi ** 2 * E * I / L ** 2,
+                      1e-12, "N", "closed form, E and I typed in"))
     return out
 
 
@@ -272,6 +287,15 @@ def check_pinned_column_buckling():
 def check_dome_equilibrium():
     """Global statics and energy identities on a realistic dome model."""
     model = DomeModel(geom=geo.generate_dome(4, 12.0, 0.5))
+    # A fixed set of five load cases (dead, snow and wind in turn, and a
+    # service case), so the number of checks does not follow the defaults.
+    model.combinations = [
+        LoadCombination("LC1  1.4D", D=1.4),
+        LoadCombination("LC2  1.2D + 1.6S", D=1.2, S=1.6),
+        LoadCombination("LC3  1.2D + 1.0W + 0.5S", D=1.2, W=1.0, S=0.5),
+        LoadCombination("LC4  0.9D + 1.0W", D=0.9, W=1.0),
+        LoadCombination("SLS  1.0D + 1.0S", D=1.0, S=1.0,
+                        serviceability=True)]
     res = run_analysis(model, do_buckling=False)
     out = []
     for name in res.order:

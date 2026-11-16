@@ -45,7 +45,13 @@ class AnalysisResults:
     deflection_ratio: float = float("inf")
     deflection_ok: bool = True
 
+    # Linear buckling.  ``buckling`` is the full result (all requested
+    # modes) for the critical combination, the strength combination with
+    # the lowest positive critical load factor.  ``buckling_cases`` holds the
+    # result of every strength combination, so ``lambda_cr_by_case`` gives
+    # the first load factor of each (nan when it has no compressive mode).
     buckling: object = None
+    buckling_cases: dict = field(default_factory=dict)
     messages: list = field(default_factory=list)
 
     # ------------------------------------------------------------ helpers --
@@ -63,6 +69,28 @@ class AnalysisResults:
 
     def worst_case_result(self):
         return self.cases.get(self.governing_case) or next(iter(self.cases.values()))
+
+    @property
+    def lambda_cr_by_case(self):
+        """First critical load factor of every analysed combination."""
+        out = {}
+        for name, b in self.buckling_cases.items():
+            out[name] = (float(b.load_factors[0]) if len(b.load_factors)
+                         else float("nan"))
+        return out
+
+    @property
+    def lambda_cr(self):
+        """Lowest critical load factor over the strength combinations."""
+        if self.buckling is not None and len(self.buckling.load_factors):
+            return float(self.buckling.load_factors[0])
+        return float("nan")
+
+    @property
+    def lambda_cr_case(self):
+        """Combination that gives :attr:`lambda_cr`."""
+        return self.buckling.reference_case if self.buckling is not None \
+            else ""
 
 
 def run_analysis(model, n_buckling_modes=6, do_buckling=True, progress=None):
@@ -128,6 +156,10 @@ def run_analysis(model, n_buckling_modes=6, do_buckling=True, progress=None):
     res.N_max_case, res.N_min_case = N_max_case, N_min_case
     res.util_env, res.util_case = util_env, util_case
 
+    if not strength:
+        res.messages.append(
+            "No strength combination (every row is a service case), so no "
+            "member was checked. Untick Service on at least one combination.")
     if len(strength):
         gm = int(np.argmax(util_env))
         res.governing_member = gm
@@ -151,15 +183,36 @@ def run_analysis(model, n_buckling_modes=6, do_buckling=True, progress=None):
     res.deflection_ok = res.deflection_ratio >= model.deflection_limit
 
     # ----------------------------------------------------------- buckling --
+    # Every strength combination is a design load, so the critical one is
+    # the combination with the lowest positive load factor; it need not be
+    # the combination that governs the member utilisation.
     if do_buckling:
-        report(0.80, "Linear buckling eigenanalysis...")
-        ref = res.governing_case or res.order[0]
-        try:
-            b = bk.linear_buckling(model, res.cases[ref].N, n_buckling_modes)
-            b.reference_case = ref
-            res.buckling = b
-        except Exception as exc:
-            res.messages.append(f"Buckling analysis failed: {exc}")
+        names = [c.name for c in strength] or list(res.order)
+        for k, name in enumerate(names):
+            report(0.80 + 0.12 * k / max(len(names), 1),
+                   f"Linear buckling eigenanalysis ({name})...")
+            try:
+                b = bk.linear_buckling(model, res.cases[name].N,
+                                       n_buckling_modes)
+            except Exception as exc:
+                res.messages.append(
+                    f"Buckling analysis failed for {name}: {exc}")
+                continue
+            b.reference_case = name
+            res.buckling_cases[name] = b
+        lam = {n: v for n, v in res.lambda_cr_by_case.items()
+               if np.isfinite(v)}
+        if lam:
+            ref = min(lam, key=lam.get)
+        else:
+            ref = res.governing_case or res.order[0]
+        res.buckling = res.buckling_cases.get(ref)
+        if len(lam) > 1 and res.governing_case and \
+                ref != res.governing_case:
+            res.messages.append(
+                f"The lowest critical load factor, {lam[ref]:.2f}, is under "
+                f"{ref}, not under the combination that governs the member "
+                f"checks ({res.governing_case}).")
 
     # ------------------------------------------------------------ messages --
     report(0.95, "Collecting diagnostics...")
@@ -179,6 +232,30 @@ def run_analysis(model, n_buckling_modes=6, do_buckling=True, progress=None):
             res.messages.append(
                 "A temperature change or support settlement is defined, but "
                 "no combination has a T factor, so it was not applied.")
+
+    # A basic load that no strength combination uses is silently dropped
+    # by the envelope: say so (the live load is the usual case).
+    load_names = {"D": "dead load", "S": "snow load",
+                  "L": "live load (live pressure, crown load and L nodal "
+                       "loads)",
+                  "W": "wind load"}
+    for key in ("D", "S", "L", "W"):
+        if not np.any(basic[key] != 0.0):
+            continue
+        if any(abs(c.factors()[key]) > 1e-12 for c in strength):
+            continue
+        art = "an" if key in ("L", "S") else "a"
+        res.messages.append(
+            f"The {load_names[key]} is defined, but no strength combination "
+            f"has {art} {key} factor, so the strength check does not include "
+            f"it.")
+
+    mat = model.material
+    if not getattr(mat, "aisc_checks_apply", True):
+        res.messages.append(
+            f"Member checks use AISC 360 (steel). They are not valid for "
+            f"{mat.name} ({mat.design_code}); use the results for stiffness "
+            f"and forces only.")
 
     slender = caps["slenderness"]
     if np.max(slender) > 200.0:
@@ -211,7 +288,8 @@ def summary_text(res):
     g = m.geom
     L = []
     L.append("=" * 74)
-    L.append("  GEODESIC DOME -- ANALYSIS SUMMARY")
+    L.append("  SPACE TRUSS -- ANALYSIS SUMMARY" if g.is_custom
+             else "  GEODESIC DOME -- ANALYSIS SUMMARY")
     L.append("=" * 74)
     L += ["  " + s for s in m.summary_lines()]
     L.append("")
@@ -236,6 +314,9 @@ def summary_text(res):
     L.append("-" * 74)
     L.append("  DESIGN CHECK (AISC 360 LRFD)")
     L.append("-" * 74)
+    if not getattr(m.material, "aisc_checks_apply", True):
+        L.append(f"  Note: AISC 360 is a steel code. These checks are not "
+                 f"valid for {m.material.name}.")
     if res.governing_member >= 0:
         i, j = g.members[res.governing_member]
         grp = int(g.strut_group[res.governing_member])
@@ -267,12 +348,19 @@ def summary_text(res):
     L.append("")
     if res.buckling is not None and len(res.buckling.load_factors):
         L.append("-" * 74)
-        L.append("  LINEAR BUCKLING  (reference case: "
+        L.append("  LINEAR BUCKLING  (critical combination: "
                  f"{res.buckling.reference_case})")
         L.append("-" * 74)
         for k, lam in enumerate(res.buckling.load_factors):
             L.append(f"  Mode {k + 1:<2d} critical load factor  {lam:10.3f}")
         L.append(f"  {res.buckling.info}")
+        by_case = res.lambda_cr_by_case
+        if len(by_case) > 1:
+            L.append("  First load factor of each strength combination:")
+            for name, lam in by_case.items():
+                txt = f"{lam:10.3f}" if np.isfinite(lam) else \
+                    "  no compressive mode"
+                L.append(f"    {name:<24s}{txt}")
     L.append("")
     if res.messages:
         L.append("-" * 74)

@@ -9,8 +9,8 @@ Every reference value is closed form or derived independently in this file:
   P(w) = 2 EA y (1/l - 1/L), limit point l* = (b^2 L)^(1/3), linearised
   lambda_cr = 2 EA h^3 / (L b^2) and the closed-form P-Delta path;
 * spring-braced column: exact bifurcation load P_b = kL / (1 + kL/EA);
-* 24-member star dome (Hangai & Kawamata geometry, research notes Sec. 5):
-  first limit P/EA = 3.15655e-4 at w = 0.7685 cm, lambda_cr / EA = 1.52097e-3,
+* 24-member star dome (Hangai & Kawamata geometry, docs/VALIDATION.md):
+  first limit P/EA = 3.15655e-4 at w = 0.76844 cm, lambda_cr / EA = 1.52097e-3,
   exact zero-load mirror state at w = 4 cm, second peak 8.8654e-3;
 * small-load agreement with the linear solver; 6V hemispherical dome under
   1.2D + 1.6S: arc-length and displacement control agree on the limit point.
@@ -42,7 +42,7 @@ from geodome.model import DomeModel, LoadCombination, LoadSpec, \
 
 
 # ============================================================== helpers ====
-B, H, EA_VM = 1.0, 0.1, 1.0                    # von Mises truss (notes Sec. 10)
+B, H, EA_VM = 1.0, 0.1, 1.0                    # von Mises truss (closed form derived here)
 
 
 def _vm_system(EA=EA_VM, b=B, h=H):
@@ -70,7 +70,7 @@ def _vm_limit(EA=EA_VM, b=B, h=H):
 
 
 def _star_geometry():
-    """24-member star dome, metres (research notes Sec. 5c, exact hexagon)."""
+    """24-member star dome, metres (docs/VALIDATION.md, exact hexagon)."""
     P = [[0.0, 0.0, 8.216]]
     P += [[25 * math.cos(math.radians(60 * k)),
            25 * math.sin(math.radians(60 * k)), 6.216] for k in range(6)]
@@ -298,6 +298,103 @@ def test_energy_identity_converges_quadratically():
 
 
 # ===================================================== bifurcation =======
+def _tent(b=1.0, h=4.0, EA=1e7, P=1e6):
+    """Three-bar tent: apex (0, 0, h) on three pinned legs at radius b,
+    120 deg apart; load P down at the apex.  Only the apex is free."""
+    X = [[0.0, 0.0, h]] + [[b * math.cos(math.radians(a)),
+                            b * math.sin(math.radians(a)), 0.0]
+                           for a in (0.0, 120.0, 240.0)]
+    M = [[1, 0], [2, 0], [3, 0]]
+    F = np.zeros(12)
+    F[2] = -P
+    return nl.TrussSystem(X, M, [EA] * 3, list(range(3, 12))), F
+
+
+def _tent_closed(b=1.0, h=4.0, EA=1e7, P=1e6):
+    """Independent closed form of the tent on its symmetric path.
+
+    Apex drop w, y = h - w, l = sqrt(b^2 + y^2), L = sqrt(b^2 + h^2),
+    N = EA (l - L)/L, vertical equilibrium lambda = -3 N y / (l P).
+    Lateral stiffness (double, x and y):
+        K_xx = (EA/L)(3/2)(b/l)^2 + (N/l)(3 - (3/2)(b/l)^2)
+    Vertical stiffness K_zz = 3 [(EA/L)(y/l)^2 + (N/l)(b/l)^2].
+    Returns (lambda at K_xx = 0, lambda at K_zz = 0)."""
+    from scipy.optimize import brentq
+    L = math.hypot(b, h)
+
+    def parts(w):
+        y = h - w
+        l = math.hypot(b, y)
+        N = EA * (l - L) / L
+        lam = -3.0 * N * y / (l * P)
+        kxx = EA / L * 1.5 * (b / l) ** 2 + N / l * (3.0 - 1.5 * (b / l) ** 2)
+        kzz = 3.0 * (EA / L * (y / l) ** 2 + N / l * (b / l) ** 2)
+        return lam, kxx, kzz
+
+    w_b = brentq(lambda w: parts(w)[1], 1e-9, 0.5 * h, xtol=1e-15, rtol=1e-15)
+    w_l = brentq(lambda w: parts(w)[2], 1e-9, h - 1e-9, xtol=1e-15,
+                 rtol=1e-15)
+    return parts(w_b)[0], parts(w_l)[0]
+
+
+def test_tent_double_bifurcation_bracket():
+    """Review F8: next to the double bifurcation of the three-bar tent the
+    bisection must not reject converged stable points (closed form
+    lambda_b = 0.9104292470; the old bracket missed it by 2.7e-7)."""
+    lam_b, lam_l = _tent_closed()
+    assert abs(lam_b - 0.9104292470) < 1e-9
+    s, F = _tent()
+    r = nl.trace_path(s, F, "arc-length", control_dof=2,
+                      first_increment=0.05, lambda_max=2.0 * lam_l,
+                      stop_after_limit=3)
+    bif = [cp for cp in r.critical_points if cp["type"] == "bifurcation"]
+    assert bif and bif[0]["refined"], r.critical_points
+    lo, hi = bif[0]["lambda_bracket"]
+    assert hi - lo <= 1e-9 * lam_b
+    assert abs(bif[0]["lambda"] - lam_b) < 2e-9 * lam_b, \
+        (bif[0]["lambda"], lam_b)
+    assert abs(r.lambda_first_critical - lam_b) < 2e-9 * lam_b
+    assert not any("det K_T only" in t for t in r.messages)
+
+
+def test_tent_determinant_sign_path_warns():
+    """Review F9: above eig_limit the stability check is the determinant
+    sign, which cannot see a double crossing; the run must say so."""
+    lam_b, lam_l = _tent_closed()
+    s, F = _tent()
+    r = nl.trace_path(s, F, "arc-length", control_dof=2,
+                      first_increment=0.05, lambda_max=2.0 * lam_l,
+                      stop_after_limit=3, eig_limit=0)
+    assert any("det K_T only" in t for t in r.messages), r.messages
+    # the double bifurcation is missed: the limit point comes first
+    assert r.limit_found and r.limit_type == "limit"
+    assert abs(r.lambda_limit - lam_l) < 1e-7 * lam_l, (r.lambda_limit, lam_l)
+    assert r.lambda_first_critical > 10.0 * lam_b
+
+
+def test_first_arc_step_never_goes_to_a_negative_load():
+    """Review GUI-06: a first arc-length step that is far too long may
+    converge on the branch below lambda = 0; it must be cut back, and a
+    path that dips below zero before its maximum is not a limit point."""
+    # The case study at span/200 with the dialog defaults: the + run used
+    # to start at lambda = -12.3 and report a spurious 57.1 (> lambda_cr).
+    from geodome import benchmarks as bm
+    m = bm.make_preset("case_study_6v")
+    span = m.geom.base_diameter
+    rows, runs = nl.imperfection_study(m, amplitudes=[span / 200.0],
+                                       return_results=True)
+    perfect, row = rows
+    for (a, sg), r in runs.items():
+        k = r.limit_step if r.limit_found else r.n_points - 1
+        assert np.all(r.lam[:k + 1] >= 0.0), (a, sg, r.lam[:4])
+        if r.limit_found:
+            assert r.lambda_limit < r.lambda_cr, (a, sg, r.lambda_limit)
+    assert row["found"]
+    assert row["lambda_limit"] < perfect["lambda_limit"]
+    assert abs(row["ratio"] - 0.2884) < 2e-3, row["ratio"]
+    assert row["sign"] == 1.0
+
+
 def test_spring_braced_column_bifurcation():
     """Bar on a fixed pin, top braced by a lateral spring k: the straight
     path loses stability at P_b = kL / (1 + kL/EA) (lateral stiffness
@@ -328,7 +425,7 @@ def test_star_dome_limit_point_and_linear_buckling():
         assert r.limit_found and r.limit_type == "limit" and r.limit_refined
         assert abs(r.lambda_limit / EA - 3.15655e-4) < 1e-9, \
             r.lambda_limit / EA
-        assert abs(-r.control_limit * 100 - 0.7685) < 2e-4
+        assert abs(-r.control_limit * 100 - 0.76844) < 2e-4
         assert abs(r.lambda_cr / EA - 1.52097e-3) < 1e-8
         assert abs(r.limit_ratio - 0.2075) < 1e-3
 
@@ -337,7 +434,7 @@ def test_star_dome_symmetric_path_landmarks():
     """Displacement control on the crown follows the symmetric path: zero
     load in the exact mirror state w = 4 cm, second maximum 8.8654e-3 EA
     near 10.54 cm, failure where the crown displacement snaps back
-    (near 12.96 cm, research notes Sec. 5d)."""
+    (near 12.96 cm, docs/VALIDATION.md)."""
     m = _star_model()
     EA = float(m.EA()[0])
     r = nl.run_nonlinear(m, "P", method="displacement", stop_after_limit=None,
@@ -410,7 +507,7 @@ def test_6v_dome_limit_point_arc_length_vs_displacement():
     t0 = time.perf_counter()
     ra = nl.run_nonlinear(m, "LC2")
     ta = time.perf_counter() - t0
-    assert ta < 30.0, ta
+    assert ta < (120.0 if os.environ.get("CI") else 30.0), ta
     assert ra.limit_found and ra.limit_refined and ra.limit_type == "limit"
     assert ra.max_residual < 1e-8
     assert 0.0 < ra.limit_ratio < 1.0

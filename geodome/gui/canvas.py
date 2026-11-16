@@ -24,7 +24,8 @@ class MplCanvas(QtWidgets.QWidget):
         self.figure = Figure(figsize=(7.0, 5.2), dpi=100)
         self.figure.patch.set_facecolor("#ffffff")
         self.canvas = FigureCanvasQTAgg(self.figure)
-        self.canvas.setMinimumSize(380, 300)
+        # small enough for the window to fit a 1366 x 768 screen
+        self.canvas.setMinimumSize(380, 200)
         self._projection = projection
         self.axes = self.figure.add_subplot(111, projection=projection)
         self._colorbar = None
@@ -115,6 +116,15 @@ class DualCanvas2D(QtWidgets.QWidget):
         self.toolbar = NavigationToolbar2QT(self.canvas, self)
         self.toolbar.setIconSize(self.toolbar.iconSize() * 0.8)
         lay.addWidget(self.toolbar)
+        # Lay the two plots out again when the pane is resized; otherwise a
+        # shorter pane cut off the lower axis title.
+        self.canvas.mpl_connect("resize_event", self._on_resize)
+
+    def _on_resize(self, _event=None):
+        try:
+            self.figure.tight_layout(h_pad=2.4)
+        except Exception:
+            pass
 
     def refresh(self):
         try:

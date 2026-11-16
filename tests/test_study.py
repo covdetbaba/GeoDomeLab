@@ -152,7 +152,11 @@ def test_row_equals_direct_analysis():
     assert _rel(r["mass_kg"], base.steel_mass()) < 1e-12
     assert _rel(r["span_over_deflection"], res.deflection_ratio) < 1e-12
     assert _rel(r["crown_disp_mm"], res.crown_disp * 1e3) < 1e-12
-    assert r["buckling_case"] == res.governing_case
+    # the study reports the lowest load factor over the strength
+    # combinations, which need not be the governing combination
+    assert r["buckling_case"] == res.lambda_cr_case
+    assert _rel(r["lambda_cr"], min(v for v in res.lambda_cr_by_case.values()
+                                    if v == v)) < 1e-12
     assert base.group_sections == before
     # the solver identities hold
     assert r["equilibrium_residual"] < 1e-9
@@ -205,6 +209,99 @@ def test_uniform_section_rule():
         pass
     else:
         raise AssertionError("unknown section accepted")
+
+
+def _uniform_scan(model, target, check_deflection):
+    """Brute force: the lightest catalogue section that, put on every
+    family, passes the final check (utilisation <= target, KL/r <= 200 and,
+    optionally, the deflection limit).  Uses run_analysis only for the
+    member forces; the selection logic of optimize is not used."""
+    for name in sx.SECTION_NAMES:
+        m = DomeModel.from_dict(model.to_dict())      # a fresh copy
+        m.group_sections = [name] * m.geom.n_strut_types()
+        res = run_analysis(m, do_buckling=False)
+        if res.governing_util > target + 1e-12:
+            continue
+        if np.max(res.caps["slenderness"]) > 200.0:
+            continue
+        if check_deflection and not res.deflection_ok:
+            continue
+        return name
+    return None
+
+
+def test_auto_size_uses_the_design_wall_thickness():
+    """Review F3 / V03: the selection must use the B4.2 design wall
+    (factor * t) like the final check, so the result meets the target."""
+    from geodome import benchmarks as bm
+    from geodome import buckling as bk
+    from geodome.optimize import _select_section
+    # unit level: a 3 m strut with 100 kN compression, factor 0.93
+    m = default_model(4, 12.0, 0.5)
+    m.design_thickness_factor = 0.93
+    name = _select_section(m, 3.0, 0.0, -100e3, 1.0)
+    i = sx.section_index(name)
+    cap = lambda k: bk.compression_capacity(                      # noqa: E731
+        bk.design_section(sx.CATALOGUE[k], 0.93), m.material, 3.0)[0]
+    assert cap(i) >= 100e3
+    assert i == 0 or cap(i - 1) < 100e3
+    # model level: the case study with factor 0.93 and target 1.00
+    cs = bm.make_preset("case_study_6v")
+    cs.design_thickness_factor = 0.93
+    s = auto_size(cs, target_util=1.0)
+    fin = run_analysis(cs, do_buckling=False)
+    assert s.converged
+    assert fin.governing_util <= 1.0 + 1e-12, fin.governing_util
+    assert not any("heaviest" in t for t in s.messages), s.messages
+    # one-family determinate Model A: exactly the brute-force answer
+    a = bm.make_preset("validation_a")
+    assert a.geom.n_strut_types() == 1
+    a.design_thickness_factor = 0.93
+    want = _uniform_scan(a, 1.0, False)
+    s = auto_size(a, target_util=1.0, enforce_deflection=False)
+    assert a.group_sections == [want], (a.group_sections, want)
+
+
+def test_auto_size_deflection_step_up_is_kept():
+    """Review F4: a deflection-governed design must not oscillate.  With
+    span/8000 the 4V dome needs CHS 114.3 x 6.3 on every family (the
+    lightest uniform section that passes both checks)."""
+    m = default_model(4, 12.0, 0.5)
+    m.deflection_limit = 8000.0
+    base = default_model(4, 12.0, 0.5)
+    base.deflection_limit = 8000.0
+    want = _uniform_scan(base, 0.95, True)
+    s = auto_size(m, max_iter=12)
+    fin = run_analysis(m, do_buckling=False)
+    assert s.converged, s.messages
+    assert fin.deflection_ok
+    assert set(m.group_sections) == {want}, (m.group_sections, want)
+    assert want == "CHS 114.3 x 6.3"
+    assert any("deflection limit governs" in t for t in s.messages)
+    # after the first deflection step no family ever goes down again
+    idx = [[sx.section_index(n) for n in h.sections] for h in s.history]
+    k0 = next(k for k, h in enumerate(s.history)
+              if "deflection" in h.note)
+    for a, b in zip(idx[k0 + 1:], idx[k0 + 2:]):
+        assert all(y >= x for x, y in zip(a, b)), (a, b)
+
+
+def test_auto_size_needs_a_strength_combination():
+    """Review GUI-08: with every combination a service case there is
+    nothing to size for; auto_size must refuse, not pick the heaviest
+    tube."""
+    m = default_model(3, 8.0, 0.5)
+    for c in m.combinations:
+        c.serviceability = True
+    try:
+        auto_size(m)
+    except ValueError as exc:
+        assert "Service" in str(exc)
+    else:
+        raise AssertionError("auto_size ran without a strength combination")
+    res = run_analysis(m, do_buckling=False)
+    assert res.governing_case == ""
+    assert any("No strength combination" in t for t in res.messages)
 
 
 def test_auto_size_rows_equal_direct_sizing():

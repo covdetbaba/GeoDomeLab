@@ -309,6 +309,38 @@ def _compare_with_csv(model_letter, rows):
     return len(csv_rows), worst
 
 
+def test_run_validation_has_its_own_pass_rule():
+    """Review V05: run_validation.py carries the tolerance, a pass column
+    and an exit code; the GUI and run_all_checks.py use the same limits."""
+    import run_validation as rv
+    import importlib.util
+    from geodome.gui import validation_view as vv
+    assert rv.REL_TOL == vv.RV_REL_TOL == 1e-12
+    assert rv.ABS_TOL == vv.RV_ABS_TOL == 1e-9
+    spec = importlib.util.spec_from_file_location(
+        "rac", os.path.join(os.path.dirname(VALID), "run_all_checks.py"))
+    rac = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(rac)
+    assert abs(rac.RV_REL_TOL_PERCENT - 100.0 * rv.REL_TOL) < 1e-24
+    assert rac.RV_ABS_TOL == rv.ABS_TOL
+    saved = list(rv.ROWS)
+    try:
+        rv.ROWS.clear()
+        rv.row("X", "t", "1 % off", 1.0, 1.01, "-")
+        rv.row("X", "t", "exact", 2.0, 2.0, "-")
+        rv.row("X", "t", "zero, small", 0.0, 5e-10, "kN")
+        rv.row("X", "t", "zero, large", 0.0, 2e-9, "kN")
+        assert [r["pass"] for r in rv.ROWS] == [False, True, True, False]
+    finally:
+        rv.ROWS[:] = saved
+    with open(os.path.join(VALID, "run_validation.py"),
+              encoding="utf-8") as fh:
+        assert "raise SystemExit(main())" in fh.read()
+    with open(COMPARISON_CSV, newline="", encoding="utf-8") as fh:
+        rows = list(csv.DictReader(fh))
+    assert rows and all(r["pass"] == "True" for r in rows)
+
+
 def test_validation_a_reproduces_every_row_of_comparison_csv():
     n, worst = _compare_with_csv("A", _program_rows_a(bm.validation_model_a()))
     assert n >= 37 and worst < 1e-12
@@ -417,7 +449,7 @@ def test_von_mises_linear_closed_form():
 
 
 def test_von_mises_closed_form_helpers():
-    # research_notes.md Sec. 10 example: b = 1, h = 0.1, EA = 1
+    # example: b = 1, h = 0.1, EA = 1
     lp = bm.von_mises_limit_point(1.0, 0.1, 1.0)
     assert abs(lp["w"] - 0.042360746517) < 1e-11
     assert _rel(lp["P"], 3.810871904181e-4) < 1e-11
@@ -473,7 +505,7 @@ def test_von_mises_preset_is_validation_case_F6():
 
 
 # =============================================================== star dome ===
-STAR_TABLE_CM = [   # research_notes.md Sec. 5c, nodes 1..13
+STAR_TABLE_CM = [   # docs/VALIDATION.md, star dome, nodes 1..13
     (0.00000, 0.00000, 8.216), (25.00000, 0.00000, 6.216),
     (12.50000, 21.65064, 6.216), (-12.50000, 21.65064, 6.216),
     (-25.00000, 0.00000, 6.216), (-12.50000, -21.65064, 6.216),
@@ -599,8 +631,8 @@ def test_star_dome_reproduces_published_snap_through_points():
 
     Greco & Venturini (2006): first limit point "near 0.75 cm".
     Iu & Bradford (2012): zero-load state with the crown at ~19 mm and
-    node 2 at ~-1.16 mm (i.e. moving up); research notes (5d): P/EA =
-    3.15655e-4 at w = 0.7685 cm, zero load at 1.8838 cm with node 2 up
+    node 2 at ~-1.16 mm (i.e. moving up); docs/VALIDATION.md: P/EA =
+    3.15655e-4 at w = 0.76844 cm, zero load at 1.8838 cm with node 2 up
     0.1162 cm, minimum -2.76000e-4 at 3.0278 cm, exact mirror state
     (P = 0, ring back at z) at w = 4.000 cm.
     """
@@ -666,7 +698,7 @@ def test_star_dome_reproduces_published_snap_through_points():
     w1, (P1, u1, _) = golden(k1, +1)
     assert _rel(P1, bm.STAR_P_OVER_EA_LIMIT) < 2e-5, P1
     assert abs(w1 - bm.STAR_W_LIMIT_CM) < 1e-4, w1
-    assert abs(w1 - 0.7685) < 2e-4                  # research-note value
+    assert abs(w1 - 0.76844) < 2e-4                 # reference value
     assert abs(w1 - 0.75) < 0.05                    # Greco & Venturini
     ring_uz = u1[5:21:3]
     assert np.ptp(ring_uz) < 1e-12                  # symmetric path
@@ -863,7 +895,7 @@ def test_verify_preset_detects_a_wrong_model():
     m.geom.nodes[0, 2] += 0.001                          # crown 1 mm too high
     rows = bm.verify_preset("star_dome", m)
     assert any(not r["pass"] for r in rows
-               if r["source"].startswith("research_notes"))
+               if r["source"].startswith("computed in this work"))
     # Controls the other way: the force-method reference is built from the
     # model's own E, alpha and loads, so an edited (still valid) truss passes.
     m = bm.three_bar_truss()

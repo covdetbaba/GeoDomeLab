@@ -1,0 +1,80 @@
+# GeoDomeLab packaging.
+#
+# Recommended install, from a clone of the repository:
+#
+#     pip install -e .          # then run:  geodomelab   or   python -m geodome
+#
+# The examples/, validation/ and tests/ folders are not part of the installed
+# package.  They are used in place from the clone, which an editable install
+# keeps (see README.md, "Quick start").
+
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "geodomelab"
+dynamic = ["version"]
+description = "Analysis, stability and fabrication of single-layer geodesic domes and space trusses by matrix structural analysis, with a Qt GUI."
+readme = "README.md"
+requires-python = ">=3.10"
+# All rights reserved by the author; free use with attribution (see LICENSE).
+license = "LicenseRef-GeoDomeLab"
+license-files = ["LICENSE"]
+authors = [{name = "Jovdat Babazade"}]
+keywords = [
+    "geodesic dome", "space truss", "direct stiffness method",
+    "geometric nonlinear analysis", "arc-length method", "linear buckling",
+    "modal analysis", "AISC 360", "ASCE 7", "OpenSees",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: X11 Applications :: Qt",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+]
+dependencies = [
+    "numpy>=1.23",
+    "scipy>=1.9",
+    "matplotlib>=3.6",
+    "qtpy>=2.0",
+    "PyQt6>=6.4",
+]
+
+[project.optional-dependencies]
+# Independent cross-check against OpenSees (validation/opensees_crosscheck.py).
+opensees = ["openseespy"]
+# The tests also run without pytest: python tests/test_geodome.py
+test = ["pytest>=7"]
+
+[project.urls]
+Homepage = "https://github.com/covdetbaba/GeoDomeLab"
+Source = "https://github.com/covdetbaba/GeoDomeLab"
+Documentation = "https://github.com/covdetbaba/GeoDomeLab/blob/main/docs/USER_GUIDE.md"
+Issues = "https://github.com/covdetbaba/GeoDomeLab/issues"
+
+[project.scripts]
+# "geodomelab" opens the GUI; it takes the same options as run_geodome.py
+# (--verify, --demo, --batch, --help).
+geodomelab = "geodome.__main__:main"
+
+[tool.setuptools.dynamic]
+version = {attr = "geodome.__version__"}
+
+[tool.setuptools.packages.find]
+include = ["geodome*"]
+namespaces = false
+
+[tool.setuptools.package-data]
+"geodome.gui" = ["icons/*.png"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

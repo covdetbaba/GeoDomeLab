@@ -1,7 +1,7 @@
 """
 Tests for the extended validation (validation/run_validation_ext.py).
 
-The comparison runs every F1-F8 hand calculation of
+The comparison runs every F1-F10 hand calculation of
 validation/hand_calc_ext.py through GeoDomeLab.  These tests require that
 
 * the hand files are independent of the program (no geodome import, checked
@@ -85,8 +85,11 @@ def test_every_hand_value_is_compared():
     assert info["missing"] == [], info["missing"]
     assert info["n_used"] == info["n_hand"] == len(ve.hx.results())
     keys = {r["key"] for r in rows}
-    for case in ("F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8"):
+    for case in ("F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9",
+                 "F10"):
         assert any(k.startswith(case + ".") for k in keys), case
+    # every row is filed under its own case (F10 is not F1)
+    assert {r["case"] for r in rows} == {f"F{k}" for k in range(1, 11)}
 
 
 def test_all_comparisons_pass():
@@ -124,12 +127,46 @@ def test_program_identities_for_every_solve():
     subs = {r["sub"] for r in ident}
     want = {"F1a", "F1b", "F2a", "F2b", "F3a", "F3b", "F4 load",
             "F4 temperature", "F4 settlement", "F4 combined", "F5a", "F5b",
-            "F5c", "F6 linear", "F7 sw", "F7 dead"}
+            "F5c", "F6 linear", "F7 sw", "F7 dead", "F9 wind Model B"}
     assert subs == want, sorted(subs ^ want)
     assert all(r["program"] <= 1e-10 for r in ident)
 
 
 # ==================================================== specific cases ======
+def test_wind_case_f9_matches_independent_numbers():
+    """Review V02: the wind field on Model B (default wind data) against
+    numbers worked out independently of both files (qz = 0.613 Kz Kzt Kd
+    V^2, Cp interpolated along the meridian, F = -qz G Cp A_trib n)."""
+    h = ve.HAND
+    assert abs(h["F9.qz"]["value"] - 1061.332875) < 1e-9
+    assert abs(h["F9.Fz_1"]["value"] - 17994.811) < 1e-3       # crown
+    for key, want in (("F9.Fx_2", 7863.239), ("F9.Fz_2", 3931.619),
+                      ("F9.Fx_3", 4441.627), ("F9.Fy_3", 13669.924),
+                      ("F9.Fz_3", 7186.704), ("F9.Fx_4", -2134.404),
+                      ("F9.Fy_4", 1550.736), ("F9.Fz_4", 1319.135)):
+        assert abs(h[key]["value"] - want) < 1e-3, (key, h[key]["value"])
+    assert abs(h["F9.Cp_1"]["value"] + 1.0) < 1e-15
+    rows, _ = _rows()
+    f9 = [r for r in rows if r["case"] == "F9" and r["kind"] == "linear"]
+    assert len(f9) == 49 and all(r["pass"] for r in f9)
+
+
+def test_aisc_case_f10_matches_independent_numbers():
+    """Review V06: inelastic E3, B4.2 design wall and E7 effective area
+    (AISC 360-16), worked out independently: 239.578, 223.996 and
+    1112.935 kN; zero above the 0.45 E/Fy scope limit."""
+    h = ve.HAND
+    for key, want in (("F10.phiPn_inel", 239578.0), ("F10.phiPn_b42",
+                                                      223996.0),
+                      ("F10.phiPn_e7", 1112935.0)):
+        assert abs(h[key]["value"] - want) < 1.0, (key, h[key]["value"])
+    assert abs(h["F10.Q_e7"]["value"] - 0.93871) < 1e-5
+    assert h["F10.phiPn_scope"]["value"] == 0.0
+    rows, _ = _rows()
+    f10 = [r for r in rows if r["case"] == "F10"]
+    assert len(f10) == 14 and all(r["pass"] for r in f10)
+    assert max(r["difference"] for r in f10) <= 1e-12
+
 def test_von_mises_path_covers_both_limits_and_snap():
     rows, _ = _rows()
     hand = ve.HAND

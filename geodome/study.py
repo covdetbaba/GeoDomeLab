@@ -49,10 +49,11 @@ Output columns (one row per study point)
 * max utilisation  max over strength combinations and members of
   |N| / (phi Pn), AISC 360-16 D2 (tension) and E3 (flexural buckling)
 * governing combination (and member)
-* lambda_cr: smallest root of det(K + lambda Kg(N_ref)) = 0, N_ref = member
-  forces of the governing combination (linearised buckling, McGuire,
-  Gallagher & Ziemian 2000, Ch. 9).  NaN when not requested or when the
-  dome has no compressive buckling mode.
+* lambda_cr: smallest root of det(K + lambda Kg(N_ref)) = 0 over the
+  strength combinations, N_ref = member forces of each combination in turn
+  (linearised buckling, McGuire, Gallagher & Ziemian 2000, Ch. 9); the
+  combination with the lowest root is the buckling case.  NaN when not
+  requested or when the dome has no compressive buckling mode.
 * span / deflection = D_base / max_i |u_i| under the serviceability
   combination, against the deflection limit
 * status (OK, OVERSTRESSED, DEFLECTION, UNSTABLE, ERROR) and the two solver
@@ -70,7 +71,8 @@ R^2, the bar stiffnesses EA/L as 1/R, so
 
 A study at R and 2R must reproduce these ratios to round-off.  The 2V mass
 has a closed form from the chord factors 2 sin(arctan(2)/4) (30 struts) and
-2 sin(18 deg) (35 struts) of the hemisphere (Kenner 1976; Clinton 1971).
+2 sin(18 deg) (35 struts) of the hemisphere (Kenner 1976, as reproduced
+by the Domerama chord-factor chart; Clinton 1971).
 
 Reading the results
 -------------------
@@ -525,7 +527,7 @@ def _analyse_point(model, nu, R, fr, auto_size, do_buckling, target_util,
         if len(res.buckling.load_factors):
             lam = float(res.buckling.load_factors[0])
         else:
-            notes.append("no compressive buckling mode under the reference "
+            notes.append("no compressive buckling mode under any strength "
                          "combination")
     for msg in res.messages:
         if msg.startswith("Buckling analysis failed"):

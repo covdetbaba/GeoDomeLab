@@ -55,7 +55,7 @@ class LoadSpec:
     include_self_weight: bool = True
     dead_pressure: float = 300.0        # cladding + services on surface  [Pa]
     snow_pressure: float = 1200.0       # ground-projected snow           [Pa]
-    snow_unbalanced: bool = False       # 1.5 / 0.5 split across the dome
+    snow_unbalanced: bool = False       # 1.5 p on x >= 0, 0.5 p on x < 0
     live_pressure: float = 0.0          # projected live/maintenance      [Pa]
 
     wind_enabled: bool = True
@@ -64,7 +64,9 @@ class LoadSpec:
     wind_Kzt: float = 1.00              # topographic factor
     wind_Kd: float = 0.95               # directionality factor
     wind_G: float = 0.85                # gust effect factor
-    wind_azimuth: float = 0.0           # wind comes from this bearing [deg]
+    # direction the wind blows towards, degrees counter-clockwise from +x
+    # (0 = wind from -x towards +x; see loads.wind_pressure_coefficients)
+    wind_azimuth: float = 0.0
 
     crown_point_load: float = 0.0       # downward point load at crown    [N]
 
@@ -138,12 +140,22 @@ class LoadCombination:
 
 
 def default_combinations():
-    """ASCE 7 strength combinations (snow-governed roof) plus one service case."""
+    """ASCE 7-16 Sec. 2.3.1 strength combinations plus one service case.
+
+    Snow S stands for "Lr or S or R" (a roof).  The set covers basic
+    combinations 1 (LC1), 2 (LC6, with the live load L), 3 (LC2 and LC5,
+    the "L or 0.5W" term taken as 0.5W) and 4 and 5 (LC3, LC4) for D, S
+    and W.  When L is not zero, ASCE 7 also adds L to combinations 3 and 4
+    (1.2D + 1.6S + 1.0L, 1.2D + 1.0W + 1.0L + 0.5S): add those rows by hand.
+    ``SLS`` is unfactored and used for the deflection check.
+    """
     return [
         LoadCombination("LC1  1.4D", D=1.4),
         LoadCombination("LC2  1.2D + 1.6S", D=1.2, S=1.6),
         LoadCombination("LC3  1.2D + 1.0W + 0.5S", D=1.2, W=1.0, S=0.5),
         LoadCombination("LC4  0.9D + 1.0W", D=0.9, W=1.0),
+        LoadCombination("LC5  1.2D + 1.6S + 0.5W", D=1.2, S=1.6, W=0.5),
+        LoadCombination("LC6  1.2D + 1.6L + 0.5S", D=1.2, L=1.6, S=0.5),
         LoadCombination("SLS  1.0D + 1.0S", D=1.0, S=1.0, serviceability=True),
     ]
 
@@ -284,6 +296,12 @@ class DomeModel:
         return self.steel_mass() / max(pa, 1e-12)
 
     # --------------------------------------------------------- description --
+    def _per_plan_text(self):
+        per_area = self.mass_per_plan_area()
+        if not math.isfinite(per_area):
+            return "(no panels, so no plan area)"
+        return f"({per_area:.1f} kg/m2 of plan)"
+
     def _support_line(self):
         text = geo.SUPPORT_TYPES.get(self.support_type, self.support_type)
         if self.support_type == geo.ELASTIC:
@@ -315,7 +333,7 @@ class DomeModel:
                 f"Faceted surface area   {g.surface_area:.1f} m2",
                 f"Plan (footprint) area  {g.plan_area:.1f} m2",
                 f"Structural steel mass  {self.steel_mass():.0f} kg "
-                f"({self.mass_per_plan_area():.1f} kg/m2 of plan)",
+                f"{self._per_plan_text()}",
             ]
         if self.support_type in (geo.PINNED, geo.ROLLER3):
             sup_line = (f"Supported base nodes   {len(g.base_nodes)}  "
@@ -340,7 +358,7 @@ class DomeModel:
             f"Faceted surface area   {g.surface_area:.1f} m2",
             f"Plan (footprint) area  {g.plan_area:.1f} m2",
             f"Structural steel mass  {self.steel_mass():.0f} kg "
-            f"({self.mass_per_plan_area():.1f} kg/m2 of plan)",
+            f"{self._per_plan_text()}",
         ]
 
     # ------------------------------------------------------ serialisation --

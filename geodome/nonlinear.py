@@ -80,9 +80,13 @@ there; elsewhere the criterion is ``|r| / |lambda F_ref| <= tol``.
 Stability indicators (every converged point)
 --------------------------------------------
 * ``det_sign`` -- sign of det K_T from the sparse LU factors (pivots and
-  row/column permutations).  It flips each time an eigenvalue crosses zero.
+  row/column permutations).  It flips each time an odd number of
+  eigenvalues crosses zero; a pair of equal eigenvalues crossing together
+  (a double bifurcation, common in symmetric domes) leaves it unchanged.
 * ``n_negative``, ``min_eig`` -- dense eigenvalues of K_T for systems up to
-  ``eig_limit`` free DOFs (-1 / NaN above it).
+  ``eig_limit`` free DOFs (-1 / NaN above it).  The negative count also sees
+  a double crossing.  Above ``eig_limit`` only the determinant sign is
+  available, and the run says so in its messages.
 * ``stiffness_parameter`` S = F^T K_0^-1 F / F^T K_T^-1 F, 1 at the start.
   S -> 0 at a **limit point** but stays finite at a **bifurcation**.  When
   the critical mode does little work on the load, S only collapses very
@@ -103,9 +107,12 @@ equilibrium points (cylindrical distance from the last point before the peak,
 or the control displacement), so the reported ``lambda_limit`` is an exact
 equilibrium point, not a sample.  When that family is not smooth (a sharp
 limit or a branch switch at a bifurcation) the stability change is bracketed
-instead by load-controlled bisection along the rising primary path (to a
-relative width of 1e-10); the same bisection refines bifurcations found
-earlier on the rising path.  ``lambda_limit`` is the maximum load of the
+instead by load-controlled bisection along the rising primary path (the
+bracket closes to a relative width of 1e-10, but next to a bifurcation the
+nearly singular tangent limits the accuracy of the bracketed load to about
+1e-9; a point is accepted when its force residual has converged, and a load
+step without equilibrium counts as beyond the critical point); the same
+bisection refines bifurcations found earlier on the rising path.  ``lambda_limit`` is the maximum load of the
 traced path: a limit point, or the bifurcation load when the path turns down
 onto a secondary branch there (``limit_type`` says which).
 
@@ -612,21 +619,29 @@ class _Tracer:
                     float(np.linalg.norm(st.f_full)), 1e-300)
         return r, float(np.linalg.norm(r)) / scale
 
-    def _converged(self, rn, corr, Dnorm, tol):
+    def _converged(self, rn, corr, Dnorm, tol, force_only=False):
         if not np.isfinite(rn):
             raise _Fail("non-finite residual")
         if rn > tol:
             return False
         if corr is None:                 # predictor only: accept if exact
             return rn <= 1e-3 * tol
+        if force_only:
+            # Next to a critical point the tangent is nearly singular and
+            # turns round-off into corrections that never pass the
+            # displacement test, although equilibrium holds to round-off.
+            return True
         return corr <= self.tol_disp * max(Dnorm, 1e-3 * self.du_ref,
                                            1e-14 * self.Lc)
 
     # -------------------------------------------------------- correctors --
-    def correct(self, kind, u0, lam0, Du, DL, param, tol=None):
+    def correct(self, kind, u0, lam0, Du, DL, param, tol=None,
+                force_only=False):
         """Iterate from predictor (Du, DL) to an equilibrium point.
 
         kind 'arc': |Du| = param; 'disp': Du[ic] = param; 'load': DL fixed.
+        ``force_only`` accepts a point once the force residual has converged
+        (used by the critical-point bisection).
         Returns (u_full, lam, state, iterations, rnorm).
         """
         tol = self.tol if tol is None else tol
@@ -642,7 +657,8 @@ class _Tracer:
                 raise _Fail(str(exc)) from None
             lam = lam0 + DL
             r, rn = self._rnorm(st, lam)
-            if self._converged(rn, corr, float(np.linalg.norm(Du)), tol):
+            if self._converged(rn, corr, float(np.linalg.norm(Du)), tol,
+                               force_only):
                 return st.u, lam, st, it, rn
             if it == self.max_iter:
                 break
@@ -804,6 +820,14 @@ def trace_path(system, F_ref, method="arc-length", control_dof=None, *,
         control_dof = int(s.free[int(np.argmax(np.abs(v0)))])
     tr = _Tracer(s, F, control_dof, tol, tol_disp, max_iter, eig_limit)
     msgs = []
+    if s.nf > int(eig_limit):
+        msgs.append(
+            f"This model has {s.nf} free DOF, more than eig_limit = "
+            f"{int(eig_limit)}, so stability is checked by the sign of "
+            f"det K_T only.  A pair of equal eigenvalues crossing zero "
+            f"together (a double bifurcation, common in symmetric domes) "
+            f"leaves that sign unchanged and is missed.  Compare "
+            f"lambda_limit with lambda_cr.")
 
     u = np.zeros(s.ndof)
     lam = 0.0
@@ -882,6 +906,11 @@ def trace_path(system, F_ref, method="arc-length", control_dof=None, *,
                     Du = DL * v
                     un, lamn, stn, it, rn = tr.correct("arc", u, lam, Du, DL,
                                                        size)
+                    if Du_prev is None and not lamn > lam:
+                        # A first step that is too long can converge on
+                        # the branch below lambda = 0 (the path then runs
+                        # backwards); cut it back.
+                        raise _Fail("the first step went to a lower load")
                 elif method == "displacement":
                     dc = dsign * size
                     if abs(v[tr.ic]) < 1e-300:
@@ -1219,8 +1248,13 @@ def _bisect_critical(tr, res, j, key, rtol=1e-10, max_bisect=80):
     Starts at the last point with the old stability key (j-1), climbs the
     primary path with load-controlled Newton steps (doubling) until the key
     changes or Newton fails (beyond a limit load), then bisects the load
-    factor.  Returns {"lambda", "lambda_bracket", "u" (last stable point),
-    "sp" (stiffness parameter there)}.
+    factor.  A point counts as stable when its force residual converges
+    (``force_only``: the displacement-increment test is not used, because
+    the nearly singular tangent next to the critical point amplifies
+    round-off) and its stability key is still the old one.  The bracket
+    closes to ``rtol``; the bracketed load is accurate to about 1e-9 next
+    to a double bifurcation.  Returns {"lambda", "lambda_bracket", "u"
+    (last stable point), "sp" (stiffness parameter there)}.
     """
     key0 = int(key[j - 1])
     u_lo = res.u[j - 1].copy()
@@ -1234,7 +1268,7 @@ def _bisect_critical(tr, res, j, key, rtol=1e-10, max_bisect=80):
         Du = (lt - l_lo) * v_lo
         try:
             u, _, _, _, _ = tr.correct("load", u_lo, l_lo, Du, lt - l_lo,
-                                       None, tol=tol)
+                                       None, tol=tol, force_only=True)
         except _Fail:
             return None
         if np.linalg.norm((u - u_lo)[tr.s.free] - Du) > np.linalg.norm(Du):
@@ -1497,6 +1531,18 @@ def run_nonlinear(model, combination_name=None, method="arc-length",
         except Exception as exc:                          # pragma: no cover
             msgs.append(f"Member checks skipped ({exc}).")
 
+    if res.limit_found and res.limit_step is not None and \
+            np.any(res.lam[:int(res.limit_step) + 1] <
+                   -1e-9 * max(abs(res.lambda_limit), 1.0)):
+        # The path ran backwards (to negative loads) before its first
+        # maximum: that maximum is not the limit load of the primary path.
+        res.limit_found = False
+        res.stop_reason = ("the path went to a negative load before its "
+                           "first maximum")
+        res.messages.append(
+            "The path went to a negative load before its first maximum, so "
+            "that maximum is not used as a limit point.  Try a smaller first "
+            "increment.")
     if not res.limit_found:
         res.messages.append(f"No limit point reached: {res.stop_reason}.")
     else:
@@ -1653,7 +1699,8 @@ def von_mises_load(b, h, EA, w):
 
     Half span ``b``, rise ``h``, apex deflection ``w`` (down +):
     ``P(w) = 2 EA y (1/l - 1/L)`` with ``y = h - w``, ``l = sqrt(b^2 + y^2)``,
-    ``L = sqrt(b^2 + h^2)`` (Pecknold et al. 1985 for the closed form).
+    ``L = sqrt(b^2 + h^2)`` (closed form derived here for engineering
+    strain; the problem studied by Pecknold et al. 1985).
     """
     w = np.asarray(w, dtype=float)
     L = math.hypot(b, h)

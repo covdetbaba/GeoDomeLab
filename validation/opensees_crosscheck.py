@@ -426,8 +426,9 @@ def section_nonlinear(rows, quick, log):
             rows.add("N", cid, _structure(m), st, cname,
                      "OpenSees P/EA at limit vs reference 3.15655e-4 "
                      "(absolute, 6 digits)", d, 5e-10,
-                     f"P/EA = {p_ea:.9e}; reference = research notes 5d "
-                     f"(agrees with Greco & Venturini 2006, Fig. 8)",
+                     f"P/EA = {p_ea:.9e}; reference computed in this "
+                     f"work (docs/VALIDATION.md, star dome reference values; "
+                     f"agrees with Greco & Venturini 2006, Fig. 8)",
                      kind="abs")
 
 
@@ -574,10 +575,17 @@ def write_md(rows, path, log, meta):
         "nonlinear path.")
     L.append("")
     L.append(
-        "Load generation (tributary areas, the wind pressure coefficients) "
-        "and the non-structural masses are therefore *inputs* here; they are "
-        "validated by hand calculation in `validation/run_validation.py` and "
-        "`validation/run_validation_ext.py`.")
+        "Load generation and the non-structural masses are therefore "
+        "*inputs* here, and this cross-check cannot see an error in them.  "
+        "Checked by hand elsewhere: the dead and snow tributary loads and "
+        "the crown load on Models A and B (`validation/run_validation.py`), "
+        "the wind field on Model B (case F9 of "
+        "`validation/run_validation_ext.py`), and E, alpha and rho through "
+        "the typed-in constants of the hand files.  Not checked by a hand "
+        "calculation: the unbalanced snow pattern and the default "
+        "combination factors (unit tests only), and the 7-point Cp table "
+        "itself (an illustrative simplification, not ASCE 7-16 Fig. "
+        "27.3-2).")
     L.append("")
     L.append("Differences are normwise relative: for displacements "
              "max|u_GDL - u_OS| / max|u_GDL| (likewise N, with the fully "
@@ -652,9 +660,11 @@ def write_md(rows, path, log, meta):
              "(the generator cuts at the nearest node ring, so odd "
              "frequencies come out lower; the structure column shows the "
              "actual fraction f), default sections (CHS 88.9 x 4.0 "
-             "unless stated), default loads and the ASCE 7 combinations LC1 "
-             "1.4D, LC2 1.2D + 1.6S, LC3 1.2D + 1.0W + 0.5S, LC4 0.9D + "
-             "1.0W, SLS 1.0D + 1.0S.  Springs (elastic supports) 50 MN/m in "
+             "unless stated), default loads and the default ASCE 7-16 "
+             "combinations LC1 1.4D, LC2 1.2D + 1.6S, LC3 1.2D + 1.0W + "
+             "0.5S, LC4 0.9D + 1.0W, LC5 1.2D + 1.6S + 0.5W, LC6 1.2D + "
+             "1.6L + 0.5S, SLS 1.0D + 1.0S.  Springs (elastic supports) "
+             "50 MN/m in "
              "x, y and z.  T cases: dT = +30 C on every strut and two base "
              "nodes settling (10 mm down, and 3 / -2 / -5 mm in x / y / z; "
              "vertical only on the roller supports), combinations 1.2D + "

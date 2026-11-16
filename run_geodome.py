@@ -19,6 +19,7 @@ Command line
     python run_geodome.py --verify        run the verification suite only
     python run_geodome.py --demo          run the worked example, no GUI
     python run_geodome.py --batch 6 15 0.5 out/   analyse and export headless
+    python run_geodome.py --help          list these options
 """
 
 import os
@@ -27,8 +28,27 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 
+USAGE = """GeoDomeLab -- geodesic dome space-truss analyzer
+
+usage:
+    python run_geodome.py                 start the GUI
+    python run_geodome.py --verify        run the verification suite only
+    python run_geodome.py --demo          run the worked example, no GUI
+    python run_geodome.py --batch F R FRACTION OUT
+                                          analyse a dome and export the
+                                          results, no GUI (defaults 4 12 0.5
+                                          output)
+    python run_geodome.py --help          show this text
+"""
+
+
 def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
+
+    # ------------------------------------------------------------ help ------
+    if "--help" in argv or "-h" in argv:
+        print(USAGE)
+        return 0
 
     # ---------------------------------------------------------- verify ------
     if "--verify" in argv:

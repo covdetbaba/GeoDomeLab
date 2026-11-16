@@ -18,6 +18,11 @@ Outputs (validation/output/):
     model_B_LC1.json
     model_B_LC2.json
 
+A row passes when |program - hand| / |hand| <= REL_TOL (1e-12, that is
+1e-10 %), or, where the hand answer is zero, when |program| <= ABS_TOL
+(1e-9 in the row unit).  The tables carry a pass column, the script prints
+"N of M pass" and exits with code 1 when any row fails.
+
 Run:  python validation/run_validation.py
 """
 
@@ -105,6 +110,10 @@ def member_map(hand_members, prog_members, nmap):
 # =============================================================================
 ROWS = []
 
+# Pass rule (also used by the GUI Validation menu and run_all_checks.py).
+REL_TOL = 1e-12          # |p - h| / |h|                   (1e-10 %)
+ABS_TOL = 1e-9           # |p| in the row unit when the hand answer is 0
+
 
 def row(model, case, quantity, hand, prog, unit, scale=1.0):
     h = float(hand) * scale
@@ -112,12 +121,15 @@ def row(model, case, quantity, hand, prog, unit, scale=1.0):
     if abs(h) > 1e-9:
         diff = abs(p - h) / abs(h) * 100.0
         kind = "%"
+        ok = diff <= REL_TOL * 100.0
     else:
         diff = abs(p - h)
         kind = unit
+        ok = diff <= ABS_TOL
     ROWS.append({"model": model, "case": case, "quantity": quantity,
                  "hand": h, "program": p, "unit": unit,
-                 "difference": diff, "diff_kind": kind})
+                 "difference": diff, "diff_kind": kind,
+                 "pass": bool(ok)})
 
 
 # =============================================================================
@@ -196,7 +208,7 @@ def validate_a(H):
         "kN", 1e-3)
     row("A", "AISC E3", "utilisation", ai["util"], res.util_env[k1], "-")
     row("A", "buckling", "lambda_cr", H["buckling"]["lam_cr"],
-        res.buckling.load_factors[0], "-")
+        res.lambda_cr_by_case["A2  1.2D + 1.6S"], "-")
     return mA, res, r1
 
 
@@ -390,13 +402,17 @@ def main():
         w.writerows(ROWS)
     with open(os.path.join(OUT, "comparison.md"), "w", encoding="utf-8") as fh:
         fh.write("| Model | Case | Quantity | Hand | GeoDomeLab | Unit | "
-                 "Difference |\n|---|---|---|---|---|---|---|\n")
+                 "Difference | Pass |\n|---|---|---|---|---|---|---|---|\n")
         for r in ROWS:
             d = (f"{r['difference']:.1e} %" if r["diff_kind"] == "%"
                  else f"{r['difference']:.1e} {r['unit']}")
             fh.write(f"| {r['model']} | {r['case']} | {r['quantity']} | "
                      f"{r['hand']:.6g} | {r['program']:.6g} | {r['unit']} | "
-                     f"{d} |\n")
+                     f"{d} | {'yes' if r['pass'] else 'NO'} |\n")
+        n_ok = sum(r["pass"] for r in ROWS)
+        fh.write(f"\n{n_ok} of {len(ROWS)} pass (|p - h| / |h| <= "
+                 f"{REL_TOL:g}, or |p| <= {ABS_TOL:g} in the row unit where "
+                 f"the hand answer is zero).\n")
 
     # ---- figures ------------------------------------------------------------
     sketch(HA, os.path.join(OUT, "model_A_sketch.png"),
@@ -454,11 +470,17 @@ def main():
     print(f"{len(ROWS)} quantities compared.  Largest relative difference "
           f"{worst_pct:.2e} %.  Largest absolute value where the hand answer "
           f"is zero {worst_abs:.2e}.")
+    n_ok = sum(r["pass"] for r in ROWS)
+    print(f"{n_ok} of {len(ROWS)} pass (relative tolerance {REL_TOL:g}, "
+          f"absolute {ABS_TOL:g} where the hand answer is zero).")
+    for r in ROWS:
+        if not r["pass"]:
+            print(f"  FAIL  {r['model']} {r['case']} {r['quantity']}")
     suite = run_all()
     print(f"Built-in verification suite on the same code: "
           f"{sum(r['pass'] for r in suite)} of {len(suite)} checks pass.")
-    return worst_pct
+    return 0 if n_ok == len(ROWS) else 1
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

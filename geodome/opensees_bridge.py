@@ -16,9 +16,15 @@ every strut, restrained DOFs, spring stiffnesses, the factored nodal load
 vector (D/S/L/W), the free strains ``eps0 = T alpha dT`` and the prescribed
 settlements ``T delta``, and the masses (``rho A`` of every strut and the
 non-structural nodal masses of ``modal.lumped_masses``).  These are the
-*inputs*; load generation (tributary areas, wind pressure coefficients) is
-validated elsewhere (``validation/run_validation.py``).  Everything after
-that is computed independently by OpenSees:
+*inputs*, so the cross-check cannot see an error in them.  Checked by hand
+elsewhere: the dead and snow tributary loads and the crown load on Models A
+and B (``validation/run_validation.py``), the wind field on Model B (case F9
+of ``validation/run_validation_ext.py``), and E, alpha and rho through the
+typed-in constants of the hand files.  Not checked by a hand calculation:
+the unbalanced snow pattern and the default combination factors (unit tests
+only), and the 7-point Cp table itself (an illustrative simplification, not
+ASCE 7-16 Fig. 27.3-2).  Everything after the inputs is computed
+independently by OpenSees:
 
 * stiffness: ``element('Truss')`` (linear) or ``element('corotTruss')``
   (geometrically nonlinear), ``uniaxialMaterial('Elastic')``;

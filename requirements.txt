@@ -1,21 +1,22 @@
-# GeoDomeLab requirements
+# GeoDomeLab requirements (Python 3.10 or newer).
 #
-# All of these ship with a standard Anaconda / Spyder installation, so in most
-# cases nothing needs to be installed at all.
+#     pip install -r requirements.txt
+#
+# Anaconda and Spyder already ship numpy, scipy, matplotlib, qtpy and a Qt
+# binding, so there you can usually skip this step.
 
-numpy>=1.20
-scipy>=1.7
-matplotlib>=3.5
+numpy>=1.23
+scipy>=1.9
+matplotlib>=3.6
 qtpy>=2.0
 
-# Exactly one Qt binding is required.  qtpy will use whichever it finds, so
-# install one of the following only if none is already present:
-#
-#   pip install PyQt5
-#   pip install PyQt6
-#   pip install PySide6
-#
-# Spyder already provides one.
+# One Qt binding.  qtpy uses whichever it finds, so PyQt5 or PySide6 also
+# work if you already have one of them.
+PyQt6>=6.4
 
-# Optional: the unit tests run standalone, but pytest gives nicer output.
-# pytest>=7.0
+# Optional: the independent cross-check against OpenSees.  The tests skip
+# cleanly without it.
+#   pip install openseespy
+
+# Optional: the tests also run without pytest (python tests/test_geodome.py).
+#   pip install pytest

@@ -1,4 +1,4 @@
-# GeoDomeLab extended hand calculations (validation cases F1 to F8)
+# GeoDomeLab extended hand calculations (validation cases F1 to F10)
 
 This document is produced by validation/hand_calc_ext.py. The script does not import the GeoDomeLab package. Each case defines a structure, solves it with a hand method (equilibrium, compatibility, the force method or the stiffness method as taught in the course), prints every intermediate number and ends with an independent check. The reference values feed validation/run_validation_ext.py, which runs the same structures through GeoDomeLab and compares.
 
@@ -531,7 +531,7 @@ stiffness  Kxx = Kyy = 5/2 k s^2,  Kzz = 5 k t^2
 
 ## F8  2V Class I geodesic geometry: chord factors and angles
 
-Purpose. Fabrication data. The 2V Class I sphere splits each of the 20 icosahedron faces into four triangles through the edge midpoints, which are pushed out radially to the sphere. Every value below is computed twice, once from closed-form spherical trigonometry and once from the vertex vectors of an independently built 2V sphere, and the chord factors are compared with the published 2V chord factors of Kenner (1976), Geodesic Math and How to Use It: A = 0.54653, B = 0.61803.
+Purpose. Fabrication data. The 2V Class I sphere splits each of the 20 icosahedron faces into four triangles through the edge midpoints, which are pushed out radially to the sphere. Every value below is computed twice, once from closed-form spherical trigonometry and once from the vertex vectors of an independently built 2V sphere, and the chord factors are compared with the 2V chord factors of Kenner (1976), Geodesic Math and How to Use It, as reproduced by the Domerama chord-factor chart: A = 0.54653, B = 0.61803.
 
 ### Closed form
 
@@ -592,9 +592,67 @@ Hub types: 30 x 2A+4B, 12 x 5A+0B. Panel types: 60 x AAB, 20 x BBB. Every strut 
 - For a sphere of R = 5 m the struts are 2.73267 m (A) and 3.09017 m (B).
 - The axial angle is the same at both ends of a strut because both hubs lie on the sphere. The dihedral angle is the angle between the two panels measured inside the dome. The bend angle (180 - dihedral) is the angle between the panel normals and is what a hub or panel bracket must turn.
 
+## F9  Wind on validation Model B
+
+Purpose. The wind load generator. Model B (1V dome on its lower ring, R = 5 m, 11 nodes, 15 equilateral panels) gets the program's default wind: an external pressure p = qz G Cp normal to the surface, lumped at the nodes on the surface tributary area A_i (one third of each adjacent panel) along the radial unit normal n_i. Cp > 0 pushes inward. The wind blows towards azimuth 0 deg (towards +x), so the windward springing is on the -x side.
+
+```text
+qz = 0.613 Kz Kzt Kd V^2            (ASCE 7-16 Eq. 26.10-1, SI)
+   = 0.613 x 0.9 x 1 x 0.95 x 45^2 = 1061.332875 Pa
+qz G = 1061.332875 x 0.85 = 902.1329437 Pa
+theta_i = arccos(-n_i . d)   (0 = windward springing, 90 = crown, 180 = leeward)
+Cp_i  = straight-line interpolation of the table 0:0.8, 30:0.2, 60:-0.6, 90:-1, 120:-0.8, 150:-0.5, 180:-0.4
+F_i   = -qz G Cp_i A_i n_i
+```
+
+| node | A_trib [m2] | n | theta [deg] | Cp | F [kN] |
+|---|---|---|---|---|---|
+| 1 | 19.947 | (0, 0, 1) | 90 | -1 | (0, 0, 17.9948) |
+| 2 | 19.947 | (0.894427, 0, 0.447214) | 153.43495 | -0.48855017 | (7.86324, 0, 3.93162) |
+| 3 | 19.947 | (0.276393, 0.850651, 0.447214) | 106.04506 | -0.89303295 | (4.44163, 13.6699, 7.1867) |
+| 4 | 19.947 | (-0.723607, 0.525731, 0.447214) | 43.646927 | -0.16391806 | (-2.1344, 1.55074, 1.31913) |
+| 5 | 19.947 | (-0.723607, -0.525731, 0.447214) | 43.646927 | -0.16391806 | (-2.1344, -1.55074, 1.31913) |
+| 6 | 19.947 | (0.276393, -0.850651, 0.447214) | 106.04506 | -0.89303295 | (4.44163, -13.6699, 7.1867) |
+| 7 | 11.9682 | (0.723607, 0.525731, -0.447214) | 136.35307 | -0.63646927 | (4.97254, 3.61276, -3.0732) |
+| 8 | 11.9682 | (-0.276393, 0.850651, -0.447214) | 73.954943 | -0.7860659 | (-2.34577, 7.21953, -3.79553) |
+| 9 | 11.9682 | (-0.894427, 1.09536e-16, -0.447214) | 26.565051 | 0.26869898 | (2.59483, 0, 1.29742) |
+| 10 | 11.9682 | (-0.276393, -0.850651, -0.447214) | 73.954943 | -0.7860659 | (-2.34577, -7.21953, -3.79553) |
+| 11 | 11.9682 | (0.723607, -0.525731, -0.447214) | 136.35307 | -0.63646927 | (4.97254, -3.61276, -3.0732) |
+
+- Velocity pressure qz = 1061.332875 Pa, qz G = 902.1329437 Pa.
+- Crown: n = (0, 0, 1), theta = 90 deg, Cp = -1.00 (strong suction), F = qz G (5/3) A_face upward = 17.9948108 kN.
+- Resultant (20.3261, 3.63798e-15, 26.4981) kN: drag towards +x and net uplift.
+- Checks: the panel areas by cross product, the tributary areas sum to the surface, every node lies on the sphere, Fy of the resultant is zero and mirror nodes carry mirror forces.
+
+## F10  AISC 360-16 compression strength of round HSS
+
+Purpose. The member strength routines beyond the elastic branch that Model A reaches (its spoke has KL/r = 175): the inelastic E3 branch, the B4.2 design wall thickness 0.93 t for ERW HSS, the E7 effective area of a slender round HSS and the scope limit. ASTM A500 Gr. C: E = 200 GPa, Fy = 345 MPa, K = 1, phi_c = 0.9.
+
+```text
+KL/r,  Fe = pi^2 E / (KL/r)^2                       (E3-4)
+Fcr = 0.658^(Fy/Fe) Fy   if KL/r <= 4.71 sqrt(E/Fy) (E3-2)
+Fcr = 0.877 Fe           otherwise                  (E3-3)
+D/t <= 0.11 E/Fy: Ae = Ag; up to 0.45 E/Fy:
+   Ae/Ag = 0.038 E/(Fy D/t) + 2/3                    (E7-7)
+phi_c Pn = 0.90 Fcr Ae                               (E3-1, E7-1)
+4.71 sqrt(E/Fy) = 113.40347,  0.11 E/Fy = 63.768116,  0.45 E/Fy = 260.86957
+```
+
+| section and length | A [mm2] | r [mm] | KL/r | Fe [MPa] | Fcr [MPa] | D/t | Ae/Ag | phi Pn [kN] |
+|---|---|---|---|---|---|---|---|---|
+| CHS 88.9 x 4.0, L = 2 m | 1066.885 | 30.04998 | 66.55579 | 445.6133 | 249.5095 | 22.225 | 1 | 239.5781 |
+| CHS 88.9 x 4.0 with t_des = 0.93 t, L = 2 m | 995.4752 | 30.14438 | 66.34735 | 448.4175 | 250.0156 | 23.8978 | 1 | 223.9959 |
+| D 323.9 x 4.0, L = 3 m | 4019.982 | 113.1106 | 26.52272 | 2806.038 | 327.6952 | 80.975 | 0.9387134 | 1112.935 |
+| D 323.9 x 1.2, L = 3 m | 1216.55 | 114.0925 | 26.29446 | 2854.968 | 327.9844 | 269.917 | 0 | 0 |
+
+- Inelastic: KL/r = 66.5558 < 113.403, Fcr = 249.5095 MPa, phi Pn = 239.5781 kN.
+- B4.2: the 0.93 t wall lowers A and r; phi Pn = 223.9959 kN, phi_t Pn = 309.0951 kN.
+- E7: D/t = 80.975 > 0.11 E/Fy = 63.7681, Ae/Ag = 0.9387134, phi Pn = 1112.935 kN.
+- Scope: D/t = 269.917 > 0.45 E/Fy = 260.87: outside the specification, reported as phi Pn = 0.
+
 ## Summary of independent checks
 
-97 of 97 internal checks are within tolerance. A check compares two independent routes to the same number (equilibrium against compatibility, the force method against the displacement method, energy against work, closed form against vectors, or a published value).
+120 of 120 internal checks are within tolerance. A check compares two independent routes to the same number (equilibrium against compatibility, the force method against the displacement method, energy against work, closed form against vectors, or a published value).
 
 | case | check | residual | tolerance | status |
 |---|---|---|---|---|
@@ -695,6 +753,29 @@ Hub types: 30 x 2A+4B, 12 x 5A+0B. Panel types: 60 x AAB, 20 x BBB. Every strut 
 | F8 | CF_A vs Kenner 0.54653 (5 decimals) | 3.06e-06 | 5e-06 | ok |
 | F8 | CF_B vs Kenner 0.61803 (5 decimals) | 3.99e-06 | 5e-06 | ok |
 | F8 | every strut shared by two panels | 0 | 0.5 | ok |
+| F9 | 15 panel areas by cross product - 15 sqrt3/4 L^2 [m2] | 0 | 1e-11 | ok |
+| F9 | sum of tributary areas - surface [m2] | 0 | 1e-11 | ok |
+| F9 | node 1 on the sphere \|x - c\| - R [m] | 0 | 1e-12 | ok |
+| F9 | node 2 on the sphere \|x - c\| - R [m] | 0 | 1e-12 | ok |
+| F9 | node 3 on the sphere \|x - c\| - R [m] | 0 | 1e-12 | ok |
+| F9 | node 4 on the sphere \|x - c\| - R [m] | 0 | 1e-12 | ok |
+| F9 | node 5 on the sphere \|x - c\| - R [m] | 0 | 1e-12 | ok |
+| F9 | node 6 on the sphere \|x - c\| - R [m] | 0 | 1e-12 | ok |
+| F9 | node 7 on the sphere \|x - c\| - R [m] | 8.88e-16 | 1e-12 | ok |
+| F9 | node 8 on the sphere \|x - c\| - R [m] | 0 | 1e-12 | ok |
+| F9 | node 9 on the sphere \|x - c\| - R [m] | 0 | 1e-12 | ok |
+| F9 | node 10 on the sphere \|x - c\| - R [m] | 0 | 1e-12 | ok |
+| F9 | node 11 on the sphere \|x - c\| - R [m] | 0 | 1e-12 | ok |
+| F9 | crown Cp = -1.00 exactly | 0 | 0 | ok |
+| F9 | resultant Fy = 0 (mirror symmetry about x-z) [N] | 3.64e-12 | 1e-09 | ok |
+| F9 | mirror pair 3/6: Fx, Fz equal, Fy opposite [N] | 2.73e-12 | 1e-09 | ok |
+| F9 | mirror pair 4/5: Fx, Fz equal, Fy opposite [N] | 4.55e-12 | 1e-09 | ok |
+| F9 | mirror pair 7/11: Fx, Fz equal, Fy opposite [N] | 4.55e-13 | 1e-09 | ok |
+| F9 | mirror pair 8/10: Fx, Fz equal, Fy opposite [N] | 1.36e-12 | 1e-09 | ok |
+| F10 | inelastic branch: KL/r below 4.71 sqrt(E/Fy) | 0 | 0 | ok |
+| F10 | E7 case: D/t between 0.11 and 0.45 E/Fy | 0 | 0 | ok |
+| F10 | scope case: D/t above 0.45 E/Fy | 0 | 0 | ok |
+| F10 | E7: 0.038/lambda + 2/3 - Q [-] | 0 | 1e-15 | ok |
 
 ## Reference values (results() dictionary)
 
@@ -929,12 +1010,77 @@ All values in SI units. These are the numbers the program must reproduce.
 | F8.hubs_valence6 | 30 | - | count | 2V Class I full sphere: 6-valent hubs (type 2A+4B) |
 | F8.panels_AAB | 60 | - | count | 2V Class I full sphere: AAB panels |
 | F8.panels_BBB | 20 | - | count | 2V Class I full sphere: BBB panels |
+| F9.Cp_1 | -1 | - | Cp(theta), theta = acos(-n.d) | pressure coefficient at hand node 1 |
+| F9.Fx_1 | 0 | N | F = -qz*G*Cp*A_trib*n | wind force x at hand node 1 |
+| F9.Fy_1 | 0 | N | F = -qz*G*Cp*A_trib*n | wind force y at hand node 1 |
+| F9.Fz_1 | 17994.81084 | N | F = -qz*G*Cp*A_trib*n | wind force z at hand node 1 |
+| F9.Cp_2 | -0.4885501706 | - | Cp(theta), theta = acos(-n.d) | pressure coefficient at hand node 2 |
+| F9.Fx_2 | 7863.238501 | N | F = -qz*G*Cp*A_trib*n | wind force x at hand node 2 |
+| F9.Fy_2 | 0 | N | F = -qz*G*Cp*A_trib*n | wind force y at hand node 2 |
+| F9.Fz_2 | 3931.61925 | N | F = -qz*G*Cp*A_trib*n | wind force z at hand node 2 |
+| F9.Cp_3 | -0.8930329524 | - | Cp(theta), theta = acos(-n.d) | pressure coefficient at hand node 3 |
+| F9.Fx_3 | 4441.627443 | N | F = -qz*G*Cp*A_trib*n | wind force x at hand node 3 |
+| F9.Fy_3 | 13669.92366 | N | F = -qz*G*Cp*A_trib*n | wind force y at hand node 3 |
+| F9.Fz_3 | 7186.704168 | N | F = -qz*G*Cp*A_trib*n | wind force z at hand node 3 |
+| F9.Cp_4 | -0.1639180562 | - | Cp(theta), theta = acos(-n.d) | pressure coefficient at hand node 4 |
+| F9.Fx_4 | -2134.404458 | N | F = -qz*G*Cp*A_trib*n | wind force x at hand node 4 |
+| F9.Fy_4 | 1550.735611 | N | F = -qz*G*Cp*A_trib*n | wind force y at hand node 4 |
+| F9.Fz_4 | 1319.134501 | N | F = -qz*G*Cp*A_trib*n | wind force z at hand node 4 |
+| F9.Cp_5 | -0.1639180562 | - | Cp(theta), theta = acos(-n.d) | pressure coefficient at hand node 5 |
+| F9.Fx_5 | -2134.404458 | N | F = -qz*G*Cp*A_trib*n | wind force x at hand node 5 |
+| F9.Fy_5 | -1550.735611 | N | F = -qz*G*Cp*A_trib*n | wind force y at hand node 5 |
+| F9.Fz_5 | 1319.134501 | N | F = -qz*G*Cp*A_trib*n | wind force z at hand node 5 |
+| F9.Cp_6 | -0.8930329524 | - | Cp(theta), theta = acos(-n.d) | pressure coefficient at hand node 6 |
+| F9.Fx_6 | 4441.627443 | N | F = -qz*G*Cp*A_trib*n | wind force x at hand node 6 |
+| F9.Fy_6 | -13669.92366 | N | F = -qz*G*Cp*A_trib*n | wind force y at hand node 6 |
+| F9.Fz_6 | 7186.704168 | N | F = -qz*G*Cp*A_trib*n | wind force z at hand node 6 |
+| F9.Cp_7 | -0.6364692711 | - | Cp(theta), theta = acos(-n.d) | pressure coefficient at hand node 7 |
+| F9.Fx_7 | 4972.543773 | N | F = -qz*G*Cp*A_trib*n | wind force x at hand node 7 |
+| F9.Fy_7 | 3612.764523 | N | F = -qz*G*Cp*A_trib*n | wind force y at hand node 7 |
+| F9.Fz_7 | -3073.201062 | N | F = -qz*G*Cp*A_trib*n | wind force z at hand node 7 |
+| F9.Cp_8 | -0.7860659049 | - | Cp(theta), theta = acos(-n.d) | pressure coefficient at hand node 8 |
+| F9.Fx_8 | -2345.766896 | N | F = -qz*G*Cp*A_trib*n | wind force x at hand node 8 |
+| F9.Fy_8 | 7219.528158 | N | F = -qz*G*Cp*A_trib*n | wind force y at hand node 8 |
+| F9.Fz_8 | -3795.530567 | N | F = -qz*G*Cp*A_trib*n | wind force z at hand node 8 |
+| F9.Cp_9 | 0.2686989765 | - | Cp(theta), theta = acos(-n.d) | pressure coefficient at hand node 9 |
+| F9.Fx_9 | 2594.833772 | N | F = -qz*G*Cp*A_trib*n | wind force x at hand node 9 |
+| F9.Fy_9 | 0 | N | F = -qz*G*Cp*A_trib*n | wind force y at hand node 9 |
+| F9.Fz_9 | 1297.416886 | N | F = -qz*G*Cp*A_trib*n | wind force z at hand node 9 |
+| F9.Cp_10 | -0.7860659049 | - | Cp(theta), theta = acos(-n.d) | pressure coefficient at hand node 10 |
+| F9.Fx_10 | -2345.766896 | N | F = -qz*G*Cp*A_trib*n | wind force x at hand node 10 |
+| F9.Fy_10 | -7219.528158 | N | F = -qz*G*Cp*A_trib*n | wind force y at hand node 10 |
+| F9.Fz_10 | -3795.530567 | N | F = -qz*G*Cp*A_trib*n | wind force z at hand node 10 |
+| F9.Cp_11 | -0.6364692711 | - | Cp(theta), theta = acos(-n.d) | pressure coefficient at hand node 11 |
+| F9.Fx_11 | 4972.543773 | N | F = -qz*G*Cp*A_trib*n | wind force x at hand node 11 |
+| F9.Fy_11 | -3612.764523 | N | F = -qz*G*Cp*A_trib*n | wind force y at hand node 11 |
+| F9.Fz_11 | -3073.201062 | N | F = -qz*G*Cp*A_trib*n | wind force z at hand node 11 |
+| F9.qz | 1061.332875 | Pa | qz = 0.613*Kz*Kzt*Kd*V^2 | velocity pressure, default wind data |
+| F9.qG | 902.1329437 | Pa | qz*G | velocity pressure times gust factor |
+| F9.Rx | 20326.072 | N | sum of the nodal wind forces | wind resultant x |
+| F9.Ry | 0 | N | sum of the nodal wind forces | wind resultant y |
+| F9.Rz | 26498.06105 | N | sum of the nodal wind forces | wind resultant z |
+| F10.phiPn_inel | 239578.0961 | N | phi*Fcr*Q*Ag (E3 + E7) | design compression strength, CHS 88.9 x 4.0, L = 2 m |
+| F10.Fcr_inel | 249509476.9 | Pa | E3-2 | critical stress, CHS 88.9 x 4.0, L = 2 m |
+| F10.Q_inel | 1 | - | 1, or 0.038E/(Fy D/t) + 2/3 (E7-7) | effective area ratio Ae/Ag, CHS 88.9 x 4.0, L = 2 m |
+| F10.KLr_inel | 66.5557865 | - | K*L/r | slenderness, CHS 88.9 x 4.0, L = 2 m |
+| F10.phiPn_b42 | 223995.9127 | N | phi*Fcr*Q*Ag (E3 + E7) | design compression strength, CHS 88.9 x 4.0 with t_des = 0.93 t, L = 2 m |
+| F10.Fcr_b42 | 250015616.3 | Pa | E3-2 | critical stress, CHS 88.9 x 4.0 with t_des = 0.93 t, L = 2 m |
+| F10.Q_b42 | 1 | - | 1, or 0.038E/(Fy D/t) + 2/3 (E7-7) | effective area ratio Ae/Ag, CHS 88.9 x 4.0 with t_des = 0.93 t, L = 2 m |
+| F10.KLr_b42 | 66.34735148 | - | K*L/r | slenderness, CHS 88.9 x 4.0 with t_des = 0.93 t, L = 2 m |
+| F10.phiPn_e7 | 1112934.907 | N | phi*Fcr*Q*Ag (E3 + E7) | design compression strength, D 323.9 x 4.0, L = 3 m |
+| F10.Fcr_e7 | 327695234.8 | Pa | E3-2 | critical stress, D 323.9 x 4.0, L = 3 m |
+| F10.Q_e7 | 0.9387134158 | - | 1, or 0.038E/(Fy D/t) + 2/3 (E7-7) | effective area ratio Ae/Ag, D 323.9 x 4.0, L = 3 m |
+| F10.KLr_e7 | 26.52271999 | - | K*L/r | slenderness, D 323.9 x 4.0, L = 3 m |
+| F10.phiPn_scope | 0 | N | phi*Fcr*Q*Ag (E3 + E7) | design compression strength, D 323.9 x 1.2, L = 3 m |
+| F10.phiPn_t_b42 | 309095.0519 | N | phi_t*Fy*Ag(t_des) (D2-1) | design tension yield strength, CHS 88.9 x 4.0 with t_des = 0.93 t |
 
 ## References
 
 - Kassimali, A. Matrix Analysis of Structures, 2nd ed. Cengage, 2012 (direct stiffness method for plane and space trusses, member forces from end displacements, support settlements and temperature changes by equivalent joint loads).
 - Hibbeler, R. C. Structural Analysis, 10th ed. Pearson, 2018 (force method of analysis for trusses, principle of virtual work, unit-load method, temperature and fabrication errors, support settlement).
-- Kenner, H. Geodesic Math and How to Use It. University of California Press, 1976 (Class I breakdown, 2V chord factors 0.54653 and 0.61803).
+- Kenner, H. Geodesic Math and How to Use It. University of California Press, 1976 (Class I breakdown; the 2V chord factors 0.54653 and 0.61803 as reproduced by the Domerama chord-factor chart; closed forms 2 sin(15.8587 deg) and 2 sin 18 deg).
+- ASCE/SEI 7-16 Minimum Design Loads, Eq. 26.10-1 (velocity pressure qz = 0.613 Kz Kzt Kd V^2 in SI). The 7-point Cp table of F9 is the program's illustrative simplification, not values read from Fig. 27.3-2; F9 checks the implementation, not the table.
+- AISC 360-16 Specification for Structural Steel Buildings, Sec. B4.2 (design wall thickness 0.93 t for ERW HSS), Table B4.1a, Eqs. E3-2 to E3-4 and E7-7 (F10).
 - Crisfield, M. A. Non-linear Finite Element Analysis of Solids and Structures, Vol. 1. Wiley, 1991 (shallow two-bar truss, limit point, snap-through).
 - Bazant, Z. P., and Cedolin, L. Stability of Structures. Oxford University Press, 1991 (von Mises truss, linearised versus exact limit load).
 - Chopra, A. K. Dynamics of Structures, 5th ed. Pearson, 2017 (free vibration, lumped mass, mass-normalised modes, effective modal mass).

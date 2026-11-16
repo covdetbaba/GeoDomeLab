@@ -1,5 +1,5 @@
 """
-Extended hand calculations for GeoDomeLab 2.0 (validation cases F1 to F8).
+Extended hand calculations for GeoDomeLab 2.0 (validation cases F1 to F10).
 
 This file is the "by hand" side of the extended validation.  It does NOT
 import the geodome package, so it cannot inherit a mistake from the program.
@@ -31,6 +31,10 @@ CASES
   F7  Model A crown natural frequencies with lumped masses
   F8  2V Class I geodesic sphere: chord factors, axial angles, face angles,
       dihedral angles, counts, hub and panel types
+  F9  wind on Model B: velocity pressure, pressure coefficient of every
+      node along the meridian, nodal wind forces and their resultant
+  F10 AISC 360-16 member strength: E3 inelastic branch, B4.2 design wall
+      thickness, E7 effective area of a slender round HSS, scope limit
 
 CONVENTIONS (same as hand_calc.py and GeoDomeLab)
   z vertical (up), tension positive, SI units inside, kN / mm / MPa printed.
@@ -117,7 +121,30 @@ VM_SAMPLES = (0.1, 0.25, 0.5, 1.0, 1.5, 2.0, 2.5)   # w/h for the P(w) table
 
 # F8  2V geodesic sphere
 F8_R = 5.0                   # radius for the metric lengths            [m]
-KENNER_2V = {"A": 0.54653, "B": 0.61803}   # Kenner (1976) chord factors
+# Kenner (1976) 2V chord factors, the values as reproduced by the Domerama
+# chord-factor chart; closed forms 2 sin(15.8587 deg) and 2 sin 18 deg
+KENNER_2V = {"A": 0.54653, "B": 0.61803}
+
+# F9  wind on Model B (the program's default wind data, ASCE 7 notation)
+F9_V = 45.0                  # basic wind speed (3 s gust)              [m/s]
+F9_KZ = 0.90                 # velocity pressure exposure coefficient
+F9_KZT = 1.00                # topographic factor
+F9_KD = 0.95                 # directionality factor
+F9_G = 0.85                  # gust effect factor
+F9_AZ = 0.0                  # direction the wind blows towards        [deg]
+# External pressure coefficient along the meridian (theta from the windward
+# springing), the program's documented illustrative table
+F9_CP_THETA = (0.0, 30.0, 60.0, 90.0, 120.0, 150.0, 180.0)
+F9_CP_VALUE = (0.80, 0.20, -0.60, -1.00, -0.80, -0.50, -0.40)
+
+# F10  AISC 360-16 compression (E3, E7) and B4.2
+F10_PHI = 0.90
+F10_K = 1.0
+F10_L_INEL = 2.0             # strut length, inelastic E3 branch        [m]
+F10_TDES = 0.93              # B4.2 design wall factor for ERW HSS
+F10_SLENDER = ("D 323.9 x 4.0", 0.3239, 0.0040)   # D/t = 81 > 0.11 E/Fy
+F10_L_SLENDER = 3.0          #                                          [m]
+F10_OUT_OF_SCOPE = ("D 323.9 x 1.2", 0.3239, 0.0012)   # D/t > 0.45 E/Fy
 
 DEG = math.pi / 180.0
 SQ5 = math.sqrt(5.0)
@@ -1545,8 +1572,9 @@ def case_f8(doc, res):
           "value below is computed twice, once from closed-form spherical "
           "trigonometry and once from the vertex vectors of an independently "
           "built 2V sphere, and the chord factors are compared with the "
-          "published 2V chord factors of Kenner (1976), Geodesic Math and "
-          "How to Use It: A = 0.54653, B = 0.61803.")
+          "2V chord factors of Kenner (1976), Geodesic Math and How to Use "
+          "It, as reproduced by the Domerama chord-factor chart: "
+          "A = 0.54653, B = 0.61803.")
     P, faces, V, F, e1 = geodesic_2v()
     R = 1.0
     doc.h3("Closed form")
@@ -1799,6 +1827,239 @@ def case_f8(doc, res):
 _CACHE = {}
 
 
+# =============================================================================
+# F9  wind on Model B
+# =============================================================================
+def f9_cp(theta):
+    """Cp at meridian angle theta [deg] by straight-line interpolation in
+    the 7-point table (worked by hand: find the interval, then the ratio)."""
+    th = min(max(float(theta), F9_CP_THETA[0]), F9_CP_THETA[-1])
+    for k in range(len(F9_CP_THETA) - 1):
+        a, b = F9_CP_THETA[k], F9_CP_THETA[k + 1]
+        if a <= th <= b:
+            t = (th - a) / (b - a)
+            return F9_CP_VALUE[k] + t * (F9_CP_VALUE[k + 1] - F9_CP_VALUE[k])
+    return F9_CP_VALUE[-1]                                # pragma: no cover
+
+
+def f9_faces():
+    """The 15 panels of Model B in hand numbering (crown 1, upper ring 2-6
+    at 0, 72, ... deg, lower ring 7-11 at 36, 108, ... deg)."""
+    out = []
+    for i in range(5):
+        u0, u1 = 2 + i, 2 + (i + 1) % 5
+        l0, l1 = 7 + i, 7 + (i + 1) % 5
+        out.append((1, u0, u1))           # top cap
+        out.append((u0, u1, l0))          # band, L_i between U_i and U_i+1
+        out.append((l0, l1, u1))          # band, U_i+1 between L_i and L_i+1
+    return out
+
+
+def case_f9(doc, res):
+    nodes, _ = hc.model_b_geometry()
+    R = hc.R
+    centre = np.array([0.0, 0.0, hc.H_RING])   # lower ring at -R/sqrt5
+    L = hc.L_EDGE
+    A_face = math.sqrt(3.0) / 4.0 * L * L
+    qz = 0.613 * F9_KZ * F9_KZT * F9_KD * F9_V ** 2
+    qG = qz * F9_G
+    az = F9_AZ * DEG
+    d = np.array([math.cos(az), math.sin(az), 0.0])
+    doc.h2("F9  Wind on validation Model B")
+    doc.p("Purpose. The wind load generator. Model B (1V dome on its lower "
+          f"ring, R = {g6(R)} m, 11 nodes, 15 equilateral panels) gets the "
+          "program's default wind: an external pressure p = qz G Cp normal "
+          "to the surface, lumped at the nodes on the surface tributary "
+          "area A_i (one third of each adjacent panel) along the radial "
+          "unit normal n_i. Cp > 0 pushes inward. The wind blows towards "
+          f"azimuth {g6(F9_AZ)} deg (towards +x), so the windward springing "
+          "is on the -x side.")
+    doc.eq("qz = 0.613 Kz Kzt Kd V^2            (ASCE 7-16 Eq. 26.10-1, SI)",
+           f"   = 0.613 x {g6(F9_KZ)} x {g6(F9_KZT)} x {g6(F9_KD)} x "
+           f"{g6(F9_V)}^2 = {g6(qz, 10)} Pa",
+           f"qz G = {g6(qz, 10)} x {g6(F9_G)} = {g6(qG, 10)} Pa",
+           "theta_i = arccos(-n_i . d)   (0 = windward springing, "
+           "90 = crown, 180 = leeward)",
+           "Cp_i  = straight-line interpolation of the table "
+           + ", ".join(f"{g6(t)}:{g6(c)}" for t, c in
+                       zip(F9_CP_THETA, F9_CP_VALUE)),
+           "F_i   = -qz G Cp_i A_i n_i")
+    # tributary areas by counting panels, checked with the cross product
+    A_trib = {n: 0.0 for n in nodes}
+    A_cross = 0.0
+    for f in f9_faces():
+        a, b, c = (nodes[k] for k in f)
+        A_cross += 0.5 * float(np.linalg.norm(np.cross(b - a, c - a)))
+        for k in f:
+            A_trib[k] += A_face / 3.0
+    check("F9", "15 panel areas by cross product - 15 sqrt3/4 L^2 [m2]",
+          A_cross - 15.0 * A_face, 1e-11)
+    check("F9", "sum of tributary areas - surface [m2]",
+          sum(A_trib.values()) - 15.0 * A_face, 1e-11)
+    rows = []
+    F = {}
+    tot = np.zeros(3)
+    for n in sorted(nodes):
+        x = nodes[n]
+        nrm = (x - centre) / R
+        check("F9", f"node {n} on the sphere |x - c| - R [m]",
+              float(np.linalg.norm(x - centre)) - R, 1e-12)
+        cos_t = max(-1.0, min(1.0, -float(nrm @ d)))
+        th = math.acos(cos_t) / DEG
+        cp = f9_cp(th)
+        Fn = -qG * cp * A_trib[n] * nrm
+        # components that vanish by symmetry are exactly zero
+        Fn = np.where(np.abs(Fn) <= 1e-12 * qG * A_face, 0.0, Fn)
+        F[n] = Fn
+        tot += Fn
+        rows.append([n, g6(A_trib[n]), vec(nrm), g6(th, 8), g6(cp, 8),
+                     vec(Fn, 1e-3)])
+        res.add(f"F9.Cp_{n}", cp, "-", "Cp(theta), theta = acos(-n.d)",
+                f"pressure coefficient at hand node {n}")
+        for ax, key in enumerate("xyz"):
+            res.add(f"F9.F{key}_{n}", Fn[ax], "N",
+                    "F = -qz*G*Cp*A_trib*n",
+                    f"wind force {key} at hand node {n}")
+    doc.table(["node", "A_trib [m2]", "n", "theta [deg]", "Cp",
+               "F [kN]"], rows)
+    check("F9", "crown Cp = -1.00 exactly", f9_cp(90.0) + 1.0, 0.0)
+    check("F9", "resultant Fy = 0 (mirror symmetry about x-z) [N]",
+          tot[1], 1e-9)
+    # mirror pairs: upper ring 3/6 (72 / 288 deg), 4/5; lower ring 7/11, 8/10
+    for a, b in ((3, 6), (4, 5), (7, 11), (8, 10)):
+        check("F9", f"mirror pair {a}/{b}: Fx, Fz equal, Fy opposite [N]",
+              max(abs(F[a][0] - F[b][0]), abs(F[a][2] - F[b][2]),
+                  abs(F[a][1] + F[b][1])), 1e-9)
+    doc.items([f"Velocity pressure qz = {g6(qz, 10)} Pa, qz G = "
+               f"{g6(qG, 10)} Pa.",
+               f"Crown: n = (0, 0, 1), theta = 90 deg, Cp = -1.00 (strong "
+               f"suction), F = qz G (5/3) A_face upward = "
+               f"{kN(F[1][2], 9)} kN.",
+               f"Resultant ({kN(tot[0])}, {kN(tot[1])}, {kN(tot[2])}) kN: "
+               f"drag towards +x and net uplift.",
+               "Checks: the panel areas by cross product, the tributary "
+               "areas sum to the surface, every node lies on the sphere, "
+               "Fy of the resultant is zero and mirror nodes carry mirror "
+               "forces."])
+    res.add("F9.qz", qz, "Pa", "qz = 0.613*Kz*Kzt*Kd*V^2",
+            "velocity pressure, default wind data")
+    res.add("F9.qG", qG, "Pa", "qz*G", "velocity pressure times gust factor")
+    tot[1] = 0.0                              # zero by mirror symmetry
+    for ax, key in enumerate("xyz"):
+        res.add(f"F9.R{key}", tot[ax], "N", "sum of the nodal wind forces",
+                f"wind resultant {key}")
+
+
+# =============================================================================
+# F10  AISC 360-16 member strength (E3, B4.2, E7)
+# =============================================================================
+def f10_capacity(D, t, Lc):
+    """phi_c Pn of a round HSS by AISC 360-16 E3 + E7, worked out in full.
+
+    Returns a dict of every intermediate number.  Pn = 0 when D/t is above
+    the scope limit 0.45 E/Fy (Table B4.1a note, Sec. E7).
+    """
+    s = chs(D, t)
+    KLr = F10_K * Lc / s["r"]
+    Fe = math.pi ** 2 * E / KLr ** 2
+    lim = 4.71 * math.sqrt(E / FY)
+    Fcr = (0.658 ** (FY / Fe)) * FY if KLr <= lim else 0.877 * Fe
+    Dt = D / t
+    if Dt <= 0.11 * E / FY:
+        Q = 1.0
+    elif Dt <= 0.45 * E / FY:
+        Q = 0.038 * E / (FY * Dt) + 2.0 / 3.0
+    else:
+        Q = 0.0
+    phiPn = F10_PHI * Fcr * Q * s["A"]
+    return dict(s, KLr=KLr, Fe=Fe, Fcr=Fcr, Dt=Dt, Q=Q, phiPn=phiPn,
+                limit=lim)
+
+
+def case_f10(doc, res):
+    doc.h2("F10  AISC 360-16 compression strength of round HSS")
+    lim_s = 0.11 * E / FY
+    lim_o = 0.45 * E / FY
+    doc.p("Purpose. The member strength routines beyond the elastic branch "
+          "that Model A reaches (its spoke has KL/r = 175): the inelastic "
+          "E3 branch, the B4.2 design wall thickness 0.93 t for ERW HSS, "
+          "the E7 effective area of a slender round HSS and the scope "
+          f"limit. ASTM A500 Gr. C: E = {g6(E / 1e9)} GPa, Fy = "
+          f"{g6(FY / 1e6)} MPa, K = {g6(F10_K)}, phi_c = {g6(F10_PHI)}.")
+    doc.eq("KL/r,  Fe = pi^2 E / (KL/r)^2                       (E3-4)",
+           "Fcr = 0.658^(Fy/Fe) Fy   if KL/r <= 4.71 sqrt(E/Fy) (E3-2)",
+           "Fcr = 0.877 Fe           otherwise                  (E3-3)",
+           "D/t <= 0.11 E/Fy: Ae = Ag; up to 0.45 E/Fy:",
+           "   Ae/Ag = 0.038 E/(Fy D/t) + 2/3                    (E7-7)",
+           "phi_c Pn = 0.90 Fcr Ae                               (E3-1, E7-1)",
+           f"4.71 sqrt(E/Fy) = {g6(4.71 * math.sqrt(E / FY), 8)},  "
+           f"0.11 E/Fy = {g6(lim_s, 8)},  0.45 E/Fy = {g6(lim_o, 8)}")
+    cases = [
+        ("inel", f"{SEC_MAIN[0]}, L = {g6(F10_L_INEL)} m",
+         SEC_MAIN[1], SEC_MAIN[2], F10_L_INEL),
+        ("b42", f"{SEC_MAIN[0]} with t_des = {g6(F10_TDES)} t, L = "
+                f"{g6(F10_L_INEL)} m",
+         SEC_MAIN[1], F10_TDES * SEC_MAIN[2], F10_L_INEL),
+        ("e7", f"{F10_SLENDER[0]}, L = {g6(F10_L_SLENDER)} m",
+         F10_SLENDER[1], F10_SLENDER[2], F10_L_SLENDER),
+        ("scope", f"{F10_OUT_OF_SCOPE[0]}, L = {g6(F10_L_SLENDER)} m",
+         F10_OUT_OF_SCOPE[1], F10_OUT_OF_SCOPE[2], F10_L_SLENDER),
+    ]
+    rows = []
+    out = {}
+    for tag, label, D, t, Lc in cases:
+        c = f10_capacity(D, t, Lc)
+        out[tag] = c
+        rows.append([label, g6(c["A"] * 1e6, 7), g6(c["r"] * 1e3, 7),
+                     g6(c["KLr"], 7), g6(c["Fe"] / 1e6, 7),
+                     g6(c["Fcr"] / 1e6, 7), g6(c["Dt"], 6), g6(c["Q"], 7),
+                     kN(c["phiPn"], 7)])
+        res.add(f"F10.phiPn_{tag}", c["phiPn"], "N",
+                "phi*Fcr*Q*Ag (E3 + E7)", f"design compression strength, "
+                f"{label}")
+        if tag != "scope":
+            res.add(f"F10.Fcr_{tag}", c["Fcr"], "Pa",
+                    "E3-2" if c["KLr"] <= c["limit"] else "E3-3",
+                    f"critical stress, {label}")
+            res.add(f"F10.Q_{tag}", c["Q"], "-",
+                    "1, or 0.038E/(Fy D/t) + 2/3 (E7-7)",
+                    f"effective area ratio Ae/Ag, {label}")
+            res.add(f"F10.KLr_{tag}", c["KLr"], "-", "K*L/r",
+                    f"slenderness, {label}")
+    doc.table(["section and length", "A [mm2]", "r [mm]", "KL/r",
+               "Fe [MPa]", "Fcr [MPa]", "D/t", "Ae/Ag", "phi Pn [kN]"],
+              rows)
+    t_des = chs(SEC_MAIN[1], F10_TDES * SEC_MAIN[2])
+    phiPt = F10_PHI * FY * t_des["A"]
+    res.add("F10.phiPn_t_b42", phiPt, "N", "phi_t*Fy*Ag(t_des) (D2-1)",
+            f"design tension yield strength, {SEC_MAIN[0]} with t_des = "
+            f"{g6(F10_TDES)} t")
+    check("F10", "inelastic branch: KL/r below 4.71 sqrt(E/Fy)",
+          max(0.0, out["inel"]["KLr"] - out["inel"]["limit"]), 0.0)
+    check("F10", "E7 case: D/t between 0.11 and 0.45 E/Fy",
+          0.0 if lim_s < out["e7"]["Dt"] < lim_o else 1.0, 0.0)
+    check("F10", "scope case: D/t above 0.45 E/Fy",
+          0.0 if out["scope"]["Dt"] > lim_o else 1.0, 0.0)
+    # second route for Ae/Ag: Q written with the slenderness ratio
+    # lambda = (D/t)(Fy/E), so Q = 0.038/lambda + 2/3
+    lam = out["e7"]["Dt"] * FY / E
+    check("F10", "E7: 0.038/lambda + 2/3 - Q [-]",
+          0.038 / lam + 2.0 / 3.0 - out["e7"]["Q"], 1e-15)
+    doc.items([f"Inelastic: KL/r = {g6(out['inel']['KLr'], 6)} < "
+               f"{g6(out['inel']['limit'], 6)}, Fcr = "
+               f"{g6(out['inel']['Fcr'] / 1e6, 7)} MPa, phi Pn = "
+               f"{kN(out['inel']['phiPn'], 7)} kN.",
+               f"B4.2: the 0.93 t wall lowers A and r; phi Pn = "
+               f"{kN(out['b42']['phiPn'], 7)} kN, phi_t Pn = "
+               f"{kN(phiPt, 7)} kN.",
+               f"E7: D/t = {g6(out['e7']['Dt'], 6)} > 0.11 E/Fy = "
+               f"{g6(lim_s, 6)}, Ae/Ag = {g6(out['e7']['Q'], 7)}, phi Pn = "
+               f"{kN(out['e7']['phiPn'], 7)} kN.",
+               f"Scope: D/t = {g6(out['scope']['Dt'], 6)} > 0.45 E/Fy = "
+               f"{g6(lim_o, 6)}: outside the specification, reported as "
+               f"phi Pn = 0."])
+
+
 def _run():
     if "res" in _CACHE:
         return _CACHE["doc"], _CACHE["res"]
@@ -1806,7 +2067,8 @@ def _run():
     doc, res = Doc(), Results()
     MA = _model_a_basics()
     sec = MA["section"]
-    doc.h1("GeoDomeLab extended hand calculations (validation cases F1 to F8)")
+    doc.h1("GeoDomeLab extended hand calculations (validation cases F1 to "
+           "F10)")
     doc.p("This document is produced by validation/hand_calc_ext.py. The "
           "script does not import the GeoDomeLab package. Each case defines "
           "a structure, solves it with a hand method (equilibrium, "
@@ -1843,6 +2105,8 @@ def _run():
     case_f6(doc, res)
     case_f7(doc, res, MA)
     case_f8(doc, res)
+    case_f9(doc, res)
+    case_f10(doc, res)
 
     doc.h2("Summary of independent checks")
     npass = sum(1 for _, _, r, tol in CHECKS if r <= tol)
@@ -1871,8 +2135,16 @@ def _run():
         "unit-load method, temperature and fabrication errors, support "
         "settlement).",
         "Kenner, H. Geodesic Math and How to Use It. University of "
-        "California Press, 1976 (Class I breakdown, 2V chord factors "
-        "0.54653 and 0.61803).",
+        "California Press, 1976 (Class I breakdown; the 2V chord factors "
+        "0.54653 and 0.61803 as reproduced by the Domerama chord-factor "
+        "chart; closed forms 2 sin(15.8587 deg) and 2 sin 18 deg).",
+        "ASCE/SEI 7-16 Minimum Design Loads, Eq. 26.10-1 (velocity "
+        "pressure qz = 0.613 Kz Kzt Kd V^2 in SI). The 7-point Cp table of "
+        "F9 is the program's illustrative simplification, not values read "
+        "from Fig. 27.3-2; F9 checks the implementation, not the table.",
+        "AISC 360-16 Specification for Structural Steel Buildings, Sec. "
+        "B4.2 (design wall thickness 0.93 t for ERW HSS), Table B4.1a, "
+        "Eqs. E3-2 to E3-4 and E7-7 (F10).",
         "Crisfield, M. A. Non-linear Finite Element Analysis of Solids and "
         "Structures, Vol. 1. Wiley, 1991 (shallow two-bar truss, limit "
         "point, snap-through).",

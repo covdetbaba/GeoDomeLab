@@ -13,8 +13,17 @@ space small enough for a simple, transparent, fully-stressed iteration:
             take the envelope tension and compression demands
             pick the lightest catalogue section whose LRFD capacity covers them
             at the target utilisation, while respecting KL/r <= 200
+            (never below the family's floor, see below)
         if nothing changed and the deflection limit is satisfied: stop
         otherwise, if the deflection limit is violated, step every family up
+            one catalogue size and make that size the family's floor
+
+The capacities are those of the final check (``buckling.member_capacities``):
+the design wall thickness ``model.design_thickness_factor * t`` (AISC 360-16
+B4.2) for tension, compression and the slenderness KL/r.  The per-family
+floor keeps a deflection step-up from being undone by the next stress
+selection.  The run counts as converged only when the final design meets the
+target utilisation (and the deflection limit, when enforced).
 
 The result is a local optimum, not a global one, but it is the classical
 fully-stressed design and it converges in a handful of iterations because the
@@ -71,19 +80,26 @@ class SizingResult:
 
 def _select_section(model, L_design, N_t, N_c, target, min_index=0,
                     slenderness_limit=200.0):
-    """Lightest catalogue section covering the demands of one family."""
+    """Lightest catalogue section covering the demands of one family.
+
+    The checks use the design section (wall ``design_thickness_factor * t``,
+    AISC 360-16 B4.2), exactly as :func:`buckling.member_capacities` does in
+    the final analysis.
+    """
     mat = model.material
     K = model.K_effective
+    tf = float(getattr(model, "design_thickness_factor", 1.0))
     need_t = abs(N_t) / max(target, 1e-6)
     need_c = abs(N_c) / max(target, 1e-6)
 
     for i in range(min_index, len(sx.CATALOGUE)):
         s = sx.CATALOGUE[i]
-        if K * L_design / s.r > slenderness_limit:
+        sd = bk.design_section(s, tf)
+        if K * L_design / sd.r > slenderness_limit:
             continue
-        if bk.tension_capacity(s, mat, model.phi_t) < need_t:
+        if bk.tension_capacity(sd, mat, model.phi_t) < need_t:
             continue
-        cap_c, *_ = bk.compression_capacity(s, mat, L_design, K, model.phi_c)
+        cap_c, *_ = bk.compression_capacity(sd, mat, L_design, K, model.phi_c)
         if cap_c < need_c:
             continue
         return s.name
@@ -101,6 +117,10 @@ def auto_size(model, target_util=0.95, max_iter=12, enforce_deflection=True,
         if progress is not None:
             progress(float(f), str(msg))
 
+    if not any(not c.serviceability for c in model.combinations):
+        raise ValueError("No strength combination: untick Service on at "
+                         "least one combination.")
+
     geom = model.geom
     n_groups = geom.n_strut_types()
     start_mass = model.steel_mass()
@@ -108,7 +128,9 @@ def auto_size(model, target_util=0.95, max_iter=12, enforce_deflection=True,
     history = []
     converged = False
     messages = []
-    bump = 0                       # global catalogue offset for deflection
+    floor = [0] * n_groups         # per-family catalogue floor (deflection)
+    defl_steps = 0
+    last = len(sx.CATALOGUE) - 1
 
     for it in range(1, max_iter + 1):
         report(0.05 + 0.9 * (it - 1) / max_iter, f"Sizing iteration {it}...")
@@ -122,7 +144,7 @@ def auto_size(model, target_util=0.95, max_iter=12, enforce_deflection=True,
             N_c = float(np.min(res.N_min[sel]))
             new_sections[g] = _select_section(
                 model, L_design, N_t, N_c, target_util,
-                min_index=bump, slenderness_limit=slenderness_limit)
+                min_index=floor[g], slenderness_limit=slenderness_limit)
 
         note = ""
         changed = new_sections != list(model.group_sections)
@@ -139,16 +161,19 @@ def auto_size(model, target_util=0.95, max_iter=12, enforce_deflection=True,
             break
 
         if not changed and not defl_ok:
-            # Sections are stress-adequate but the dome is too flexible: raise
-            # the floor of the catalogue search and try again.
-            bump += 1
-            if bump >= len(sx.CATALOGUE):
+            # Sections are stress-adequate but the dome is too flexible: step
+            # every family up one size and keep that size as its floor, so
+            # the next stress selection cannot undo the step.
+            idx = [sx.section_index(s) for s in model.group_sections]
+            if all(i >= last for i in idx):
                 messages.append("Deflection limit cannot be met with the "
                                 "available catalogue; relax the limit or "
                                 "increase the dome frequency.")
                 break
             note = "stepping every family up to satisfy the deflection limit"
-            new_sections = [sx.next_larger(s) for s in model.group_sections]
+            floor = [min(i + 1, last) for i in idx]
+            new_sections = [sx.SECTION_NAMES[f] for f in floor]
+            defl_steps += 1
 
         model.group_sections = new_sections
         if note:
@@ -162,7 +187,11 @@ def auto_size(model, target_util=0.95, max_iter=12, enforce_deflection=True,
         deflection_ratio=float(final.deflection_ratio),
         note="final" + ("" if final.deflection_ok else " (deflection exceeded)")))
 
-    if not converged:
+    loop_converged = converged
+    over = final.governing_util > target_util + 1e-9
+    if over or (enforce_deflection and not final.deflection_ok):
+        converged = False
+    if not loop_converged and not messages:
         messages.append(f"Stopped after {max_iter} iterations without a fully "
                         f"stable section set; the last design is reported.")
     if converged and final.governing_util < 0.85 * target_util:
@@ -171,20 +200,35 @@ def auto_size(model, target_util=0.95, max_iter=12, enforce_deflection=True,
         grp = int(geom.strut_group[gm])
         cur = model.group_sections[grp]
         i = sx.section_index(cur)
-        reason = ("it is the smallest section in the catalogue"
-                  if i == 0 else
-                  f"the next size down ({sx.SECTION_NAMES[i - 1]}) fails the "
-                  f"compression or slenderness check")
-        messages.append(
-            f"Final utilisation {final.governing_util:.2f} sits below the "
-            f"{target_util:.2f} target because the catalogue is discrete: for "
-            f"the governing family ({chr(ord('A') + grp)}, {cur}) {reason}. "
-            f"Slender struts in a single-layer dome are usually governed by "
-            f"buckling, not by stress.")
-    if final.governing_util > 1.0:
-        messages.append(f"Final design still shows utilisation "
-                        f"{final.governing_util:.2f}; the heaviest catalogue "
-                        f"section is insufficient.")
+        if defl_steps:
+            messages.append(
+                f"Final utilisation {final.governing_util:.2f} sits below the "
+                f"{target_util:.2f} target because the deflection limit "
+                f"governs: every family was stepped up {defl_steps} time(s) "
+                f"to reach span/{final.deflection_ratio:.0f} (limit "
+                f"span/{model.deflection_limit:.0f}).")
+        else:
+            reason = ("it is the smallest section in the catalogue"
+                      if i == 0 else
+                      f"the next size down ({sx.SECTION_NAMES[i - 1]}) fails "
+                      f"the compression or slenderness check")
+            messages.append(
+                f"Final utilisation {final.governing_util:.2f} sits below the "
+                f"{target_util:.2f} target because the catalogue is discrete: "
+                f"for the governing family ({chr(ord('A') + grp)}, {cur}) "
+                f"{reason}. Slender struts in a single-layer dome are usually "
+                f"governed by buckling, not by stress.")
+    if over:
+        gm = int(np.argmax(final.util_env))
+        grp = int(geom.strut_group[gm])
+        if model.group_sections[grp] == sx.SECTION_NAMES[-1]:
+            messages.append(f"Final design still shows utilisation "
+                            f"{final.governing_util:.2f}; the heaviest "
+                            f"catalogue section is insufficient for family "
+                            f"{chr(ord('A') + grp)}.")
+        else:
+            messages.append(f"Final utilisation {final.governing_util:.2f} "
+                            f"exceeds the {target_util:.2f} target.")
 
     report(1.0, "Auto-sizing complete.")
     return SizingResult(converged=converged, iterations=len(history),

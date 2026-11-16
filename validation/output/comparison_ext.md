@@ -1,6 +1,6 @@
-# GeoDomeLab extended validation: hand calculations F1-F8 vs the program
+# GeoDomeLab extended validation: hand calculations F1-F10 vs the program
 
-356 of 356 comparisons pass. 227 of 227 hand reference values are compared (every one of them). The hand file's own 97 internal checks: 97 within tolerance.
+422 of 422 comparisons pass. 290 of 290 hand reference values are compared (every one of them). The hand file's own 120 internal checks: 120 within tolerance.
 
 Produced by `validation/run_validation_ext.py`. The reference values come from `validation/hand_calc_ext.py`, which does not import the geodome package; they were computed in this run before geodome was imported (geodome loaded before the hand values: False). The program values come from the normal GeoDomeLab API (column `source`).
 
@@ -27,6 +27,8 @@ For a non-zero reference d = |program - hand| / |hand|, the plain relative diffe
 | F6 | von Mises truss snap-through | 32 | 32 | 1.2e-13 | - | 4.9e-10 | 0.0e+00 |
 | F7 | Model A natural frequencies | 34 | 34 | - | 7.0e-16 | - | 4.4e-16 |
 | F8 | 2V geodesic geometry and fabrication angles | 52 | 52 | 3.2e-15 | - | - | - |
+| F9 | Wind on Model B | 52 | 52 | 2.6e-15 | - | - | 2.8e-16 |
+| F10 | AISC 360-16 compression, B4.2 and E7 | 14 | 14 | 0.0e+00 | - | - | - |
 
 ## How each case is run in GeoDomeLab
 
@@ -37,7 +39,9 @@ For a non-zero reference d = |program - hand| / |hand|, the plain relative diffe
 - **F5** CUSTOM supports with a spring stiffness entry (5e7 N/m) in series and in parallel with the bar, and a heated bar on a spring.
 - **F6** `benchmarks.von_mises_truss()`: linear solve and `buckling.linear_buckling`; `nonlinear.run_nonlinear` (Crisfield arc length) traced through the limit point, the unstable branch and onto the inverted stable branch; every traced point is compared with the closed form P(w). The sample loads P(w) are the program's corotational internal force at the symmetric state; both limit points are also located as zeros of the program's consistent tangent; the snap-through target is the program's equilibrium at lambda* found by Newton iteration on its residual. `linear_buckling` returns n_free - 2 modes, one for this 2-DOF truss, so the sway root uses the same program matrices K and K_g.
 - **F7** `modal.modal_analysis` on Model A, lumped mass, with and without the cladding dead load as mass.
-- **F8** a full 2V Class I sphere built with the program's own `icosahedron`, `subdivide_class1` and `custom_geometry`, and the 2V hemisphere from `generate_dome`, both through `fabrication.fabrication_tables`; chord factors also against Kenner (1976).
+- **F8** a full 2V Class I sphere built with the program's own `icosahedron`, `subdivide_class1` and `custom_geometry`, and the 2V hemisphere from `generate_dome`, both through `fabrication.fabrication_tables`; chord factors also against Kenner (1976), the values as reproduced by the Domerama chart.
+- **F9** `benchmarks.validation_model_b()` with the default `LoadSpec` (wind on): `loads.velocity_pressure`, `wind_pressure_coefficients` and `wind_load` at every node, the resultant, and a `run_analysis` of 1.0W for the identities. This checks the implementation of the wind field; the 7-point Cp table itself is an illustrative simplification, not ASCE 7-16 Fig. 27.3-2.
+- **F10** `buckling.compression_capacity` (inelastic E3 branch, E7 slender wall with a custom `Section`, the 0.45 E/Fy scope limit) and `buckling.member_capacities` of a one-bar model with `design_thickness_factor = 0.93` (AISC 360-16 B4.2).
 
 ## Failures
 
@@ -403,5 +407,71 @@ None.
 | F8 sphere | axial angle B, program formula column | F8.axial_B_deg | 72 | 72 | deg | 2.0e-16 | 1e-09 | yes | fabrication_tables axial_formula_deg |
 | F8 sphere | dihedral A, program formula column | F8.dihedral_A_deg | 157.5410761 | 157.5410761 | deg | 1.8e-16 | 1e-09 | yes | fabrication_tables dihedral_formula_deg |
 | F8 sphere | dihedral B, program formula column | F8.dihedral_B_deg | 161.9708979 | 161.9708979 | deg | 1.8e-16 | 1e-09 | yes | fabrication_tables dihedral_formula_deg |
+| F9 wind Model B | velocity pressure qz | F9.qz | 1061.332875 | 1061.332875 | Pa | 0.0e+00 | 1e-09 | yes | loads.velocity_pressure (LoadSpec defaults) |
+| F9 wind Model B | qz G | F9.qG | 902.1329437 | 902.1329437 | Pa | 0.0e+00 | 1e-09 | yes | loads.velocity_pressure x LoadSpec.wind_G |
+| F9 wind Model B | Cp at hand node 1 | F9.Cp_1 | -1 | -1 | - | 0.0e+00 | 1e-09 | yes | loads.wind_pressure_coefficients |
+| F9 wind Model B | Fx at hand node 1 | F9.Fx_1 | 0 | 0 | N | 0.0e+00 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Fy at hand node 1 | F9.Fy_1 | 0 | 0 | N | 0.0e+00 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Fz at hand node 1 | F9.Fz_1 | 17994.81084 | 17994.81084 | N | 0.0e+00 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Cp at hand node 2 | F9.Cp_2 | -0.4885501706 | -0.4885501706 | - | 0.0e+00 | 1e-09 | yes | loads.wind_pressure_coefficients |
+| F9 wind Model B | Fx at hand node 2 | F9.Fx_2 | 7863.238501 | 7863.238501 | N | 0.0e+00 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Fy at hand node 2 | F9.Fy_2 | 0 | 0 | N | 0.0e+00 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Fz at hand node 2 | F9.Fz_2 | 3931.61925 | 3931.61925 | N | 0.0e+00 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Cp at hand node 3 | F9.Cp_3 | -0.8930329524 | -0.8930329524 | - | 0.0e+00 | 1e-09 | yes | loads.wind_pressure_coefficients |
+| F9 wind Model B | Fx at hand node 3 | F9.Fx_3 | 4441.627443 | 4441.627443 | N | 0.0e+00 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Fy at hand node 3 | F9.Fy_3 | 13669.92366 | 13669.92366 | N | 2.7e-16 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Fz at hand node 3 | F9.Fz_3 | 7186.704168 | 7186.704168 | N | 0.0e+00 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Cp at hand node 4 | F9.Cp_4 | -0.1639180562 | -0.1639180562 | - | 1.0e-15 | 1e-09 | yes | loads.wind_pressure_coefficients |
+| F9 wind Model B | Fx at hand node 4 | F9.Fx_4 | -2134.404458 | -2134.404458 | N | 1.1e-15 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Fy at hand node 4 | F9.Fy_4 | 1550.735611 | 1550.735611 | N | 1.2e-15 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Fz at hand node 4 | F9.Fz_4 | 1319.134501 | 1319.134501 | N | 1.0e-15 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Cp at hand node 5 | F9.Cp_5 | -0.1639180562 | -0.1639180562 | - | 2.4e-15 | 1e-09 | yes | loads.wind_pressure_coefficients |
+| F9 wind Model B | Fx at hand node 5 | F9.Fx_5 | -2134.404458 | -2134.404458 | N | 2.3e-15 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Fy at hand node 5 | F9.Fy_5 | -1550.735611 | -1550.735611 | N | 2.3e-15 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Fz at hand node 5 | F9.Fz_5 | 1319.134501 | 1319.134501 | N | 2.6e-15 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Cp at hand node 6 | F9.Cp_6 | -0.8930329524 | -0.8930329524 | - | 0.0e+00 | 1e-09 | yes | loads.wind_pressure_coefficients |
+| F9 wind Model B | Fx at hand node 6 | F9.Fx_6 | 4441.627443 | 4441.627443 | N | 0.0e+00 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Fy at hand node 6 | F9.Fy_6 | -13669.92366 | -13669.92366 | N | 1.3e-16 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Fz at hand node 6 | F9.Fz_6 | 7186.704168 | 7186.704168 | N | 2.5e-16 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Cp at hand node 7 | F9.Cp_7 | -0.6364692711 | -0.6364692711 | - | 1.7e-16 | 1e-09 | yes | loads.wind_pressure_coefficients |
+| F9 wind Model B | Fx at hand node 7 | F9.Fx_7 | 4972.543773 | 4972.543773 | N | 1.8e-16 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Fy at hand node 7 | F9.Fy_7 | 3612.764523 | 3612.764523 | N | 0.0e+00 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Fz at hand node 7 | F9.Fz_7 | -3073.201062 | -3073.201062 | N | 3.0e-16 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Cp at hand node 8 | F9.Cp_8 | -0.7860659049 | -0.7860659049 | - | 0.0e+00 | 1e-09 | yes | loads.wind_pressure_coefficients |
+| F9 wind Model B | Fx at hand node 8 | F9.Fx_8 | -2345.766896 | -2345.766896 | N | 1.9e-16 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Fy at hand node 8 | F9.Fy_8 | 7219.528158 | 7219.528158 | N | 2.5e-16 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Fz at hand node 8 | F9.Fz_8 | -3795.530567 | -3795.530567 | N | 1.2e-16 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Cp at hand node 9 | F9.Cp_9 | 0.2686989765 | 0.2686989765 | - | 0.0e+00 | 1e-09 | yes | loads.wind_pressure_coefficients |
+| F9 wind Model B | Fx at hand node 9 | F9.Fx_9 | 2594.833772 | 2594.833772 | N | 1.8e-16 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Fy at hand node 9 | F9.Fy_9 | 0 | -3.177754874e-13 | N | 1.2e-17 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Fz at hand node 9 | F9.Fz_9 | 1297.416886 | 1297.416886 | N | 1.8e-16 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Cp at hand node 10 | F9.Cp_10 | -0.7860659049 | -0.7860659049 | - | 2.8e-16 | 1e-09 | yes | loads.wind_pressure_coefficients |
+| F9 wind Model B | Fx at hand node 10 | F9.Fx_10 | -2345.766896 | -2345.766896 | N | 1.9e-16 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Fy at hand node 10 | F9.Fy_10 | -7219.528158 | -7219.528158 | N | 1.3e-16 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Fz at hand node 10 | F9.Fz_10 | -3795.530567 | -3795.530567 | N | 3.6e-16 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Cp at hand node 11 | F9.Cp_11 | -0.6364692711 | -0.6364692711 | - | 1.7e-16 | 1e-09 | yes | loads.wind_pressure_coefficients |
+| F9 wind Model B | Fx at hand node 11 | F9.Fx_11 | 4972.543773 | 4972.543773 | N | 0.0e+00 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Fy at hand node 11 | F9.Fy_11 | -3612.764523 | -3612.764523 | N | 2.5e-16 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | Fz at hand node 11 | F9.Fz_11 | -3073.201062 | -3073.201062 | N | 3.0e-16 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | wind resultant x | F9.Rx | 20326.072 | 20326.072 | N | 5.4e-16 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | wind resultant y | F9.Ry | 0 | -3.637978807e-12 | N | 1.4e-16 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | wind resultant z | F9.Rz | 26498.06105 | 26498.06105 | N | 1.4e-16 | 1e-09 | yes | loads.wind_load (LoadSpec defaults) |
+| F9 wind Model B | 1.0W solve: equilibrium residual | identity | 0 | 2.832544991e-16 | - | 2.8e-16 | 1e-10 | yes | solver.StaticResult |
+| F9 wind Model B | 1.0W solve: energy identity mismatch | identity | 0 | 1.962862267e-16 | - | 2.0e-16 | 1e-10 | yes | solver.StaticResult |
+| F9 wind Model B | 1.0W solve: \|sum F + sum R\| / max(\|F\|, \|R\|) | identity | 0 | 2.777773583e-16 | - | 2.8e-16 | 1e-10 | yes | solver.StaticResult |
+| F10 AISC | phi Pn, inelastic | F10.phiPn_inel | 239578.0961 | 239578.0961 | N | 0.0e+00 | 1e-09 | yes | buckling.compression_capacity |
+| F10 AISC | Fcr, inelastic | F10.Fcr_inel | 249509476.9 | 249509476.9 | Pa | 0.0e+00 | 1e-09 | yes | buckling.compression_capacity |
+| F10 AISC | Ae/Ag, inelastic | F10.Q_inel | 1 | 1 | - | 0.0e+00 | 1e-09 | yes | buckling.compression_capacity |
+| F10 AISC | KL/r, inelastic | F10.KLr_inel | 66.5557865 | 66.5557865 | - | 0.0e+00 | 1e-09 | yes | buckling.compression_capacity |
+| F10 AISC | phi Pn, B4.2 wall | F10.phiPn_b42 | 223995.9127 | 223995.9127 | N | 0.0e+00 | 1e-09 | yes | buckling.member_capacities, design_thickness_factor 0.93 |
+| F10 AISC | Fcr, B4.2 wall | F10.Fcr_b42 | 250015616.3 | 250015616.3 | Pa | 0.0e+00 | 1e-09 | yes | buckling.member_capacities, design_thickness_factor 0.93 |
+| F10 AISC | Ae/Ag, B4.2 wall | F10.Q_b42 | 1 | 1 | - | 0.0e+00 | 1e-09 | yes | buckling.member_capacities, design_thickness_factor 0.93 |
+| F10 AISC | KL/r, B4.2 wall | F10.KLr_b42 | 66.34735148 | 66.34735148 | - | 0.0e+00 | 1e-09 | yes | buckling.member_capacities, design_thickness_factor 0.93 |
+| F10 AISC | phi_t Pn, B4.2 wall | F10.phiPn_t_b42 | 309095.0519 | 309095.0519 | N | 0.0e+00 | 1e-09 | yes | buckling.member_capacities, design_thickness_factor 0.93 |
+| F10 AISC | phi Pn, E7 slender wall | F10.phiPn_e7 | 1112934.907 | 1112934.907 | N | 0.0e+00 | 1e-09 | yes | buckling.compression_capacity (custom Section) |
+| F10 AISC | Fcr, E7 slender wall | F10.Fcr_e7 | 327695234.8 | 327695234.8 | Pa | 0.0e+00 | 1e-09 | yes | buckling.compression_capacity (custom Section) |
+| F10 AISC | Ae/Ag, E7 (Eq. E7-7) | F10.Q_e7 | 0.9387134158 | 0.9387134158 | - | 0.0e+00 | 1e-09 | yes | buckling.compression_capacity (custom Section) |
+| F10 AISC | KL/r, E7 slender wall | F10.KLr_e7 | 26.52271999 | 26.52271999 | - | 0.0e+00 | 1e-09 | yes | buckling.compression_capacity (custom Section) |
+| F10 AISC | phi Pn, D/t above 0.45 E/Fy | F10.phiPn_scope | 0 | 0 | N | 0.0e+00 | 1e-09 | yes | buckling.compression_capacity (custom Section) |
 
 Run time 0.2 s.

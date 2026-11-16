@@ -325,16 +325,26 @@ def model_b():
     proj_top = 0.5 * A_RING ** 2 * math.sin(72.0 * DEG)
     proj_band = 0.5 * A_RING ** 2 * (2.0 * math.sin(36.0 * DEG)
                                      - math.sin(72.0 * DEG))
-    # crown: 5 top faces.  upper node: 2 top + 3 band faces.
+    # The band below the upper ring has two kinds of face.  A face with two
+    # upper nodes and one lower node (U0, U72, L36) slopes down going
+    # outward: its outward normal points up and it carries snow.  A face
+    # with one upper and two lower nodes (L-36, L36, U0) slopes up going
+    # outward: its outward normal points DOWN, snow cannot lie on it, and
+    # its plan projection overlaps the faces above.  Snow therefore acts on
+    # the 5 top faces and the 5 upward band faces only (plan area of the
+    # dome = 5 proj_top + 5 proj_band, the decagon of radius A_RING).
+    # crown: 5 top faces.  upper node: 2 top faces + 2 upward band faces
+    # + 1 downward band face.
     crown_surf = 5.0 / 3.0 * face_area
     crown_proj = 5.0 / 3.0 * proj_top
     up_surf = 5.0 / 3.0 * face_area
-    up_proj = (2.0 * proj_top + 3.0 * proj_band) / 3.0
+    up_proj = (2.0 * proj_top + 2.0 * proj_band) / 3.0
     crown_self = 2.5 * w_member               # 5 spokes, half each
     up_self = 2.5 * w_member                  # 1 spoke + 2 ring + 2 zigzag
-    # lower (supported) node: 3 band faces, half of 2 zigzag + 2 ring struts
+    # lower (supported) node: 1 upward + 2 downward band faces, half of 2
+    # zigzag + 2 ring struts
     low_surf = 3.0 / 3.0 * face_area
-    low_proj = 3.0 * proj_band / 3.0
+    low_proj = 1.0 * proj_band / 3.0
     low_self = 2.0 * w_member
     Pl2 = -(F_DEAD * (low_self + Q_DEAD * low_surf)
             + F_SNOW * P_SNOW * low_proj)
@@ -344,7 +354,7 @@ def model_b():
             + F_SNOW * P_SNOW * up_proj)
     # Whole dome, for the reaction check (15 faces, 25 struts)
     tot_dead = 25.0 * w_member + Q_DEAD * 15.0 * face_area
-    tot_snow = P_SNOW * 5.0 * (proj_top + 2.0 * proj_band)
+    tot_snow = P_SNOW * 5.0 * (proj_top + proj_band)   # upward faces only
     tot_P2 = -(F_DEAD * tot_dead + F_SNOW * tot_snow)
 
     cases = {}

@@ -78,7 +78,15 @@ QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox {{
 QLineEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus, QComboBox:focus {{
     border: 1px solid {ACCENT};
 }}
+QLineEdit:disabled, QSpinBox:disabled, QDoubleSpinBox:disabled,
+QComboBox:disabled {{
+    color: #9aa7b3; background: #f2f4f6; border-color: #d3dae1;
+}}
 QComboBox::drop-down {{ border: none; width: 17px; }}
+QComboBox#cellcombo {{
+    border: none; border-radius: 0; padding: 1px 4px; min-height: 0;
+    background: transparent;
+}}
 QComboBox QAbstractItemView {{
     background: #ffffff; border: 1px solid {ACCENT};
     selection-background-color: {ACCENT}; selection-color: #ffffff;
@@ -101,13 +109,50 @@ QPlainTextEdit, QTextEdit {{
     font-family: "Consolas", "Courier New", monospace; font-size: 11px;
 }}
 
+QMenuBar {{
+    background: #ffffff; color: #1c2733;
+    border-bottom: 1px solid #c8d2db; padding: 1px 4px;
+}}
+QMenuBar::item {{
+    background: transparent; color: #1c2733;
+    padding: 4px 10px; border-radius: 3px;
+}}
+QMenuBar::item:selected {{ background: #e1ebf3; color: {ACCENT_DARK}; }}
+QMenuBar::item:pressed {{ background: #cfe2f1; color: {ACCENT_DARK}; }}
+QMenuBar::item:disabled {{ color: #9aa7b3; }}
+
+QMenu {{
+    background: #ffffff; color: #1c2733;
+    border: 1px solid #b7c3ce; padding: 4px 0;
+}}
+QMenu::item {{
+    background: transparent; color: #1c2733;
+    padding: 5px 28px 5px 20px;
+}}
+QMenu::item:selected {{ background: {ACCENT}; color: #ffffff; }}
+QMenu::item:disabled {{ color: #9aa7b3; background: transparent; }}
+QMenu::separator {{ height: 1px; background: #dde4ea; margin: 4px 8px; }}
+
+QToolTip {{
+    background: #fffdf0; color: #1c2733;
+    border: 1px solid #a9b8c6; padding: 4px 6px;
+}}
+QMessageBox {{ background: #eef1f4; }}
+QMessageBox QLabel {{ color: #1c2733; background: transparent; }}
+
 QToolBar {{
     background: #ffffff; border-bottom: 1px solid #c8d2db;
     spacing: 4px; padding: 4px 6px;
 }}
-QToolBar QToolButton {{ padding: 5px 11px; border-radius: 4px; }}
+QToolBar QToolButton {{
+    padding: 5px 11px; border-radius: 4px; color: #1c2733;
+    background: transparent;
+}}
 QToolBar QToolButton:hover {{ background: #e8eef3; }}
+QToolBar QToolButton:pressed {{ background: #dfe9f1; }}
 QToolBar QToolButton:disabled {{ color: #9aa7b3; }}
+QScrollArea {{ background: transparent; }}
+QScrollArea > QWidget > QWidget {{ background: transparent; }}
 
 QStatusBar {{ background: #ffffff; border-top: 1px solid #c8d2db; }}
 QStatusBar::item {{ border: none; }}
@@ -124,6 +169,7 @@ QSlider::groove:horizontal {{
 QSlider::handle:horizontal {{
     background: {ACCENT}; width: 13px; margin: -5px 0; border-radius: 7px;
 }}
+QSlider::handle:horizontal:disabled {{ background: #b7c3ce; }}
 QSplitter::handle {{ background: #d4dce3; }}
 QSplitter::handle:horizontal {{ width: 4px; }}
 QSplitter::handle:vertical {{ height: 4px; }}
@@ -132,7 +178,126 @@ QCheckBox {{ spacing: 6px; }}
 QLabel#heading {{ font-size: 13px; font-weight: 600; color: {ACCENT_DARK}; }}
 QLabel#hint {{ color: #64748b; font-size: 11px; }}
 QLabel#metric {{ font-family: "Consolas", monospace; font-size: 11px; }}
+QLabel#note {{
+    background: #fff7e6; border: 1px solid #f0d9a8; border-radius: 4px;
+    padding: 6px 8px; color: #5c3b00;
+}}
 """
+
+
+def _arrow_rules():
+    """Up/down arrows of spin boxes and combo boxes.
+
+    Once the boxes above have a styled border, Qt no longer draws their
+    arrows, so the fields looked like plain text boxes.  These rules draw
+    small arrow images from ``gui/icons`` (Qt picks the @2x files on high-DPI
+    screens).  Without the icon folder nothing changes.
+    """
+    import os
+    folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icons")
+    if not os.path.isfile(os.path.join(folder, "arrow_down.png")):
+        return ""
+    d = folder.replace("\\", "/")
+    return f"""
+QAbstractSpinBox {{ padding-right: 18px; }}
+QAbstractSpinBox::up-button, QAbstractSpinBox::down-button {{
+    subcontrol-origin: border; width: 17px; border: none;
+    background: transparent;
+}}
+QAbstractSpinBox::up-button {{ subcontrol-position: top right;
+                               border-top-right-radius: 3px; }}
+QAbstractSpinBox::down-button {{ subcontrol-position: bottom right;
+                                 border-bottom-right-radius: 3px; }}
+QAbstractSpinBox::up-button:hover, QAbstractSpinBox::down-button:hover {{
+    background: #e1ebf3;
+}}
+QAbstractSpinBox::up-button:pressed, QAbstractSpinBox::down-button:pressed {{
+    background: #cfe2f1;
+}}
+QAbstractSpinBox::up-arrow {{ image: url("{d}/arrow_up.png");
+                             width: 9px; height: 5px; }}
+QAbstractSpinBox::down-arrow {{ image: url("{d}/arrow_down.png");
+                               width: 9px; height: 5px; }}
+QAbstractSpinBox::up-arrow:disabled, QAbstractSpinBox::up-arrow:off {{
+    image: url("{d}/arrow_up_disabled.png");
+}}
+QAbstractSpinBox::down-arrow:disabled, QAbstractSpinBox::down-arrow:off {{
+    image: url("{d}/arrow_down_disabled.png");
+}}
+QComboBox::down-arrow {{ image: url("{d}/arrow_down.png");
+                        width: 9px; height: 5px; }}
+QComboBox::down-arrow:disabled {{
+    image: url("{d}/arrow_down_disabled.png");
+}}
+QComboBox#cellcombo::down-arrow {{ width: 7px; height: 4px; }}
+"""
+
+
+STYLESHEET += _arrow_rules()
+
+
+# ------------------------------------------------------------ light theme --
+# Colours of the light palette.  The stylesheet above colours most widgets,
+# but some parts (scroll bars, check-box indicators, spin-box arrows, the
+# matplotlib toolbar icons) follow the palette.  Windows in dark mode hands
+# Qt a dark palette, which gave dark text on a dark menu bar.  Forcing this
+# palette makes the window look the same in light and dark OS themes.
+_PALETTE = {
+    "Window": "#eef1f4", "WindowText": "#1c2733",
+    "Base": "#ffffff", "AlternateBase": "#f6f9fb",
+    "ToolTipBase": "#fffdf0", "ToolTipText": "#1c2733",
+    "PlaceholderText": "#7b8794",
+    "Text": "#1c2733", "Button": "#f4f6f8", "ButtonText": "#1c2733",
+    "BrightText": "#ffffff",
+    "Light": "#ffffff", "Midlight": "#e3e9ee", "Mid": "#b7c3ce",
+    "Dark": "#8a99a8", "Shadow": "#5b6b7b",
+    "Highlight": ACCENT, "HighlightedText": "#ffffff",
+    "Link": ACCENT, "LinkVisited": ACCENT_DARK,
+}
+_DISABLED = {"WindowText": "#9aa7b3", "Text": "#9aa7b3",
+             "ButtonText": "#9aa7b3", "Highlight": "#94a9bb"}
+
+
+def light_palette():
+    """The light QPalette used by the application (independent of the OS)."""
+    from qtpy.QtGui import QPalette
+    pal = QPalette()
+    role_enum = getattr(QPalette, "ColorRole", QPalette)
+    group_enum = getattr(QPalette, "ColorGroup", QPalette)
+    groups = [getattr(group_enum, g) for g in ("Active", "Inactive",
+                                               "Disabled")]
+    for name, colour in _PALETTE.items():
+        role = getattr(role_enum, name, None)
+        if role is None:
+            continue
+        for grp in groups:
+            pal.setColor(grp, role, QColor(colour))
+    for name, colour in _DISABLED.items():
+        role = getattr(role_enum, name, None)
+        if role is not None:
+            pal.setColor(group_enum.Disabled, role, QColor(colour))
+    return pal
+
+
+def apply_light_theme(app=None):
+    """Make the application light, whatever the OS colour scheme.
+
+    Asks Qt (6.8 and later) for the light colour scheme and installs
+    :func:`light_palette` on the application.  Safe to call more than once
+    and a no-op when there is no QApplication.
+    """
+    app = app or QtWidgets.QApplication.instance()
+    if app is None:
+        return False
+    try:
+        hints = app.styleHints()
+        scheme = getattr(getattr(Qt, "ColorScheme", None), "Light", None)
+        if scheme is not None and hasattr(hints, "setColorScheme"):
+            hints.setColorScheme(scheme)
+    except Exception:                                # pragma: no cover
+        pass
+    app.setPalette(light_palette())
+    return True
 
 
 # ----------------------------------------------------------------- helpers --
@@ -147,6 +312,40 @@ def hint(text):
     lab.setObjectName("hint")
     lab.setWordWrap(True)
     return lab
+
+
+def note(text):
+    """A boxed, word-wrapped note (used for the custom-model notice)."""
+    lab = QtWidgets.QLabel(text)
+    lab.setObjectName("note")
+    lab.setWordWrap(True)
+    return lab
+
+
+def input_table(columns, min_height=84, max_height=132):
+    """An editable table for row input (settlements, nodal loads)."""
+    t = QtWidgets.QTableWidget(0, len(columns))
+    t.setHorizontalHeaderLabels(columns)
+    t.verticalHeader().setVisible(False)
+    t.verticalHeader().setDefaultSectionSize(26)
+    t.setAlternatingRowColors(True)
+    t.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+    t.setMinimumHeight(min_height)
+    t.setMaximumHeight(max_height)
+    hh = t.horizontalHeader()
+    hh.setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+    return t
+
+
+def fmt_float(v, digits=3):
+    """Format a number for a table cell; NaN and inf read 'n/a'."""
+    try:
+        f = float(v)
+    except (TypeError, ValueError):
+        return str(v)
+    if f != f or f in (float("inf"), float("-inf")):
+        return "n/a"
+    return f"{f:,.{digits}f}"
 
 
 def hline():
@@ -207,7 +406,7 @@ def fill_table(widget, rows, highlight=None, numeric_digits=3):
         for j, c in enumerate(cols):
             v = row.get(c, "")
             if isinstance(v, float):
-                text = f"{v:,.{numeric_digits}f}"
+                text = fmt_float(v, numeric_digits)
             else:
                 text = str(v)
             item = QtWidgets.QTableWidgetItem(text)
