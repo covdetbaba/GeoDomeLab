@@ -139,6 +139,10 @@ def combo_id(name):
     return parts[0] if parts else str(name)
 
 
+def secs(t):
+    return f"{t:.2f} s" if t >= 0.1 else f"{t * 1e3:.0f} ms"
+
+
 def g10(x):
     return f"{x:.10g}"
 
@@ -405,23 +409,23 @@ def model_a_verification():
 
     a1 = H["A1"]
     r1 = res.cases[bm.COMBO_A1]
-    crown = f"node {c} (hand node 1), crown"
+    crown = f"crown, node {c} (hand 1)"
     for ax, lab in enumerate("xyz"):
-        add(f"A1 crown displacement u{lab}", "mm", crown,
+        add(f"A1 crown u{lab}", "mm", crown,
             a1["D"][ax], r1.u[3 * c + ax], 1e3)
     for mh in range(1, 6):
         add("A1 axial force N", "kN",
-            f"member {mmap[mh]} (hand member {mh}), spoke",
+            f"spoke, member {mmap[mh]} (hand {mh})",
             a1["N"][mh], r1.N[mmap[mh]], 1e-3)
     ring = [mmap[mh] for mh in range(6, 11)]
-    add("A1 largest |N| of the ring struts", "kN",
-        f"members {', '.join(str(k) for k in sorted(ring))} (hand 6 to 10)",
+    add("A1 ring struts, largest |N|", "kN",
+        f"members {min(ring)} to {max(ring)} (hand 6 to 10)",
         0.0, max(abs(r1.N[k]) for k in ring), 1e-3)
     R1 = r1.reaction_vectors()
     for h in range(2, 7):
         for ax, lab in enumerate("xyz"):
             add(f"A1 reaction R{lab}", "kN",
-                f"node {nmap[h]} (hand node {h}), support",
+                f"support, node {nmap[h]} (hand {h})",
                 a1["R"][h][ax], R1[nmap[h], ax], 1e-3)
     tot1 = R1.sum(axis=0)
     for ax, lab in ((0, "x"), (2, "z")):
@@ -430,22 +434,22 @@ def model_a_verification():
 
     a2 = H["A2"]
     r2 = res.cases[bm.COMBO_A2]
-    add("A2 crown displacement uz", "mm", crown, a2["D"][2],
+    add("A2 crown uz", "mm", crown, a2["D"][2],
         r2.u[3 * c + 2], 1e3)
     for mh in range(1, 6):
         add("A2 axial force N", "kN",
-            f"member {mmap[mh]} (hand member {mh}), spoke",
+            f"spoke, member {mmap[mh]} (hand {mh})",
             a2["N"][mh], r2.N[mmap[mh]], 1e-3)
     R2 = r2.reaction_vectors()
     for h in range(2, 7):
-        add("A2 reaction Rz", "kN", f"node {nmap[h]} (hand node {h}), support",
+        add("A2 reaction Rz", "kN", f"support, node {nmap[h]} (hand {h})",
             a2["R"][h][2], R2[nmap[h], 2], 1e-3)
     add("A2 total vertical load", "kN", "whole cap", a2["tot_P"],
         r2.F[2::3].sum(), 1e-3)
-    add("A2 utilisation, AISC 360-16 E3", "-",
-        f"member {mmap[1]} (hand member 1), spoke",
+    add("A2 utilisation, AISC E3", "-",
+        f"spoke, member {mmap[1]} (hand 1)",
         H["aisc"]["util"], res.util_env[mmap[1]], 1.0)
-    add("A2 critical load factor λcr", "-", "whole cap",
+    add("A2 load factor λcr", "-", "whole cap",
         H["buckling"]["lam_cr"], res.lambda_cr_by_case[bm.COMBO_A2], 1.0)
 
     df = pd.DataFrame(rows)
@@ -592,7 +596,7 @@ else:
         f"{model.material_name}. Sections: "
         f"{', '.join(sorted(set(model.group_sections)))}. "
         f"Solved {len(res.order)} combinations with buckling in "
-        f"{run['time_s']:.2f} s.")
+        f"{secs(run['time_s'])}.")
     for note in g.notes:                  # the snapping notes, not the counts
         if "snapped" in note or "stepped" in note:
             st.caption(note)
