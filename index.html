@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>GeoDomeLab in the browser</title>
+<meta name="description" content="GeoDomeLab 2.0.0: geodesic dome space-truss analysis by the direct stiffness method, running in your browser.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@stlite/browser@1.12.1/build/stlite.css">
+<style>
+  html, body { margin: 0; background: #ffffff; }
+  #gdl-note {
+    position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%);
+    z-index: 1000; box-sizing: border-box; width: max-content;
+    max-width: calc(100% - 32px); padding: 12px 16px; border-radius: 8px;
+    background: #1f2a36; color: #ffffff;
+    font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+  }
+  #gdl-note a { color: #9fd0ff; }
+  #gdl-note.failed { background: #7a1f1f; }
+</style>
+</head>
+<body>
+<div id="gdl-note" role="status">
+  <strong>GeoDomeLab 2.0.0 is loading.</strong>
+  The first load takes about 20 to 40 s while Python, NumPy and SciPy
+  download into your browser. The analysis then runs on your device.
+  <a href="https://github.com/covdetbaba/GeoDomeLab">Source on GitHub</a>
+</div>
+<div id="root"></div>
+<script type="module">
+import { mount } from "https://cdn.jsdelivr.net/npm/@stlite/browser@1.12.1/build/stlite.js";
+
+const note = document.getElementById("gdl-note");
+mount({
+  "entrypoint": "web/streamlit_app.py",
+  "requirements": [
+    "numpy",
+    "scipy"
+  ],
+  "files": {
+    "web/streamlit_app.py": {
+      "url": "web/streamlit_app.py?v=898626b6c2"
+    },
+    "geodome/__init__.py": {
+      "url": "geodome/__init__.py?v=fdf156bd84"
+    },
+    "geodome/benchmarks.py": {
+      "url": "geodome/benchmarks.py?v=49ceac5f1c"
+    },
+    "geodome/buckling.py": {
+      "url": "geodome/buckling.py?v=36f28dcfac"
+    },
+    "geodome/geometry.py": {
+      "url": "geodome/geometry.py?v=f5991139b1"
+    },
+    "geodome/loads.py": {
+      "url": "geodome/loads.py?v=f192a5b984"
+    },
+    "geodome/materials.py": {
+      "url": "geodome/materials.py?v=3931eac978"
+    },
+    "geodome/model.py": {
+      "url": "geodome/model.py?v=a84611ca22"
+    },
+    "geodome/optimize.py": {
+      "url": "geodome/optimize.py?v=2eabc4a1d8"
+    },
+    "geodome/postprocess.py": {
+      "url": "geodome/postprocess.py?v=fd6662e1b8"
+    },
+    "geodome/sections.py": {
+      "url": "geodome/sections.py?v=7f441a0aed"
+    },
+    "geodome/solver.py": {
+      "url": "geodome/solver.py?v=15037b87dc"
+    },
+    "geodome/units.py": {
+      "url": "geodome/units.py?v=6f97c21abd"
+    },
+    "validation/hand_calc.py": {
+      "url": "validation/hand_calc.py?v=7104155710"
+    }
+  },
+  "streamlitConfig": {
+    "client.toolbarMode": "viewer"
+  }
+}, document.getElementById("root"));
+
+// Hide the loading note once the app has drawn its title.  The time is kept
+// in window.__gdlReadyMs (milliseconds from navigation start).
+const timer = setInterval(() => {
+  if (document.querySelector("#root h1")) {
+    clearInterval(timer);
+    window.__gdlReadyMs = Math.round(performance.now());
+    console.log("GeoDomeLab ready after " + window.__gdlReadyMs + " ms");
+    note.style.display = "none";
+  }
+}, 250);
+setTimeout(() => {
+  if (!window.__gdlReadyMs) {
+    note.innerHTML = "Still loading. A slow connection can take a few " +
+      "minutes. If nothing appears, reload the page or use the desktop " +
+      'program from <a href="https://github.com/covdetbaba/GeoDomeLab">GitHub</a>.';
+  }
+}, 120000);
+</script>
+</body>
+</html>
