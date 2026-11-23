@@ -299,6 +299,15 @@ def show_figure(fig):
         "s=Math.max(1,1.1*el.clientHeight/Math.max(el.clientWidth,1));"
         "f.layout.scene.camera.eye={x:e.x*s,y:e.y*s,z:e.z*s};"
         f"Plotly.newPlot('g',f.data,f.layout,{json.dumps(PLOT_CONFIG)});"
+        # The view never zooms on the wheel (scrollZoom off), and the wheel
+        # scrolls the page instead: the frame of the view would otherwise
+        # swallow it.
+        "window.addEventListener('wheel',function(ev){try{"
+        "var m=window.parent.document.querySelector("
+        "'[data-testid=\"stMain\"]')||window.parent.document."
+        "scrollingElement;var k=ev.deltaMode===1?40:(ev.deltaMode===2?"
+        "m.clientHeight:1);m.scrollBy(0,ev.deltaY*k);}catch(e){}},"
+        "{capture:true,passive:true});"
         "</script></body></html>")
     components.html(html, height=height + 6)
 
