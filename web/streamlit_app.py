@@ -273,8 +273,12 @@ def dome_figure(model, res, combo, height=500):
     return {"data": data, "layout": layout}
 
 
-PLOT_CONFIG = {"displaylogo": False, "scrollZoom": True, "responsive": True,
-               "modeBarButtonsToRemove": ["toImage"]}
+# scrollZoom off: the mouse wheel and a swipe scroll the page past the 3D
+# view instead of zooming the dome to a speck.  Zoom stays on the modebar
+# (+ and -) and on a two-finger pinch.  "Reset camera" restores the view of
+# the first draw (the narrow-screen fit on a phone), not plotly's default.
+PLOT_CONFIG = {"displaylogo": False, "scrollZoom": False, "responsive": True,
+               "modeBarButtonsToRemove": ["toImage", "resetCameraDefault3d"]}
 
 
 def show_figure(fig):
@@ -572,12 +576,35 @@ if run_clicked:
                 start = m.steel_mass()
                 sizing = opt.auto_size(m)
                 label += " (auto-sized)"
-            prev = st.session_state.get("show_combo", "LC2  1.2D + 1.6S")
-            store(solve(m, label, "custom", sizing, start), prev)
+            new = solve(m, label, "custom", sizing, start)
+            gov = new["res"].governing_case or st.session_state.get(
+                "show_combo", "LC2  1.2D + 1.6S")
+            store(new, gov)
     except Exception as exc:
         st.error(f"The model could not be solved: {exc}")
 
 run = st.session_state.get("run")
+
+
+def headline(run):
+    """One line with the key results, shown right under the buttons."""
+    res = run["res"]
+    parts = []
+    if res.governing_case:
+        parts.append(f"largest utilisation {res.governing_util:.3f} "
+                     f"({combo_id(res.governing_case)})")
+    lam = {k: v for k, v in res.lambda_cr_by_case.items()
+           if math.isfinite(v)}
+    if lam:
+        ref = min(lam, key=lam.get)
+        parts.append(f"λcr {lam_text(lam[ref])} ({combo_id(ref)})")
+    parts.append(f"steel {run['model'].steel_mass():,.0f} kg")
+    return (f"**{run['label']}**: " + ", ".join(parts)
+            + ". The 3D view and the tables are below.")
+
+
+if run is not None:
+    st.success(headline(run))
 
 if run is None:
     st.info("Tap an example above to run it, or open Custom dome and press "
@@ -697,8 +724,9 @@ else:
         st.caption(
             f"Axial force under {short(combo)}. Red is tension, blue is "
             f"compression, the scale is symmetric about zero. Drag to turn, "
-            f"scroll or pinch to zoom, hover or tap a strut for its force. "
-            f"Squares are supports.")
+            f"pinch or use the zoom buttons above the view to zoom, hover or "
+            f"tap a strut for its force. Squares are supports. The mouse "
+            f"wheel scrolls the page.")
 
     with tabs[1]:
         dfm = members_frame(run, combo)
