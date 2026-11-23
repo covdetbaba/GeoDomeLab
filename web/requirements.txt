@@ -1,0 +1,17 @@
+# Requirements of the browser app (web/streamlit_app.py).
+#
+# Streamlit Community Cloud reads this file because it sits next to the
+# app's main file, so the desktop requirements in the root requirements.txt
+# (PyQt6, qtpy, matplotlib) are not installed for the web app.
+#
+#     pip install -r web/requirements.txt
+#     streamlit run web/streamlit_app.py
+#
+# pandas comes with streamlit.  The GitHub Pages build (web/build_pages.py)
+# does not use this file: it loads numpy and scipy from Pyodide and draws the
+# 3D view with plotly.js instead of Python plotly.
+
+numpy>=1.23
+scipy>=1.9
+plotly>=5.20
+streamlit>=1.51

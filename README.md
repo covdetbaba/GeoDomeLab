@@ -15,6 +15,12 @@ limit point, computes the natural frequencies and writes the cut list for
 fabrication. The program is checked against hand calculations, published
 benchmarks and OpenSees. Version 2.0.0.
 
+**Try it in your browser, no installation:** <https://covdetbaba.github.io/GeoDomeLab/>
+(the first load takes about 10 s on a laptop and up to 40 s on a phone). It runs
+the same core library through Streamlit and Pyodide: the 6V example, the Model A
+check against the hand calculation, and your own dome from 1V to 6V. See
+[web/README.md](web/README.md).
+
 ![GeoDomeLab: axial forces in a 6V dome of 30 m span](docs/img/gui_axial_force.png)
 
 | Nonlinear load path of the star dome | Natural modes | Fabrication cut list |
