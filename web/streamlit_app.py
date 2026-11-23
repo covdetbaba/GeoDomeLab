@@ -744,7 +744,7 @@ with st.expander("About this app"):
     st.markdown(
         "Every strut is a two-node pin-ended bar with 3 translations per "
         "node. The global stiffness matrix is assembled from the element "
-        "matrices (EA/L) [cc^T, -cc^T; -cc^T, cc^T], the supported DOF are "
+        "matrices (EA/L) [[cc^T, -cc^T], [-cc^T, cc^T]], the supported DOF are "
         "removed and {P} = [K]{D} is solved for each ASCE 7-16 combination. "
         "Member forces give the AISC 360-16 checks, and the geometric "
         "stiffness of each strength combination gives the linear buckling "
