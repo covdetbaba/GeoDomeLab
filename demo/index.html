@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GeoDomeLab demo video</title>
+<meta name="description" content="A 3.5-minute recording of GeoDomeLab 2.0.0: the browser version and the desktop program, from input to output.">
+<style>
+  :root { --navy: #13243a; --gold: #f0a24b; --ink: #1c2733; --muted: #5b6b7c;
+           --line: #d9e0e8; --bg: #f4f6f9; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+  header { background: var(--navy); color: #fff; padding: 20px 16px 16px;
+    border-bottom: 4px solid var(--gold); }
+  header h1 { margin: 0; font-size: 1.6rem; }
+  header p { margin: 4px 0 0; color: #dbe4f1; }
+  main { max-width: 1100px; margin: 0 auto; padding: 16px; }
+  video { width: 100%; height: auto; background: #000; border-radius: 6px;
+    display: block; }
+  .links { margin: 12px 0 4px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .links a { padding: 8px 14px; border-radius: 6px; text-decoration: none;
+    background: #fff; border: 1px solid var(--line); color: var(--navy); }
+  .links a.main { background: #e5484d; border-color: #e5484d; color: #fff; }
+  h2 { font-size: 1.1rem; margin: 20px 0 6px; }
+  ol { margin: 0; padding-left: 0; list-style: none; }
+  li button { width: 100%; text-align: left; border: 0; background: none;
+    padding: 6px 4px; font: inherit; color: var(--ink); cursor: pointer;
+    border-bottom: 1px solid var(--line); }
+  li button:hover { background: #fff; }
+  li .t { display: inline-block; min-width: 3.2em; color: var(--muted);
+    font-variant-numeric: tabular-nums; }
+  footer { color: var(--muted); font-size: 0.9rem; margin: 20px 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>GeoDomeLab 2.0.0: demo video</h1>
+  <p>Geodesic dome space-truss analysis by the direct stiffness method.
+  The recording runs one complete example from input to output.</p>
+</header>
+<main>
+  <video id="v" controls playsinline preload="metadata" poster="poster.jpg">
+    <source src="GeoDomeLab_demo.mp4" type="video/mp4">
+    Your browser cannot play this video. <a href="GeoDomeLab_demo.mp4">Download it</a>.
+  </video>
+  <div class="links">
+    <a class="main" href="../">Try it in your browser</a>
+    <a href="https://github.com/covdetbaba/GeoDomeLab">Source code on GitHub</a>
+    <a href="https://github.com/covdetbaba/GeoDomeLab/releases/tag/v2.0.0">Release v2.0.0</a>
+    <a href="GeoDomeLab_demo.mp4" download>Download the video (mp4)</a>
+  </div>
+  <h2>Parts of the video</h2>
+  <ol>
+    <li><button data-t="0"><span class="t">0:00</span>Title</button></li>
+    <li><button data-t="5"><span class="t">0:05</span>Browser version: the 6V example, no installation</button></li>
+    <li><button data-t="47"><span class="t">0:47</span>Desktop program: the input</button></li>
+    <li><button data-t="77"><span class="t">1:17</span>Run, deflected shape, axial force, pick a strut</button></li>
+    <li><button data-t="112"><span class="t">1:52</span>Auto-size the struts</button></li>
+    <li><button data-t="133"><span class="t">2:13</span>Nonlinear path to the limit point</button></li>
+    <li><button data-t="172"><span class="t">2:52</span>Imperfection study (shown faster)</button></li>
+    <li><button data-t="199"><span class="t">3:19</span>End: try it yourself</button></li>
+  </ol>
+  <footer>3 min 25 s, 1920 &times; 1080, no sound (captions in the picture).
+  Recorded on 22 November 2026 from the real program: the browser version at
+  covdetbaba.github.io/GeoDomeLab and the desktop window of release
+  v2.0.0.</footer>
+</main>
+<script>
+  const v = document.getElementById("v");
+  for (const b of document.querySelectorAll("button[data-t]")) {
+    b.addEventListener("click", () => {
+      v.currentTime = Number(b.dataset.t);
+      v.play();
+      v.scrollIntoView({behavior: "smooth", block: "nearest"});
+    });
+  }
+</script>
+</body>
+</html>
