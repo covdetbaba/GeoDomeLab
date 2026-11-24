@@ -79,6 +79,12 @@ shows up before the site is published. To publish, commit the folder to the
 `gh-pages` branch. GitHub Pages serves that branch at
 <https://covdetbaba.github.io/GeoDomeLab/>.
 
+The demo video page <https://covdetbaba.github.io/GeoDomeLab/demo/> is added
+with `--video GeoDomeLab_demo.mp4 --poster poster.jpg`. The video (31 MB) is
+not kept in the repository. Download it from the
+[v2.0.0 release](https://github.com/covdetbaba/GeoDomeLab/releases/tag/v2.0.0)
+to rebuild the page.
+
 ## Files
 
 | File | Purpose |

@@ -13,6 +13,8 @@ files and the visitor's browser runs the analysis.  The site holds
     validation/hand_calc.py the independent hand calculation (Model A)
     LICENSE                 the GeoDomeLab licence (attribution)
     .nojekyll               stops GitHub Pages from hiding __init__.py
+    demo/                   with --video: a page that plays the 3.5-minute
+                            demo video (demo/index.html, the mp4, a poster)
 
 Python packages: numpy and scipy come from the Pyodide distribution.  The app
 draws its 3D view with plotly.js from a pinned CDN file when Python plotly is
@@ -22,6 +24,11 @@ Usage (from the repository root):
 
     python web/build_pages.py --out <folder>            # build
     python web/build_pages.py --out <folder> --check    # build + self-test
+    python web/build_pages.py --out <folder> --video GeoDomeLab_demo.mp4 \
+        --poster poster.jpg                              # + demo video page
+
+The video is not kept in the repository (it is 31 MB).  It is attached to the
+GitHub release and copied into the site when --video is given.
 
 --check imports the copied modules from the site folder only, in an isolated
 interpreter, and runs both examples and the hand calculation, so a module
@@ -52,6 +59,21 @@ APP = "web/streamlit_app.py"
 EXTRA_FILES = ["validation/hand_calc.py"]
 STATIC_FILES = ["LICENSE"]         # copied, not mounted into Python
 REPO_URL = "https://github.com/covdetbaba/GeoDomeLab"
+RELEASE_URL = REPO_URL + "/releases/tag/v2.0.0"
+DEMO_DIR = "demo"
+VIDEO_NAME = "GeoDomeLab_demo.mp4"
+POSTER_NAME = "poster.jpg"
+# start of each part of the demo video, in seconds
+CHAPTERS = [
+    (0, "Title"),
+    (5, "Browser version: the 6V example, no installation"),
+    (47, "Desktop program: the input"),
+    (77, "Run, deflected shape, axial force, pick a strut"),
+    (112, "Auto-size the struts"),
+    (133, "Nonlinear path to the limit point"),
+    (172, "Imperfection study (shown faster)"),
+    (199, "End: try it yourself"),
+]
 
 
 # =============================================================================
@@ -143,7 +165,8 @@ INDEX = """\
   <strong>GeoDomeLab {version} is loading<span id="gdl-time"></span>.</strong>
   The first load takes about 20 to 40 s while Python, NumPy and SciPy
   download into your browser. The analysis then runs on your device.
-  <a href="{repo}">Source on GitHub</a>
+  <a href="{repo}">Source on GitHub</a> ·
+  <a href="demo/">Demo video (3.5 min)</a>
 </div>
 <div id="root"></div>
 <script type="module">
@@ -179,6 +202,93 @@ setTimeout(() => {{
 """
 
 
+DEMO = """\
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GeoDomeLab demo video</title>
+<meta name="description" content="A 3.5-minute recording of GeoDomeLab {version}: the browser version and the desktop program, from input to output.">
+<style>
+  :root {{ --navy: #13243a; --gold: #f0a24b; --ink: #1c2733; --muted: #5b6b7c;
+           --line: #d9e0e8; --bg: #f4f6f9; }}
+  html, body {{ margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }}
+  header {{ background: var(--navy); color: #fff; padding: 20px 16px 16px;
+    border-bottom: 4px solid var(--gold); }}
+  header h1 {{ margin: 0; font-size: 1.6rem; }}
+  header p {{ margin: 4px 0 0; color: #dbe4f1; }}
+  main {{ max-width: 1100px; margin: 0 auto; padding: 16px; }}
+  video {{ width: 100%; height: auto; background: #000; border-radius: 6px;
+    display: block; }}
+  .links {{ margin: 12px 0 4px; display: flex; flex-wrap: wrap; gap: 8px; }}
+  .links a {{ padding: 8px 14px; border-radius: 6px; text-decoration: none;
+    background: #fff; border: 1px solid var(--line); color: var(--navy); }}
+  .links a.main {{ background: #e5484d; border-color: #e5484d; color: #fff; }}
+  h2 {{ font-size: 1.1rem; margin: 20px 0 6px; }}
+  ol {{ margin: 0; padding-left: 0; list-style: none; }}
+  li button {{ width: 100%; text-align: left; border: 0; background: none;
+    padding: 6px 4px; font: inherit; color: var(--ink); cursor: pointer;
+    border-bottom: 1px solid var(--line); }}
+  li button:hover {{ background: #fff; }}
+  li .t {{ display: inline-block; min-width: 3.2em; color: var(--muted);
+    font-variant-numeric: tabular-nums; }}
+  footer {{ color: var(--muted); font-size: 0.9rem; margin: 20px 0; }}
+</style>
+</head>
+<body>
+<header>
+  <h1>GeoDomeLab {version}: demo video</h1>
+  <p>Geodesic dome space-truss analysis by the direct stiffness method.
+  The recording runs one complete example from input to output.</p>
+</header>
+<main>
+  <video id="v" controls playsinline preload="metadata" poster="{poster}">
+    <source src="{video}" type="video/mp4">
+    Your browser cannot play this video. <a href="{video}">Download it</a>.
+  </video>
+  <div class="links">
+    <a class="main" href="../">Try it in your browser</a>
+    <a href="{repo}">Source code on GitHub</a>
+    <a href="{release}">Release v{version}</a>
+    <a href="{video}" download>Download the video (mp4)</a>
+  </div>
+  <h2>Parts of the video</h2>
+  <ol>
+{chapters}
+  </ol>
+  <footer>3 min 25 s, 1920 &times; 1080, no sound (captions in the picture).
+  Recorded on 22 November 2026 from the real program: the browser version at
+  covdetbaba.github.io/GeoDomeLab and the desktop window of release
+  v{version}.</footer>
+</main>
+<script>
+  const v = document.getElementById("v");
+  for (const b of document.querySelectorAll("button[data-t]")) {{
+    b.addEventListener("click", () => {{
+      v.currentTime = Number(b.dataset.t);
+      v.play();
+      v.scrollIntoView({{behavior: "smooth", block: "nearest"}});
+    }});
+  }}
+</script>
+</body>
+</html>
+"""
+
+
+def demo_html(version):
+    rows = []
+    for t, name in CHAPTERS:
+        stamp = f"{t // 60}:{t % 60:02d}"
+        rows.append(f'    <li><button data-t="{t}"><span class="t">{stamp}'
+                    f'</span>{html.escape(name)}</button></li>')
+    return DEMO.format(version=html.escape(version), poster=POSTER_NAME,
+                       video=VIDEO_NAME, repo=REPO_URL, release=RELEASE_URL,
+                       chapters="\n".join(rows))
+
+
 def index_html(files, version):
     options = {
         "entrypoint": APP,
@@ -207,7 +317,7 @@ def _version():
     return "?"
 
 
-def build(out):
+def build(out, video=None, poster=None):
     mods = geodome_modules()
     mounted = [APP] + mods + EXTRA_FILES
     if os.path.isdir(out):
@@ -234,6 +344,19 @@ def build(out):
               newline="\n") as fh:
         fh.write(index_html(hashes, _version()))
     open(os.path.join(out, ".nojekyll"), "w").close()
+
+    if video:                               # the demo video page
+        demo = os.path.join(out, DEMO_DIR)
+        os.makedirs(demo, exist_ok=True)
+        shutil.copyfile(video, os.path.join(demo, VIDEO_NAME))
+        if poster:
+            shutil.copyfile(poster, os.path.join(demo, POSTER_NAME))
+        with open(os.path.join(demo, "index.html"), "w", encoding="utf-8",
+                  newline="\n") as fh:
+            fh.write(demo_html(_version()))
+        for name in sorted(os.listdir(demo)):
+            print(f"  {DEMO_DIR}/{name:27s} "
+                  f"{os.path.getsize(os.path.join(demo, name)):11,d} bytes")
 
     total = 0
     print(f"Site written to {out}")
@@ -305,8 +428,10 @@ def main(argv=None):
     ap.add_argument("--out", required=True, help="output folder")
     ap.add_argument("--check", action="store_true",
                     help="run the core from the built site as a self-test")
+    ap.add_argument("--video", help="demo video (mp4) for the demo/ page")
+    ap.add_argument("--poster", help="poster image (jpg) for the video")
     a = ap.parse_args(argv)
-    build(a.out)
+    build(a.out, video=a.video, poster=a.poster)
     if a.check:
         check(a.out)
 

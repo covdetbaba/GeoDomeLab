@@ -66,6 +66,7 @@ except ImportError:
 
 PLOTLY_JS = "https://cdn.plot.ly/plotly-gl3d-2.35.2.min.js"   # pinned
 REPO_URL = geodome.__url__
+DEMO_URL = "https://covdetbaba.github.io/GeoDomeLab/demo/"   # demo video
 IN_BROWSER = sys.platform == "emscripten"                  # stlite / Pyodide
 
 # matplotlib "coolwarm", the colour map of the desktop axial-force view:
@@ -520,7 +521,8 @@ st.markdown(
     f"Single-layer geodesic domes as 3D space trusses, solved by the direct "
     f"stiffness method, with AISC 360-16 member checks and linear buckling. "
     f"Same analysis core as the desktop program, version "
-    f"{geodome.__version__}. [Source code on GitHub]({REPO_URL})")
+    f"{geodome.__version__}. [Source code on GitHub]({REPO_URL}) · "
+    f"[Demo video, 3.5 min]({DEMO_URL})")
 if IN_BROWSER:
     st.caption("Running in your browser (Pyodide). Nothing is sent to a "
                "server.")
@@ -789,6 +791,7 @@ with st.expander("About this app"):
         "The desktop program (PyQt6) adds temperature and settlement loads, "
         "corotational arc-length nonlinear analysis with imperfections, "
         "modal analysis, fabrication data and CSV import. "
-        f"Install it from the [repository]({REPO_URL}).")
+        f"Install it from the [repository]({REPO_URL}), or watch it run "
+        f"in the [demo video]({DEMO_URL}).")
     st.caption(f"GeoDomeLab {geodome.__version__}. 3D view: "
                f"{'plotly' if HAVE_PLOTLY else 'plotly.js (pinned CDN)'}.")

@@ -21,6 +21,17 @@ the same core library through Streamlit and Pyodide: the 6V example, the Model A
 check against the hand calculation, and your own dome from 1V to 6V. See
 [web/README.md](web/README.md).
 
+**Watch the demo (3.5 min):** the recording runs one complete example from
+input to output, first in the browser version and then in the desktop program
+(input, run, picking a strut, auto-sizing, the nonlinear limit point).
+
+[![GeoDomeLab demo video: click to play](docs/img/demo_video.jpg)](https://covdetbaba.github.io/GeoDomeLab/demo/)
+
+Play it at <https://covdetbaba.github.io/GeoDomeLab/demo/> (with a list of its
+parts), or download
+[GeoDomeLab_demo.mp4](https://github.com/covdetbaba/GeoDomeLab/releases/download/v2.0.0/GeoDomeLab_demo.mp4)
+(31 MB) from the [v2.0.0 release](https://github.com/covdetbaba/GeoDomeLab/releases/tag/v2.0.0).
+
 ![GeoDomeLab: axial forces in a 6V dome of 30 m span](docs/img/gui_axial_force.png)
 
 | Nonlinear load path of the star dome | Natural modes | Fabrication cut list |
